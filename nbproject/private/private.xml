@@ -2,6 +2,25 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/index.jsp</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CourseServlet.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/WEB-INF/web.xml</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/home.jsp</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/verify_otp.jsp</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/index.html</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ResetPasswordServlet.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CourseDAO.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Topic.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/RegisterServlet.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Course.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Review.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/admin.jsp</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/HomeServlet.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Quiz.java</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/courses.jsp</file>
+            <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
+        </group>
     </open-files>
 </project-private>
