@@ -4,10 +4,18 @@
  */
 package model;
 
+import lombok.*;
+
 /**
  *
  * @author sondo
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Topic {
     private Long topic_id;
+    private String name;
+    private String description;
 }
