@@ -286,33 +286,11 @@
             <section class="content-section" id="courses">
                 <h2>Manage Courses</h2>
                 <div class="search-bar">
-                    <input type="text" id="courseSearch" placeholder="Search courses or topics...">
+                    <input type="text" id="courseSearch" placeholder="Search topics...">
                     <button id="searchButton">Search</button>
                     <button class="reset-btn" id="resetButton">Reset</button>
                 </div>
                 <div class="course-list">
-                    <!-- Danh sách course cứng -->
-                    <div class="course-item" data-name="Web Programming Course">
-                        <span class="course-name">Web Programming Course</span>
-                        <div class="course-actions">
-                            <button class="edit-btn">Edit</button>
-                            <button class="delete-btn">Delete</button>
-                        </div>
-                    </div>
-                    <div class="course-item" data-name="UI/UX Design Course">
-                        <span class="course-name">UI/UX Design Course</span>
-                        <div class="course-actions">
-                            <button class="edit-btn">Edit</button>
-                            <button class="delete-btn">Delete</button>
-                        </div>
-                    </div>
-                    <div class="course-item" data-name="Data Analysis Course">
-                        <span class="course-name">Data Analysis Course</span>
-                        <div class="course-actions">
-                            <button class="edit-btn">Edit</button>
-                            <button class="delete-btn">Delete</button>
-                        </div>
-                    </div>
                     <!-- Danh sách topic từ cơ sở dữ liệu -->
                     <% for (Topic topic : topicList) { %>
                         <div class="course-item" data-name="<%= topic.getName() %>">
@@ -381,7 +359,7 @@
             // Reset functionality
             resetButton.addEventListener('click', () => {
                 searchInput.value = ''; // Clear the input
-                courseItems.forEach(item => item.classList.remove('hidden')); // Show all courses
+                courseItems.forEach(item => item.classList.remove('hidden')); // Show all topics
             });
         });
     </script>
