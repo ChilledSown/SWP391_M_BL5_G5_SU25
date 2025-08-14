@@ -95,6 +95,7 @@ public class TopicDAO {
             return rowsAffected > 0;
         } catch (SQLException ex) {
             Logger.getLogger(TopicDAO.class.getName()).log(Level.SEVERE, null, ex);
+           
             return false;
         }
     }
