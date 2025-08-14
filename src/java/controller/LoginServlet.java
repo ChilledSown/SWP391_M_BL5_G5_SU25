@@ -49,13 +49,13 @@ public class LoginServlet extends HttpServlet {
 
                 switch (u.getRole()) {
                     case "admin":
-                         request.getRequestDispatcher("admin.jsp").forward(request, response);
-                        break;
-                    case "seller":
-                         request.getRequestDispatcher("seller.jsp").forward(request, response);
+                        response.sendRedirect("admin");
                         break;
                     case "customer":
-                         request.getRequestDispatcher("customer.jsp").forward(request, response);
+                        response.sendRedirect("home");
+                        break;
+                    case "seller":
+                        response.sendRedirect("seller");
                         break;
                 }
             } else {

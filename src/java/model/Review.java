@@ -4,10 +4,22 @@
  */
 package model;
 
+import java.util.Date;
+import lombok.*;
+
 /**
  *
  * @author sondo
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
     private Long review_id;
+    private Long course_id;
+    private int rating;
+    private String comment;
+    private Date created_at;
+    private Long user_id;
 }
