@@ -57,7 +57,7 @@
                                 <div class="main-menu d-none d-lg-block">
                                     <nav>
                                         <ul id="navigation">                                                                                          
-                                            <li class="active" ><a href="index.jsp">Home</a></li>
+                                            <li class="active" ><a href="home">Home</a></li>
                                             <li><a href="courses.jsp">Courses</a></li>
                                             <li><a href="about.jsp">About</a></li>
                                             <li><a href="#">Blog</a>
