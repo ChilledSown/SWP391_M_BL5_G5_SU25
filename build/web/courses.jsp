@@ -1,6 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="model.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -442,58 +443,7 @@
              color: #667eea;
          }
          
-         /* Topic styling */
-         .single-topic {
-             transition: all 0.3s ease;
-         }
          
-         .single-topic:hover {
-             transform: translateY(-5px);
-         }
-         
-         .topic-img {
-             position: relative;
-             overflow: hidden;
-             border-radius: 12px;
-             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-         }
-         
-         .topic-img img {
-             width: 100%;
-             height: 200px;
-             object-fit: cover;
-             transition: transform 0.3s ease;
-         }
-         
-         .single-topic:hover .topic-img img {
-             transform: scale(1.05);
-         }
-         
-         .topic-content-box {
-             position: absolute;
-             bottom: 0;
-             left: 0;
-             right: 0;
-             background: linear-gradient(transparent, rgba(0,0,0,0.7));
-             padding: 20px;
-             color: white;
-         }
-         
-         .topic-content h3 {
-             margin: 0;
-             font-size: 18px;
-             font-weight: 600;
-         }
-         
-         .topic-content h3 a {
-             color: white;
-             text-decoration: none;
-             transition: color 0.3s ease;
-         }
-         
-         .topic-content h3 a:hover {
-             color: #667eea;
-         }
     </style>
 </head>
 
@@ -723,69 +673,14 @@
                         </form>
                             </div>
                         </div>
-                <div class="row">
+                <div class="row" id="courses-list">
                     <% if (request.getAttribute("allCourses") != null) { %>
                         <% 
                         List<Course> allCourses = (List<Course>) request.getAttribute("allCourses");
-                        for (Course course : allCourses) {
+                        request.setAttribute("pageCourses", allCourses);
                         %>
-                    <div class="col-lg-4">
-                        <div class="properties properties2 mb-30">
-                            <div class="properties__card">
-                                <div class="properties__img overlay1">
-                                    <a href="#"><img src="<%= course.getThumbnail_url() != null ? course.getThumbnail_url() : "assets/img/gallery/featured1.png" %>" alt="<%= course.getTitle() %>"></a>
-                                </div>
-                                <div class="properties__caption">
-                                    <h3><a href="#"><%= course.getTitle() %></a></h3>
-                                    <p><%= course.getDescription() != null && course.getDescription().length() > 100 ? course.getDescription().substring(0, 100) + "..." : course.getDescription() %></p>
-                                    
-                                    <% 
-                                    Map<Long, Topic> courseTopicsMap = (Map<Long, Topic>) request.getAttribute("courseTopicsMap");
-                                    if (courseTopicsMap != null && courseTopicsMap.containsKey(course.getCourse_id())) {
-                                        Topic courseTopic = courseTopicsMap.get(course.getCourse_id());
-                                        if (courseTopic != null) {
-                                    %>
-                                    <div class="course-topic">
-                                        <span class="badge">
-                                            <i class="fas fa-tag"></i><%= courseTopic.getName() %>
-                                        </span>
-                                    </div>
-                                    <% 
-                                        }
-                                    }
-                                    %>
-                                    <div class="properties__footer d-flex justify-content-between align-items-center">
-                                        <div class="restaurant-name">
-                                            <div class="rating">
-                                                <% 
-                                                double rating = course.getAverageRating();
-                                                int fullStars = (int) rating;
-                                                boolean hasHalfStar = rating % 1 >= 0.5;
-                                                %>
-                                                <% for (int i = 0; i < fullStars; i++) { %>
-                                                    <i class="fas fa-star"></i>
-                                                <% } %>
-                                                <% if (hasHalfStar) { %>
-                                                    <i class="fas fa-star-half"></i>
-                                                <% } %>
-                                                <% for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) { %>
-                                                    <i class="far fa-star"></i>
-                                                <% } %>
-                                            </div>
-                                            <p><span>(<%= String.format("%.1f", rating) %>)</span> rating</p>
-                                        </div>
-                                        <div class="price">
-                                            <span>$<%= course.getPrice() %></span>
-                                        </div>
-                                    </div>
-                                    <a href="#" class="border-btn border-btn2">Find out more</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                        <% } %>
+                        <%@ include file="partials/course_cards.jsp" %>
                     <% } else { %>
-                        <!-- Fallback content -->
                         <div class="col-12 text-center">
                             <p>Cannot found other courses.</p>
                         </div>
@@ -796,60 +691,20 @@
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mt-40">
-                            <a href="#" class="border-btn">Load More</a>
+                            <c:choose>
+                                <c:when test="${hasMore}">
+                                    <button id="loadMoreBtn" class="border-btn" data-page="${page}" data-size="${size}">Load More</button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button id="loadMoreBtn" class="border-btn" data-page="${page}" data-size="${size}" style="display:none">Load More</button>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Courses area End -->
-        <!--? top subjects Area Start -->
-        <div class="topic-area">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-7 col-lg-8">
-                        <div class="section-tittle text-center mb-55">
-                            <h2>Explore our topic</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <% if (request.getAttribute("topics") != null) { %>
-                        <% 
-                        List<Topic> topics = (List<Topic>) request.getAttribute("topics");
-                        for (int i = 0; i < topics.size() && i < 8; i++) {
-                            Topic topic = topics.get(i);
-                        %>
-                        <div class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="single-topic text-center mb-30">
-                                <div class="topic-img">
-                                    <img src="<%= topic.getThumbnail_url() != null ? topic.getThumbnail_url() : "assets/img/gallery/topic" + (i + 1) + ".png" %>" alt="<%= topic.getName() %>">
-                                    <div class="topic-content-box">
-                                        <div class="topic-content">
-                                            <h3><a href="#"><%= topic.getName() %></a></h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <% } %>
-                    <% } else { %>
-                        <!-- Fallback content -->
-                        <div class="col-12 text-center">
-                            <p>No topics available.</p>
-                        </div>
-                    <% } %>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-xl-12">
-                        <div class="section-tittle text-center mt-20">
-                            <a href="courses.jsp" class="border-btn">View More Subjects</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- top subjects End -->  
+        <!-- Courses area End -->  
         <!-- ? services-area -->
         <div class="services-area services-area2 section-padding40">
             <div class="container">
@@ -1044,5 +899,41 @@
          });
      </script>
     
+    <!-- Load more pagination -->
+    <script>
+        (function(){
+            const btn = document.getElementById('loadMoreBtn');
+            if(!btn) return;
+            btn.addEventListener('click', function(e){
+                e.preventDefault();
+                const list = document.getElementById('courses-list');
+                let page = parseInt(btn.getAttribute('data-page') || '1', 10);
+                const size = parseInt(btn.getAttribute('data-size') || '6', 10);
+                const params = new URLSearchParams(window.location.search);
+                params.set('page', String(page + 1));
+                params.set('size', String(size));
+                params.set('ajax', '1');
+                fetch('courses?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+                  .then(r => r.text())
+                  .then(html => {
+                      const temp = document.createElement('div');
+                      temp.innerHTML = html;
+                      const newItems = temp.querySelectorAll('.col-lg-4');
+                      if (newItems.length === 0) {
+                          btn.style.display = 'none';
+                          return;
+                      }
+                      newItems.forEach(el => list.appendChild(el));
+                      btn.setAttribute('data-page', String(page + 1));
+                      const total = parseInt('${totalResults}', 10);
+                      const displayed = list.querySelectorAll('.col-lg-4').length;
+                      if (displayed >= total) {
+                          btn.style.display = 'none';
+                      }
+                  })
+                  .catch(() => btn.style.display = 'none');
+            });
+        })();
+    </script>
 </body>
 </html>
