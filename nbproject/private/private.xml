@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/index.jsp</file>
             <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/web/customer.jsp</file>
             <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/OrderDetailDAO.java</file>
@@ -36,6 +37,33 @@
             <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/VerifyOtpServlet.java</file>
             <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
             <file>file:/D:/SWP391_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Cart.java</file>
+=======
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/manageuser.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ResetPasswordServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/about.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ManageCourseServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/utils/PasswordHashUtil.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/model/Course.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/login.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ForgotPasswordServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ManageUserServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/register.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/dal/CourseDAO.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/AdminServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/forgot_password.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/VerifyOtpServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/model/PasswordResetToken.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/managecourse.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/verify_otp.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/index.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/reset_password.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/model/User.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/admin.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/RegisterServlet.java</file>
+>>>>>>> d7825d9b3ef026cbc3a408f149ccf49725bbbfa4
         </group>
     </open-files>
 </project-private>
