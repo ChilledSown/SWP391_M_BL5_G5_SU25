@@ -73,7 +73,7 @@ public class CreateCourseServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-     @Override
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -93,19 +93,19 @@ public class CreateCourseServlet extends HttpServlet {
             return;
         }
 
-        Course course = Course.builder()
-                .title(title)
-                .description(description)
-                .price(price)
-                .thumbnail_url(thumbnailUrl)
-                .created_at(new Date())
-                .topic_id(topicId)
-                .build();
+        Course course = new Course();
+        course.setTitle(title);
+        course.setDescription(description);
+        course.setPrice(price);
+        course.setThumbnail_url(thumbnailUrl);
+        course.setCreated_at(new Date());
+        course.setTopic_id(topicId);
 
         CourseDAO dao = new CourseDAO();
         dao.insertCourse(course, currentUser.getUser_id());
 
         response.sendRedirect("listCousera");
+
     }
 
     /**

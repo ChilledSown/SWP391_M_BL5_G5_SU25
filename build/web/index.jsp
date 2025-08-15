@@ -52,7 +52,7 @@
                             <!-- Logo -->
                             <div class="col-xl-2 col-lg-2">
                                 <div class="logo">
-                                    <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
+                                    <a href="home"><img src="assets/img/logo/logo.png" alt=""></a>
                                 </div>
                             </div>
                             <div class="col-xl-10 col-lg-10">
@@ -62,7 +62,7 @@
                                         <nav>
                                             <ul id="navigation">                                                                                          
                                                 <li class="active" ><a href="index.jsp">Home</a></li>
-                                                <li><a href="courses.jsp">Courses</a></li>
+                                                <li><a href="courses">Courses</a></li>
                                                 <li><a href="about.jsp">About</a></li>
                                                 <li><a href="#">Blog</a>
                                                     <ul class="submenu">
