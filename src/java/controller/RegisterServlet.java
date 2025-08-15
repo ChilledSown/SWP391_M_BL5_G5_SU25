@@ -48,9 +48,26 @@ public class RegisterServlet extends HttpServlet {
 
         UserDAO dao = new UserDAO();
 
+         // Validate password length
+        if (password != null && password.length() < 6) {
+            request.setAttribute("message", "Password must be at least 6 characters long.");
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("email", email);
+            request.setAttribute("password", password); // Không hiển thị lại password (bảo mật)
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
         // Check email trùng
         if (dao.getUserByEmail(email) != null) {
             request.setAttribute("message", "Email đã tồn tại, vui lòng dùng email khác!");
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("email", email);
+            request.setAttribute("password", password);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
@@ -58,6 +75,11 @@ public class RegisterServlet extends HttpServlet {
         // Check số điện thoại trùng
         if (dao.getUserByPhone(phone) != null) {
             request.setAttribute("message", "Số điện thoại đã tồn tại, vui lòng dùng số khác!");
+            request.setAttribute("fullName", fullName);
+            request.setAttribute("email", email);
+            request.setAttribute("password", password); 
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }

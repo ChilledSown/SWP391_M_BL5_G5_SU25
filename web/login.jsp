@@ -86,11 +86,11 @@
                     <h2>Login Here</h2>
                     <div class="form-input">
                         <label for="name">Email</label>
-                        <input  type="email" name="email" placeholder="example@gmail.com">
+                        <input  type="email" name="email" value="${email}" placeholder="example@gmail.com">
                     </div>
                     <div class="form-input">
                         <label for="name">Password</label>
-                        <input type="password" name="password" placeholder="******">
+                        <input type="password" name="password" value="${password}" placeholder="******">
                     </div>
                     <div class="form-input pt-30">
                         <input type="submit" name="submit" value="login">
