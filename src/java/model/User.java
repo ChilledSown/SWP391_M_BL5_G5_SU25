@@ -24,7 +24,7 @@ public class User {
         this.passwordHash = passwordHash;
         this.role = role;
     }
-
+    
     public Long getUser_id() {
         return user_id;
     }

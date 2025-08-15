@@ -1,0 +1,220 @@
+package controller;
+
+import dal.UserDAO;
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.User;
+import utils.PasswordHashUtil;
+
+@WebServlet(name = "ManageUserServlet", urlPatterns = {"/manageuser"})
+public class ManageUserServlet extends HttpServlet {
+
+    private final int PAGE_SIZE = 8; // 4 records per page
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        UserDAO userDAO = new UserDAO();
+
+        String action = request.getParameter("action");
+        if ("edit".equals(action)) {
+            long userId = Long.parseLong(request.getParameter("userId"));
+            User user = userDAO.getUserById(userId);
+            request.setAttribute("user", user);
+            request.getRequestDispatcher("updateuser.jsp").forward(request, response);
+            return;
+        } else if ("add".equals(action)) {
+            request.removeAttribute("user");
+            HttpSession session = request.getSession(false); 
+            if (session != null) {
+                session.removeAttribute("user");
+            }
+            request.getRequestDispatcher("adduser.jsp").forward(request, response);
+            return;
+        }
+
+        int page = 1;
+        String pageStr = request.getParameter("page");
+        if (pageStr != null) {
+            try {
+                page = Integer.parseInt(pageStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+
+        String searchQuery = request.getParameter("searchQuery");
+        List<User> users;
+        int totalUsers;
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            users = userDAO.getUsersByName(searchQuery, page, PAGE_SIZE);
+            totalUsers = userDAO.getTotalUsersByName(searchQuery);
+        } else {
+            users = userDAO.getUsers(page, PAGE_SIZE);
+            totalUsers = userDAO.getTotalUsers();
+        }
+        int totalPages = (int) Math.ceil((double) totalUsers / PAGE_SIZE);
+
+        request.setAttribute("users", users);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchQuery", searchQuery); // Lưu searchQuery để giữ giá trị trong input
+
+        String message = (String) request.getSession().getAttribute("message");
+        if (message != null) {
+            request.setAttribute("message", message);
+            request.getSession().removeAttribute("message");
+        }
+        request.getRequestDispatcher("manageuser.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        UserDAO userDAO = new UserDAO();
+        String action = request.getParameter("action");
+
+        if ("delete".equals(action)) {
+            long userId = Long.parseLong(request.getParameter("userId"));
+            boolean success = userDAO.deleteUser(userId);
+            request.setAttribute("message", success ? "User deleted successfully" : "Failed to delete user");
+            doGet(request, response); // Refresh the user list
+        } else if ("update".equals(action)) {
+            // Lấy params
+            String userIdStr = request.getParameter("userId");
+            String fullName = request.getParameter("fullName");
+            String avataUrl = request.getParameter("avataUrl");
+            String phone = request.getParameter("phone");
+            String address = request.getParameter("address");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            String role = request.getParameter("role");
+
+            String error = null;
+            if (password != null && password.length() < 6) {
+                error = "Password must be at least 6 characters long.";
+            }
+            if (!email.contains("@")) {
+                error = "Email must contain '@' symbol.";
+            } else if (!phone.matches("0\\d{9}")) {
+                error = "Phone must contain exactly 10 digits and start with 0.";
+            } else {
+                User existingUserByEmail = userDAO.getUserByEmail(email);
+                if (existingUserByEmail != null && existingUserByEmail.getUser_id() != Long.parseLong(userIdStr)) {
+                    error = "Email already exists.";
+                } else {
+                    User existingUserByPhone = userDAO.getUserByPhone(phone);
+                    if (existingUserByPhone != null && existingUserByPhone.getUser_id() != Long.parseLong(userIdStr)) {
+                        error = "Phone number already exists.";
+                    }
+                }
+            }
+
+            if (error != null) {
+                User user = new User();
+                user.setUser_id(Long.parseLong(userIdStr));
+                user.setFullName(fullName);
+                user.setAvataUrl(avataUrl);
+                user.setPhone(phone);
+                user.setAddress(address);
+                user.setEmail(email);
+                user.setRole(role);
+                request.setAttribute("user", user);
+                request.setAttribute("error", error);
+                request.getRequestDispatcher("updateuser.jsp").forward(request, response);
+                return;
+            }
+
+            User user = new User();
+            user.setUser_id(Long.parseLong(userIdStr));
+            user.setFullName(fullName);
+            user.setAvataUrl(avataUrl);
+            user.setPhone(phone);
+            user.setAddress(address);
+            user.setEmail(email);
+            user.setRole(role);
+
+            try {
+                String hashedPassword = PasswordHashUtil.hashPassword(password);
+                user.setPasswordHash(hashedPassword);
+            } catch (Exception e) {
+                request.getSession().setAttribute("message", "Error hashing password");
+                response.sendRedirect("manageuser");
+                return;
+            }
+
+            boolean success = userDAO.updateUser(user);
+            request.getSession().setAttribute("message", success ? "User updated successfully" : "Failed to update user");
+            response.sendRedirect("manageuser");
+        } else if ("add".equals(action)) {
+            // Lấy params cho add new user
+            String fullName = request.getParameter("fullName");
+            String avataUrl = request.getParameter("avataUrl");
+            String phone = request.getParameter("phone");
+            String address = request.getParameter("address");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            String role = request.getParameter("role");
+
+            String error = null;
+            if (password != null && password.length() < 6) {
+                error = "Password must be at least 6 characters long.";
+            }
+            if (!email.contains("@")) {
+                error = "Email must contain '@' symbol.";
+            } else if (!phone.matches("0\\d{9}")) {
+                error = "Phone must contain exactly 10 digits and start with 0.";
+            } else {
+                User existingUserByEmail = userDAO.getUserByEmail(email);
+                if (existingUserByEmail != null) {
+                    error = "Email already exists.";
+                } else {
+                    User existingUserByPhone = userDAO.getUserByPhone(phone);
+                    if (existingUserByPhone != null) {
+                        error = "Phone number already exists.";
+                    }
+                }
+            }
+
+            if (error != null) {
+                User user = new User();
+                user.setFullName(fullName);
+                user.setAvataUrl(avataUrl);
+                user.setPhone(phone);
+                user.setAddress(address);
+                user.setEmail(email);
+                user.setRole(role);
+                request.setAttribute("user", user);
+                request.setAttribute("error", error);
+                request.getRequestDispatcher("adduser.jsp").forward(request, response);
+                return;
+            }
+
+            User user = new User();
+            user.setFullName(fullName);
+            user.setAvataUrl(avataUrl);
+            user.setPhone(phone);
+            user.setAddress(address);
+            user.setEmail(email);
+            user.setRole(role);
+
+            try {
+                String hashedPassword = PasswordHashUtil.hashPassword(password);
+                user.setPasswordHash(hashedPassword);
+            } catch (Exception e) {
+                request.getSession().setAttribute("message", "Error hashing password");
+                response.sendRedirect("manageuser");
+                return;
+            }
+
+            boolean success = userDAO.insertUser(user);
+            request.getSession().setAttribute("message", success ? "User created successfully" : "Failed to create user");
+            response.sendRedirect("manageuser");
+        }
+    }
+}
