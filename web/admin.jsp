@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -191,7 +193,7 @@
                             <a href="overview">Overview</a>
                         </li>
                         <li data-section="courses">
-                            <a href="courses">Manage Courses</a>
+                            <a href="managecourse">Manage Courses</a>
                         </li>
                         <li data-section="users">
                             <a href="manageuser">Manage Users</a>
@@ -205,55 +207,11 @@
 
             <main class="main-content">
                 <header class="main-header">
-                    <h1>Welcome, Admin!</h1>
+                    <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
                 </header>
-
-                <section class="content-section active" id="overview">
-                    <h2>Overview</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Total Courses</h3>
-                            <p>150</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Total Users</h3>
-                            <p>12,500</p>
-                        </div>
-                        <div class="stat-card">
-                            <h3>New Courses</h3>
-                            <p>25</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="content-section" id="courses">
-                    <h2>Manage Courses</h2>
-                    <div class="course-list">
-                        <div class="course-item">
-                            <span class="course-name">Web Programming Course</span>
-                            <div class="course-actions">
-                                <button class="edit-btn">Edit</button>
-                                <button class="delete-btn">Delete</button>
-                            </div>
-                        </div>
-                        <div class="course-item">
-                            <span class="course-name">UI/UX Design Course</span>
-                            <div class="course-actions">
-                                <button class="edit-btn">Edit</button>
-                                <button class="delete-btn">Delete</button>
-                            </div>
-                        </div>
-                        <div class="course-item">
-                            <span class="course-name">Data Analysis Course</span>
-                            <div class="course-actions">
-                                <button class="edit-btn">Edit</button>
-                                <button class="delete-btn">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <div style="color:green">${message}</div>                         
+                
             </main>
-
         </div>     
     </body>
 </html>
