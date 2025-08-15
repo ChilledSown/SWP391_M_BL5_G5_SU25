@@ -56,7 +56,7 @@
 
                     <div class="form-input">
                         <label for="fullName">Full name</label>
-                        <input  type="text" name="fullName" value="${fullName != null ? fullName : ''}"  placeholder="họ và tên" >
+                        <input  type="text" name="fullName" value="${fullName != null ? fullName : ''}"  placeholder="username" >
                     </div>
                     <div class="form-input">
                         <label for="email">Email Address</label>

@@ -33,6 +33,13 @@ public class ResetPasswordServlet extends HttpServlet {
         String newPassword = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
+         // 1. Validate password length
+        if (newPassword != null && newPassword.length() < 6) {
+            request.setAttribute("message", "Password must be at least 6 characters long.");
+            request.setAttribute("email", email);
+            request.getRequestDispatcher("reset_password.jsp").forward(request, response);
+            return;
+        }
         // 1. Kiểm tra mật khẩu xác nhận
         if (!newPassword.equals(confirmPassword)) {
             request.setAttribute("message", "Mật khẩu xác nhận không khớp!");
