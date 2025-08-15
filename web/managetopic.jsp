@@ -189,10 +189,10 @@
                 </div> 
                 <nav class="sidebar-nav">
                     <ul>
-                        <li class="active" data-section="overview">
+                        <li data-section="overview">
                             <a href="overview">Overview</a>
                         </li>
-                        <li data-section="courses">
+                        <li class="active" data-section="courses">
                             <a href="managetopic">Manage Topic</a>
                         </li>
                         <li data-section="users">
@@ -210,7 +210,6 @@
                     <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
                 </header>
                 <div style="color:green">${message}</div>                         
-                
             </main>
         </div>     
     </body>
