@@ -48,13 +48,22 @@ public class ManageUserServlet extends HttpServlet {
             }
         }
 
-        List<User> users = userDAO.getUsers(page, PAGE_SIZE);
-        int totalUsers = userDAO.getTotalUsers();
+        String searchQuery = request.getParameter("searchQuery");
+        List<User> users;
+        int totalUsers;
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            users = userDAO.getUsersByName(searchQuery, page, PAGE_SIZE);
+            totalUsers = userDAO.getTotalUsersByName(searchQuery);
+        } else {
+            users = userDAO.getUsers(page, PAGE_SIZE);
+            totalUsers = userDAO.getTotalUsers();
+        }
         int totalPages = (int) Math.ceil((double) totalUsers / PAGE_SIZE);
 
         request.setAttribute("users", users);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchQuery", searchQuery); // Lưu searchQuery để giữ giá trị trong input
 
         String message = (String) request.getSession().getAttribute("message");
         if (message != null) {
@@ -208,5 +217,4 @@ public class ManageUserServlet extends HttpServlet {
             response.sendRedirect("manageuser");
         }
     }
-
 }
