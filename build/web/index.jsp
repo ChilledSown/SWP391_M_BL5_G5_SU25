@@ -1,5 +1,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="model.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -27,6 +29,264 @@
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
     
+    <!-- Custom CSS for Topic Section and Dynamic Slider -->
+    <style>
+        /* Dynamic Slider Styling */
+        .dynamic-slider-area {
+            position: relative;
+            height: 600px;
+            overflow: hidden;
+            background: #000;
+            margin: 40px 0;
+        }
+        
+        /* Debug info - remove in production */
+        .slider-debug {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 100;
+        }
+        
+        .dynamic-slider-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dynamic-slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dynamic-slider-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 1;
+        }
+        
+        .dynamic-slider-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        .dynamic-slider-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dynamic-slider-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* show full image without cropping */
+            background-color: #000; /* letterbox background */
+            filter: brightness(0.9);
+        }
+        
+        .dynamic-slider-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            align-items: center; /* vertical center */
+            justify-content: flex-start; /* left aligned */
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+        
+        .hero__caption h1 {
+            color: white;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero__caption p {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .hero-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            display: inline-block;
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Navigation Arrows */
+        .dynamic-slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        .dynamic-slider-nav:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .dynamic-slider-prev {
+            left: 30px;
+        }
+        
+        .dynamic-slider-next {
+            right: 30px;
+        }
+        
+        .dynamic-slider-nav i {
+            font-size: 20px;
+        }
+        
+        /* Indicators */
+        .dynamic-slider-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .dynamic-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dynamic-indicator:hover {
+            background: rgba(255,255,255,0.8);
+            transform: scale(1.2);
+        }
+        
+        .dynamic-indicator.active {
+            background: white;
+            transform: scale(1.2);
+        }
+        
+        
+        /* Topic styling */
+        .topic-area {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .single-topic {
+            transition: all 0.3s ease;
+        }
+        
+        .single-topic:hover {
+            transform: translateY(-5px);
+        }
+        
+        .topic-img {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .topic-img img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .single-topic:hover .topic-img img {
+            transform: scale(1.05);
+        }
+        
+        .topic-content-box {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px;
+            color: white;
+        }
+        
+        .topic-content h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .topic-content h3 a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .topic-content h3 a:hover {
+            color: #667eea;
+        }
+        
+        .border-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .border-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -61,15 +321,10 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">                                                                                          
-                                                <li class="active" ><a href="index.jsp">Home</a></li>
+                                                <li class="active" ><a href="home">Home</a></li>
                                                 <li><a href="courses">Courses</a></li>
                                                 <li><a href="about.jsp">About</a></li>
-                                                <li><a href="#">Blog</a>
-                                                    <ul class="submenu">
-                                                        <li><a href="blog.jsp">Blog</a></li>
-                                                        <li><a href="blog_details.jsp">Blog Details</a></li>
-                                                        <li><a href="elements.jsp">Element</a></li>
-                                                    </ul>
+                                                <li><a href="blog">Blog</a>
                                                 </li>
                                                 <li><a href="contact.jsp">Contact</a></li>
                                                 <!-- Button -->
@@ -151,6 +406,105 @@
                 </div>
             </div>
         </div>
+        
+        <!--? Dynamic Slider Area Start-->
+        <section class="dynamic-slider-area">
+            
+            <div class="container-fluid p-0">
+                <div class="dynamic-slider-container">
+                    <div class="dynamic-slider-wrapper">
+                        <c:choose>
+                            <c:when test="${not empty sliders}">
+                                <c:forEach var="slider" items="${sliders}" varStatus="status">
+                                    <div class="dynamic-slider-slide ${status.index == 0 ? 'active' : ''}" data-index="${status.index}">
+                                        <div class="dynamic-slider-image">
+                                            <c:choose>
+                                                <c:when test="${not empty slider.image_url}">
+                                                    <c:choose>
+                                                        <c:when test="${fn:startsWith(slider.image_url, 'http')}">
+                                            <img src="${slider.image_url}" alt="${slider.title}">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="<c:url value='${slider.image_url}'/>" alt="${slider.title}">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="assets/img/hero/h1_hero.png" alt="${slider.title}">
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                        <div class="dynamic-slider-content">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-xl-6 col-lg-7 col-md-12">
+                                                        <div class="hero__caption">
+                                                            <h1 data-animation="fadeInLeft" data-delay="0.2s">${slider.title}</h1>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <!-- Fallback slider content when no data from database -->
+                                <div class="dynamic-slider-slide active" data-index="0">
+                                    <div class="dynamic-slider-image">
+                                        <img src="assets/img/gallery/slider1.jpg" alt="Online Learning Platform">
+                                    </div>
+                                    <div class="dynamic-slider-content">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-xl-6 col-lg-7 col-md-12">
+                                                    <div class="hero__caption">
+                                                        <h1 data-animation="fadeInLeft" data-delay="0.2s">Online learning<br> platform</h1>
+                                                        <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses, certificates, and degrees online from world-class universities and companies</p>
+                                                        <a href="#" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Join for Free</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    
+                    <!-- Navigation Arrows -->
+                    <button class="dynamic-slider-nav dynamic-slider-prev" onclick="changeSlide(-1)" aria-label="Previous slide">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="dynamic-slider-nav dynamic-slider-next" onclick="changeSlide(1)" aria-label="Next slide">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    
+                    <!-- Indicators -->
+                    <div class="dynamic-slider-indicators">
+                        <c:choose>
+                            <c:when test="${not empty sliders}">
+                                <c:forEach var="slider" items="${sliders}" varStatus="status">
+                                    <c:choose>
+                                        <c:when test="${status.index == 0}">
+                                            <span class="dynamic-indicator active" onclick="goToSlide(<c:out value='${status.index}'/>)"></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="dynamic-indicator" onclick="goToSlide(<c:out value='${status.index}'/>)"></span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="dynamic-indicator active" onclick="goToSlide(0)"></span>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Dynamic Slider Area End -->
+        
         <!-- Courses area start -->
         <div class="courses-area section-padding40 fix">
             <div class="container">
@@ -297,117 +651,48 @@
         </section>
         <!-- About Area End -->
         <!--? top subjects Area Start -->
-        <div class="topic-area section-padding40">
+       
+        <!--? top subjects Area Start -->
+        <div class="topic-area">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mb-55">
-                            <h2>Explore top subjects</h2>
+                            <h2>Explore our topic</h2>
                         </div>
                     </div>
                 </div>
                 <div class="row">
+                    <% if (request.getAttribute("topics") != null) { %>
+                        <% 
+                        List<Topic> topics = (List<Topic>) request.getAttribute("topics");
+                        for (int i = 0; i < topics.size() && i < 8; i++) {
+                            Topic topic = topics.get(i);
+                        %>
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="single-topic text-center mb-30">
                             <div class="topic-img">
-                                <img src="assets/img/gallery/topic1.png" alt="">
+                                    <img src="<%= topic.getThumbnail_url() != null ? topic.getThumbnail_url() : "assets/img/gallery/topic" + (i + 1) + ".png" %>" alt="<%= topic.getName() %>">
                                 <div class="topic-content-box">
                                     <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
+                                            <h3><a href="#"><%= topic.getName() %></a></h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic2.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
+                        <% } %>
+                    <% } else { %>
+                        <!-- Fallback content -->
+                        <div class="col-12 text-center">
+                            <p>No topics available.</p>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic3.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic4.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic5.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic6.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic7.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic8.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <% } %>
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-xl-12">
                         <div class="section-tittle text-center mt-20">
-                            <a href="courses.jsp" class="border-btn">View More Subjects</a>
+                            <a href="courses.jsp" class="border-btn">View More Topics</a>
                         </div>
                     </div>
                 </div>
@@ -683,6 +968,116 @@
 <!-- Jquery Plugins, main Jquery -->	
 <script src="./assets/js/plugins.js"></script>
 <script src="./assets/js/main.js"></script>
+    
+    <!-- Custom JavaScript for Dynamic Slider -->
+    <script>
+        // Dynamic Slider functionality
+        let currentSlide = 0;
+        let slideInterval;
+        const slideDuration = 3000; // 3 seconds
+        
+        // Get all slides and indicators
+        const slides = document.querySelectorAll('.dynamic-slider-slide');
+        const indicators = document.querySelectorAll('.dynamic-indicator');
+        const totalSlides = slides.length;
+        
+        // Initialize slider
+        function initSlider() {
+            if (totalSlides > 0) {
+                showSlide(currentSlide);
+                startAutoSlide();
+            }
+        }
+        
+        // Show specific slide
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Remove active class from all indicators
+            indicators.forEach(indicator => {
+                indicator.classList.remove('active');
+            });
+            
+            // Show current slide
+            if (slides[index]) {
+                slides[index].classList.add('active');
+            }
+            
+            // Activate current indicator
+            if (indicators[index]) {
+                indicators[index].classList.add('active');
+            }
+            
+            currentSlide = index;
+        }
+        
+        // Change slide (next/previous)
+        function changeSlide(direction) {
+            let newIndex = currentSlide + direction;
+            
+            if (newIndex >= totalSlides) {
+                newIndex = 0;
+            } else if (newIndex < 0) {
+                newIndex = totalSlides - 1;
+            }
+            
+            showSlide(newIndex);
+            resetAutoSlide();
+        }
+        
+        // Go to specific slide
+        function goToSlide(index) {
+            showSlide(index);
+            resetAutoSlide();
+        }
+        
+        // Start auto-sliding
+        function startAutoSlide() {
+            slideInterval = setInterval(() => {
+                changeSlide(1);
+            }, slideDuration);
+        }
+        
+        // Reset auto-slide timer
+        function resetAutoSlide() {
+            clearInterval(slideInterval);
+            startAutoSlide();
+        }
+        
+        // Pause auto-slide on hover
+        function pauseAutoSlide() {
+            clearInterval(slideInterval);
+        }
+        
+        // Resume auto-slide when mouse leaves
+        function resumeAutoSlide() {
+            startAutoSlide();
+        }
+        
+        // Initialize slider when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initSlider();
+            
+            // Add hover events to pause/resume auto-slide
+            const sliderContainer = document.querySelector('.dynamic-slider-container');
+            if (sliderContainer) {
+                sliderContainer.addEventListener('mouseenter', pauseAutoSlide);
+                sliderContainer.addEventListener('mouseleave', resumeAutoSlide);
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeSlide(1);
+            }
+        });
+    </script>
 
 </body>
 </html>

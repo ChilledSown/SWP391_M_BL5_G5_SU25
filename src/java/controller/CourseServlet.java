@@ -35,12 +35,26 @@ public class CourseServlet extends HttpServlet {
             String sortBy = request.getParameter("sort");
             String topicFilter = request.getParameter("topic");
             
-            // Lấy danh sách khóa học
+            // Pagination params
+            int page = 1;
+            int size = 6;
+            try {
+                if (request.getParameter("page") != null) page = Integer.parseInt(request.getParameter("page"));
+                if (request.getParameter("size") != null) size = Integer.parseInt(request.getParameter("size"));
+            } catch (NumberFormatException ignored) {}
+            if (page < 1) page = 1;
+            if (size < 1) size = 6;
+            int offset = (page - 1) * size;
+
+            // Lấy danh sách khóa học (phân trang)
             List<Course> courses;
+            int totalCount;
             if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
-                courses = courseDAO.getFilteredCourses(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter);
+                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, offset, size);
+                totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, ratingFilter, topicFilter);
             } else {
-                courses = courseDAO.getAllCourse();
+                courses = courseDAO.getAllCoursePaged(offset, size);
+                totalCount = courseDAO.countAllCourses();
             }
             
             // Lấy danh sách topics
@@ -57,7 +71,10 @@ public class CourseServlet extends HttpServlet {
             request.setAttribute("allCourses", courses);
             request.setAttribute("topics", allTopics);
             request.setAttribute("courseTopicsMap", courseTopicsMap); // Thêm map vào request
-            request.setAttribute("totalResults", courses.size());
+            request.setAttribute("totalResults", totalCount);
+            request.setAttribute("page", page);
+            request.setAttribute("size", size);
+            request.setAttribute("hasMore", (page * size) < totalCount);
             
             // Đặt lại các tham số filter để giữ nguyên trạng thái UI
             request.setAttribute("searchTerm", searchTerm);
@@ -66,8 +83,16 @@ public class CourseServlet extends HttpServlet {
             request.setAttribute("sortBy", sortBy != null ? sortBy : "newest");
             request.setAttribute("topicFilter", topicFilter);
             
-            // Forward đến trang courses.jsp
-            request.getRequestDispatcher("courses.jsp").forward(request, response);
+            // Nếu là request AJAX để load thêm, trả về fragment HTML
+            String ajax = request.getParameter("ajax");
+            if ("1".equals(ajax)) {
+                // For fragment rendering, provide the list via 'pageCourses'
+                request.setAttribute("pageCourses", courses);
+                request.getRequestDispatcher("/partials/course_cards.jsp").forward(request, response);
+            } else {
+                // Forward đến trang courses.jsp
+                request.getRequestDispatcher("courses.jsp").forward(request, response);
+            }
             
         } catch (Exception e) {
             e.printStackTrace();
