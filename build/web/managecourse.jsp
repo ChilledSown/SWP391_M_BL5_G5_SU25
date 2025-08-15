@@ -211,7 +211,7 @@
                 </header>
                 <div style="color:green">${message}</div>                         
                 
-                hiển thị dữ dùng JSTL
+                
                 
             </main>
         </div>     
