@@ -15,7 +15,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import dal.CourseDAO;
+import dal.TopicDAO;
+import dal.SliderDAO;
 import model.Course;
+import model.Topic;
+import model.Slider;
 
 /**
  *
@@ -63,9 +67,16 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
          CourseDAO courseDAO = new CourseDAO();
+        TopicDAO topicDAO = new TopicDAO();
+        SliderDAO sliderDAO = new SliderDAO();
+        
         List<Course> latestCourses = courseDAO.get3LatestCourse();
+        List<Topic> allTopics = topicDAO.getAllTopics();
+        List<Slider> sliders = sliderDAO.getAllSlider();
 
         request.setAttribute("latestCourses", latestCourses); 
+        request.setAttribute("topics", allTopics);
+        request.setAttribute("sliders", sliders);
 
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
