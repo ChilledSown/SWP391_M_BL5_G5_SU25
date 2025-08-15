@@ -15,7 +15,7 @@ import utils.PasswordHashUtil;
 @WebServlet(name = "ManageUserServlet", urlPatterns = {"/manageuser"})
 public class ManageUserServlet extends HttpServlet {
 
-    private final int PAGE_SIZE = 4; // 4 records per page
+    private final int PAGE_SIZE = 8; // 4 records per page
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

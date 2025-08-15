@@ -242,17 +242,32 @@ public class UserDAO extends DBContext {
     }
 
     public List<User> getUsersByName(String searchQuery, int page, int pageSize) {
-        String sql = "SELECT * FROM Users WHERE LOWER(fullName) LIKE ? ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         List<User> users = new ArrayList<>();
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
             return users; // Trả về danh sách rỗng nếu không có từ khóa
         }
-        // Làm sạch searchQuery: thay nhiều khoảng trắng bằng một khoảng trắng và loại bỏ ký tự đặc biệt
-        searchQuery = searchQuery.trim().replaceAll("\\s+", " ").replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
+        // Làm sạch searchQuery: thay nhiều khoảng trắng bằng một khoảng trắng, giữ nguyên ký tự có dấu
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
+        String[] keywords = searchQuery.split(" ");
+        if (keywords.length == 0) {
+            return users;
+        }
+        // Xây dựng câu SQL động
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM Users WHERE ");
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sqlBuilder.append(" AND ");
+            }
+            sqlBuilder.append("LOWER(FullName) LIKE ?");
+        }
+        sqlBuilder.append(" ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        String sql = sqlBuilder.toString();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, "%" + searchQuery + "%");
-            ps.setInt(2, (page - 1) * pageSize);
-            ps.setInt(3, pageSize);
+            for (int i = 0; i < keywords.length; i++) {
+                ps.setString(i + 1, "%" + keywords[i].toLowerCase() + "%");
+            }
+            ps.setInt(keywords.length + 1, (page - 1) * pageSize);
+            ps.setInt(keywords.length + 2, pageSize);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User u = new User();
@@ -266,7 +281,6 @@ public class UserDAO extends DBContext {
                     u.setRole(rs.getString("Role"));
                     users.add(u);
                 }
-                return users;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -275,13 +289,28 @@ public class UserDAO extends DBContext {
     }
 
     public int getTotalUsersByName(String searchQuery) {
-        String sql = "SELECT COUNT(*) FROM Users WHERE LOWER(fullName) LIKE ?";
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
             return 0;
         }
-        searchQuery = searchQuery.trim().replaceAll("\\s+", " ").replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
+        // Làm sạch searchQuery: thay nhiều khoảng trắng bằng một khoảng trắng, giữ nguyên ký tự có dấu
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
+        String[] keywords = searchQuery.split(" ");
+        if (keywords.length == 0) {
+            return 0;
+        }
+        // Xây dựng câu SQL động
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM Users WHERE ");
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sqlBuilder.append(" AND ");
+            }
+            sqlBuilder.append("LOWER(FullName) LIKE ?");
+        }
+        String sql = sqlBuilder.toString();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, "%" + searchQuery + "%");
+            for (int i = 0; i < keywords.length; i++) {
+                ps.setString(i + 1, "%" + keywords[i].toLowerCase() + "%");
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -290,6 +319,6 @@ public class UserDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0; 
+        return 0;
     }
 }

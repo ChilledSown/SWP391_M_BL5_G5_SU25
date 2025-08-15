@@ -326,7 +326,7 @@
                 <!-- Search Section -->
                 <div class="search-section">
                     <form action="manageuser" method="get">
-                        <input type="text" name="searchQuery" value="${searchQuery}" placeholder="Enter user name...">                
+                        <input type="text" name="searchQuery" value="${searchQuery}" placeholder="enter user name...">                
                         <button type="submit">Apply</button>
                         <a href="manageuser"><button type="button" class="reset-btn">Reset</button></a>
                     </form>
