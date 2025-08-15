@@ -75,6 +75,7 @@
                                                 <!-- Button -->
                                                 <li class="button-header margin-left "><a href="#" class="btn">Join</a></li>
                                                 <li class="button-header"><a href="login.jsp" class="btn btn3">Log in</a></li>
+                                                <li class="button-header"><a href="seller.jsp" class="btn btn3">Seller</a></li>
                                             </ul>
                                         </nav>
                                     </div>
