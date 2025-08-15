@@ -1,10 +1,10 @@
-package controller;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-import dal.CourseDAO;
+package controller;
+
+import dal.LessonDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import model.Course;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ListCouseraSeller", urlPatterns = {"/listCousera"})
-//@WebServlet(urlPatterns = {"/listCousera"})
-public class ListCouseraSeller extends HttpServlet {
+@WebServlet(name = "DeleteLessonServlet", urlPatterns = {"/deleteLesson"})
+public class DeleteLessonServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +37,10 @@ public class ListCouseraSeller extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ListCouseraSeller</title>");
+            out.println("<title>Servlet DeleteLessonServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ListCouseraSeller at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteLessonServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,44 +55,10 @@ public class ListCouseraSeller extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-//   @Override
-//protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//        throws ServletException, IOException {
-//
-//    HttpSession session = request.getSession();
-//    model.User currentUser = (model.User) session.getAttribute("currentUser");
-//
-    ////    if (currentUser == null || !"seller".equals(currentUser.getRole())) {
-////        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập.");
-////        return;
-////    }
-//
-//    CourseDAO dao = new CourseDAO();
-//    List<Course> courses = dao.getCoursesByCreator(currentUser.getUser_id().intValue());
-//
-//    request.setAttribute("courses", courses);
-//    request.getRequestDispatcher("list_course.jsp").forward(request, response);
-//}
-// check truoc khi luu sesssion
-    
- @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String idParam = request.getParameter("userId");
-        int userId = 2; // mặc định
-        if (idParam != null && !idParam.isEmpty()) {
-            try {
-                userId = Integer.parseInt(idParam);
-            } catch (NumberFormatException ignored) {
-            }
-        }
-
-        CourseDAO dao = new CourseDAO();
-        List<Course> courses = dao.getCoursesByCreator(userId);
-
-        request.setAttribute("courses", courses);
-        request.getRequestDispatcher("seller.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -107,12 +69,17 @@ public class ListCouseraSeller extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+   @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
+        long lessonId = Long.parseLong(request.getParameter("lessonId"));
+        long courseId = Long.parseLong(request.getParameter("courseId"));
 
+        LessonDAO lessonDAO = new LessonDAO();
+        lessonDAO.deleteLesson(lessonId);
+
+        response.sendRedirect("manageLesson?courseId=" + courseId);
+    }
     /**
      * Returns a short description of the servlet.
      *

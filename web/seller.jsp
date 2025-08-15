@@ -148,7 +148,7 @@
                                         <tr>
                                             <th>Title</th>
                                             <th>Price</th>
-                                            
+
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -157,7 +157,7 @@
                                             <tr>
                                                 <td>${course.title}</td>
                                                 <td>$${course.price}</td>
-                                               
+
                                                 <td>
                                                     <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}"
                                                        class="btn btn-sm btn-warning">Update</a>
@@ -166,7 +166,10 @@
                                                        onclick="return confirm('Bạn có chắc muốn xóa khóa học này?');">
                                                         Delete
                                                     </a>
-                                                        
+
+                                                    <a href="courseDetail?courseId=${course.course_id}" class="btn btn-sm btn-info">Detail</a>
+
+
                                                 </td
 
                                             </tr>
