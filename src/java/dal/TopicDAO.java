@@ -33,7 +33,7 @@ public class TopicDAO extends DBContext {
                 topic.setTopic_id(rs.getLong("Topic_Id"));
                 topic.setName(rs.getString("Name"));
                 topic.setDescription(rs.getString("Description"));
-                //topic.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                topic.setThumbnail_url(rs.getString("Thumbnail_Url"));
                 topics.add(topic);
             }
         } catch (SQLException e) {
