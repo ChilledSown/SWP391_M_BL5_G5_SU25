@@ -35,6 +35,21 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
+        if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("message", "Email cannot be empty.");
+            request.setAttribute("email", email);
+            request.setAttribute("password", password); 
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+        if (password == null || password.trim().isEmpty()) {
+            request.setAttribute("message", "Password cannot be empty.");
+            request.setAttribute("email", email); 
+            request.setAttribute("password", password);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
         try {
             // Hash mật khẩu nhập vào để so sánh
             String hashedPassword = PasswordHashUtil.hashPassword(password);
@@ -48,17 +63,19 @@ public class LoginServlet extends HttpServlet {
 
                 switch (u.getRole()) {
                     case "admin":
-                        request.getRequestDispatcher("admin.jsp").forward(request, response);
-                        break;
-                    case "seller":
-                        request.getRequestDispatcher("seller.jsp").forward(request, response);
+                        response.sendRedirect("admin");
                         break;
                     case "customer":
-                        request.getRequestDispatcher("index.jsp").forward(request, response);
+                        response.sendRedirect("home");
+                        break;
+                    case "seller":
+                        response.sendRedirect("seller");
                         break;
                 }
             } else {
-                request.setAttribute("message", "Email hoặc mật khẩu không đúng");
+                request.setAttribute("message", "Invalid email or password.");
+                request.setAttribute("email", email); 
+                request.setAttribute("password", password); 
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         } catch (Exception e) {
