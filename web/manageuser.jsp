@@ -180,9 +180,6 @@
                 background-color: #c0392b;
             }
 
-
-
-
             .user-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -236,6 +233,7 @@
                 color: #ccc;
                 pointer-events: none;
             }
+
             .create-btn {
                 background-color: #3498db;
                 color: white;
@@ -249,39 +247,97 @@
 
             .create-btn:hover {
                 background-color: #2980b9;
-            </style>
-        </head>
-        <body>
-            <div class="dashboard-container">
-                <aside class="sidebar">
-                    <div class="sidebar-header">
-                        <h3>Admin Dashboard</h3>
-                    </div>               
-                    <nav class="sidebar-nav">
-                        <ul>
-                            <li data-section="overview">
-                                <a href="overview">Overview</a>
-                            </li>
-                            <li data-section="courses">
-                                <a href="managecourse">Manage Courses</a>
-                            </li>
-                            <li class="active"  data-section="users">
-                                <a href="manageuser">Manage Users</a>
-                            </li>               
-                            <li data-section="settings">
-                                <a href="login">Logout</a>
-                            </li>
-                        </ul>
-                    </nav>              
-                </aside>
+            }
+            /* Search Section */
+            .search-section {
+                margin-bottom: 20px;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
 
-                <main class="main-content">
-                    <header class="main-header">
-                        <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
-                    </header>
-                    <div style="color:green">${message}</div>
-                        <a href="manageuser?action=add"><button class="create-btn">Create User</button></a>
-                        <!-- User Table -->
+            .search-section input[type="text"] {
+                padding: 8px 12px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                width: 300px;
+            }
+
+            .search-section button {
+                background-color: #2ecc71;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+
+            .search-section button:hover {
+                background-color: #27ae60;
+            }
+            .reset-btn {
+                background-color: #e67e22;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+
+            .reset-btn:hover {
+                background-color: #d35400;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="dashboard-container">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>Admin Dashboard</h3>
+                </div>               
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li data-section="overview">
+                            <a href="overview">Overview</a>
+                        </li>
+                        <li data-section="courses">
+                            <a href="managecourse">Manage Courses</a>
+                        </li>
+                        <li class="active" data-section="users">
+                            <a href="manageuser">Manage Users</a>
+                        </li>               
+                        <li data-section="settings">
+                            <a href="login">Logout</a>
+                        </li>
+                    </ul>
+                </nav>              
+            </aside>
+
+            <main class="main-content">
+                <header class="main-header">
+                    <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
+                </header>
+                <div style="color:green">${message}</div>
+                <!-- Search Section -->
+                <div class="search-section">
+                    <form action="manageuser" method="get">
+                        <input type="text" name="searchQuery" value="${searchQuery}" placeholder="Enter user name...">                
+                        <button type="submit">Apply</button>
+                        <a href="manageuser"><button type="button" class="reset-btn">Reset</button></a>
+                    </form>
+                </div>
+                <a href="manageuser?action=add"><button class="create-btn">Create User</button></a>
+                <!-- User Table -->
+                <c:choose>
+                    <c:when test="${empty users}">
+                        <div style="color:red; text-align:center; padding: 20px;">Not found record</div>
+                    </c:when>
+                    <c:otherwise>
                         <table class="user-table">
                             <thead>
                                 <tr>
@@ -306,43 +362,44 @@
                                         <td>
                                             <!-- Edit form (simple inline, or use modal for better UX) -->
                                             <form action="manageuser" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="edit">
-                                            <input type="hidden" name="userId" value="${user.user_id}">
-                                            <!-- Add inputs for editable fields if needed, but for simplicity, assume update via separate page or modal -->
-                                            <button type="submit" class="edit-btn">Edit</button>
-                                        </form>
-                                        <form action="manageuser" method="post" style="display:inline;">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="userId" value="${user.user_id}">
-                                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure to delete?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="userId" value="${user.user_id}">
+                                                <button type="submit" class="edit-btn">Edit</button>
+                                            </form>
+                                            <form action="manageuser" method="post" style="display:inline;">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="userId" value="${user.user_id}">
+                                                <button type="submit" class="delete-btn" onclick="return confirm('Are you sure to delete?')">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
 
-                    <!-- Pagination -->
-                    <div class="pagination">
-                        <c:if test="${currentPage > 1}">
-                            <a href="manageuser?page=${currentPage - 1}">Previous</a>
-                        </c:if>
-                        <c:if test="${currentPage <= 1}">
-                            <a class="disabled">Previous</a>
-                        </c:if>
+                <!-- Pagination -->
+                <div class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <a href="manageuser?page=${currentPage - 1}&searchQuery=${searchQuery}">Previous</a>
+                    </c:if>
+                    <c:if test="${currentPage <= 1}">
+                        <a class="disabled">Previous</a>
+                    </c:if>
 
-                        <c:forEach begin="1" end="${totalPages}" var="i">
-                            <a href="manageuser?page=${i}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
-                        </c:forEach>
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <a href="manageuser?page=${i}&searchQuery=${searchQuery}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
+                    </c:forEach>
 
-                        <c:if test="${currentPage < totalPages}">
-                            <a href="manageuser?page=${currentPage + 1}">Next</a>
-                        </c:if>
-                        <c:if test="${currentPage >= totalPages}">
-                            <a class="disabled">Next</a>
-                        </c:if>
-                    </div>
-                </main>           
-            </div>     
-        </body>
-    </html>
+                    <c:if test="${currentPage < totalPages}">
+                        <a href="manageuser?page=${currentPage + 1}&searchQuery=${searchQuery}">Next</a>
+                    </c:if>
+                    <c:if test="${currentPage >= totalPages}">
+                        <a class="disabled">Next</a>
+                    </c:if>
+                </div>
+            </main>           
+        </div>     
+    </body>
+</html>

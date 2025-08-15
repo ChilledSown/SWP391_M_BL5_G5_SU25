@@ -99,7 +99,7 @@ public class UserDAO extends DBContext {
         }
         return false;
     }
-    
+
     public User getUserById(long userId) {
         String sql = "SELECT * FROM Users WHERE UserID = ?";
         try {
@@ -123,7 +123,6 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-
 
     public List<User> getUsers(int page, int pageSize) {
         List<User> users = new ArrayList<>();
@@ -187,58 +186,110 @@ public class UserDAO extends DBContext {
     }
 
     public boolean deleteUser(long userId) {
-    try {
-        // 1. Xóa Order_Detail (con của Order)
-        String sqlOrderDetail = "DELETE FROM Order_Detail WHERE Order_Id IN (SELECT Order_Id FROM [Order] WHERE User_Id = ?)";
-        PreparedStatement psOrderDetail = connection.prepareStatement(sqlOrderDetail);
-        psOrderDetail.setLong(1, userId);
-        psOrderDetail.executeUpdate();
+        try {
+            // 1. Xóa Order_Detail (con của Order)
+            String sqlOrderDetail = "DELETE FROM Order_Detail WHERE Order_Id IN (SELECT Order_Id FROM [Order] WHERE User_Id = ?)";
+            PreparedStatement psOrderDetail = connection.prepareStatement(sqlOrderDetail);
+            psOrderDetail.setLong(1, userId);
+            psOrderDetail.executeUpdate();
 
-        // 2. Xóa Payment (con của Order)
-        String sqlPayment = "DELETE FROM Payment WHERE Order_Id IN (SELECT Order_Id FROM [Order] WHERE User_Id = ?)";
-        PreparedStatement psPayment = connection.prepareStatement(sqlPayment);
-        psPayment.setLong(1, userId);
-        psPayment.executeUpdate();
+            // 2. Xóa Payment (con của Order)
+            String sqlPayment = "DELETE FROM Payment WHERE Order_Id IN (SELECT Order_Id FROM [Order] WHERE User_Id = ?)";
+            PreparedStatement psPayment = connection.prepareStatement(sqlPayment);
+            psPayment.setLong(1, userId);
+            psPayment.executeUpdate();
 
-        // 3. Xóa [Order] (User_Id = userId)
-        String sqlOrder = "DELETE FROM [Order] WHERE User_Id = ?";
-        PreparedStatement psOrder = connection.prepareStatement(sqlOrder);
-        psOrder.setLong(1, userId);
-        psOrder.executeUpdate();
+            // 3. Xóa [Order] (User_Id = userId)
+            String sqlOrder = "DELETE FROM [Order] WHERE User_Id = ?";
+            PreparedStatement psOrder = connection.prepareStatement(sqlOrder);
+            psOrder.setLong(1, userId);
+            psOrder.executeUpdate();
 
-        // 4. Xóa Cart (User_Id = userId)
-        String sqlCart = "DELETE FROM Cart WHERE User_Id = ?";
-        PreparedStatement psCart = connection.prepareStatement(sqlCart);
-        psCart.setLong(1, userId);
-        psCart.executeUpdate();
+            // 4. Xóa Cart (User_Id = userId)
+            String sqlCart = "DELETE FROM Cart WHERE User_Id = ?";
+            PreparedStatement psCart = connection.prepareStatement(sqlCart);
+            psCart.setLong(1, userId);
+            psCart.executeUpdate();
 
-        // 5. Xóa Review (User_Id = userId)
-        String sqlReview = "DELETE FROM Review WHERE User_Id = ?";
-        PreparedStatement psReview = connection.prepareStatement(sqlReview);
-        psReview.setLong(1, userId);
-        psReview.executeUpdate();
+            // 5. Xóa Review (User_Id = userId)
+            String sqlReview = "DELETE FROM Review WHERE User_Id = ?";
+            PreparedStatement psReview = connection.prepareStatement(sqlReview);
+            psReview.setLong(1, userId);
+            psReview.executeUpdate();
 
-        // 6. Xóa Blog (Created_By = userId)
-        String sqlBlog = "DELETE FROM Blog WHERE Created_By = ?";
-        PreparedStatement psBlog = connection.prepareStatement(sqlBlog);
-        psBlog.setLong(1, userId);
-        psBlog.executeUpdate();
+            // 6. Xóa Blog (Created_By = userId)
+            String sqlBlog = "DELETE FROM Blog WHERE Created_By = ?";
+            PreparedStatement psBlog = connection.prepareStatement(sqlBlog);
+            psBlog.setLong(1, userId);
+            psBlog.executeUpdate();
 
-        // 7. Xóa PasswordResetTokens (UserID = userId)
-        String sqlTokens = "DELETE FROM PasswordResetTokens WHERE UserID = ?";
-        PreparedStatement psTokens = connection.prepareStatement(sqlTokens);
-        psTokens.setLong(1, userId);
-        psTokens.executeUpdate();
+            // 7. Xóa PasswordResetTokens (UserID = userId)
+            String sqlTokens = "DELETE FROM PasswordResetTokens WHERE UserID = ?";
+            PreparedStatement psTokens = connection.prepareStatement(sqlTokens);
+            psTokens.setLong(1, userId);
+            psTokens.executeUpdate();
 
-        // 8. Xóa Users (UserID = userId)
-        String sqlUser = "DELETE FROM Users WHERE UserID = ?";
-        PreparedStatement psUser = connection.prepareStatement(sqlUser);
-        psUser.setLong(1, userId);
-        return psUser.executeUpdate() > 0;
+            // 8. Xóa Users (UserID = userId)
+            String sqlUser = "DELETE FROM Users WHERE UserID = ?";
+            PreparedStatement psUser = connection.prepareStatement(sqlUser);
+            psUser.setLong(1, userId);
+            return psUser.executeUpdate() > 0;
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
+
+    public List<User> getUsersByName(String searchQuery, int page, int pageSize) {
+        String sql = "SELECT * FROM Users WHERE LOWER(fullName) LIKE ? ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        List<User> users = new ArrayList<>();
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return users; // Trả về danh sách rỗng nếu không có từ khóa
+        }
+        // Làm sạch searchQuery: thay nhiều khoảng trắng bằng một khoảng trắng và loại bỏ ký tự đặc biệt
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ").replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + searchQuery + "%");
+            ps.setInt(2, (page - 1) * pageSize);
+            ps.setInt(3, pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUser_id(rs.getLong("UserID"));
+                    u.setFullName(rs.getString("FullName"));
+                    u.setAvataUrl(rs.getString("Avata_Url"));
+                    u.setPhone(rs.getString("Phone"));
+                    u.setAddress(rs.getString("Address"));
+                    u.setEmail(rs.getString("Email"));
+                    u.setPasswordHash(rs.getString("PasswordHash"));
+                    u.setRole(rs.getString("Role"));
+                    users.add(u);
+                }
+                return users;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public int getTotalUsersByName(String searchQuery) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE LOWER(fullName) LIKE ?";
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return 0;
+        }
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ").replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + searchQuery + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; 
+    }
 }
