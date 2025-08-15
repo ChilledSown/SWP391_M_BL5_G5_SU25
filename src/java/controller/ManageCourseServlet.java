@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.util.List;
 import model.Topic;
 import model.Course;
+import model.Lesson;
+import model.Quiz;
 
-@WebServlet(name="ManageCourseServlet", urlPatterns={"/managecourse"})
+@WebServlet(name="ManageCourseServlet", urlPatterns={"/managecourse", "/viewtopic"})
 public class ManageCourseServlet extends HttpServlet {
 
     private final int PAGE_SIZE = 4; // 4 records per page
@@ -22,7 +24,69 @@ public class ManageCourseServlet extends HttpServlet {
             throws ServletException, IOException {
         TopicDAO topicDAO = new TopicDAO();
         String action = request.getParameter("action");
+        String servletPath = request.getServletPath();
 
+        // Handle requests to /viewtopic
+        if ("/viewtopic".equals(servletPath)) {
+            String topicIdStr = request.getParameter("topicId");
+            String courseIdStr = request.getParameter("courseId");
+            String lessonIdStr = request.getParameter("lessonId");
+
+            try {
+                // Validate topicId
+                if (topicIdStr == null || topicIdStr.trim().isEmpty()) {
+                    request.setAttribute("error", "Topic ID is required");
+                    request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
+                    return;
+                }
+
+                long topicId = Long.parseLong(topicIdStr);
+                Topic topic = topicDAO.getTopicById(topicId);
+                if (topic == null) {
+                    request.setAttribute("error", "Topic not found");
+                    request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
+                    return;
+                }
+                request.setAttribute("topic", topic);
+
+                // Handle Quizzes (when lessonId is provided)
+                if (lessonIdStr != null && !lessonIdStr.trim().isEmpty()) {
+                    try {
+                        long lessonId = Long.parseLong(lessonIdStr);
+                        List<Quiz> quizzes = topicDAO.getQuizzesByLessonId(lessonId);
+                        request.setAttribute("quizzes", quizzes);
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("error", "Invalid Lesson ID");
+                    }
+                }
+                // Handle Lessons (when courseId is provided but no lessonId)
+                else if (courseIdStr != null && !courseIdStr.trim().isEmpty()) {
+                    try {
+                        long courseId = Long.parseLong(courseIdStr);
+                        List<Lesson> lessons = topicDAO.getLessonsByCourseId(courseId);
+                        request.setAttribute("lessons", lessons);
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("error", "Invalid Course ID");
+                    }
+                }
+                // Handle Courses (when only topicId is provided)
+                else {
+                    List<Course> courses = topicDAO.getCoursesByTopicId(topicId);
+                    request.setAttribute("courses", courses);
+                }
+
+                request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid Topic ID");
+                request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", "An error occurred: " + e.getMessage());
+                request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        // Handle requests to /managecourse
         if ("edit".equals(action)) {
             long topicId = Long.parseLong(request.getParameter("topicId"));
             Topic topic = topicDAO.getTopicById(topicId);
