@@ -113,8 +113,9 @@ public class Course {
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
     }
-     @Override
+    @Override
     public String toString() {
         return "Course{" + "course_id=" + course_id + ", title=" + title + ", description=" + description + ", price=" + price + ", thumbnail_url=" + thumbnail_url + ", created_at=" + created_at + ", updated_at=" + updated_at + ", topic_id=" + topic_id + ", averageRating=" + averageRating + '}';
     }
+
 }
