@@ -31,6 +31,7 @@ public class RegisterServlet extends HttpServlet {
         request.setAttribute("password", password);
         request.setAttribute("phone", phone);
         request.setAttribute("address", address);
+        request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 
     @Override
@@ -76,17 +77,18 @@ public class RegisterServlet extends HttpServlet {
             user.setRole("customer");
 
             if (dao.insertUser(user)) {
-                doGet(request, response);
                 request.setAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
+                request.setAttribute("messageType", "success");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             } else {
-                doGet(request, response);
                 request.setAttribute("message", "Đăng ký thất bại, vui lòng thử lại.");
+                request.setAttribute("messageType", "error");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("message", "Có lỗi xảy ra, vui lòng thử lại.");
+            request.setAttribute("messageType", "error");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }

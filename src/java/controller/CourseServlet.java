@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CourseDAO;
+import dal.TopicDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,7 +9,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import model.Course;
+import model.Topic;
 
 @WebServlet(name="CourseServlet", urlPatterns={"/courses"})
 public class CourseServlet extends HttpServlet {
@@ -22,6 +26,7 @@ public class CourseServlet extends HttpServlet {
 
         try {
             CourseDAO courseDAO = new CourseDAO();
+            TopicDAO topicDAO = new TopicDAO();
             
             // Lấy các tham số filter từ request
             String searchTerm = request.getParameter("search");
@@ -30,19 +35,29 @@ public class CourseServlet extends HttpServlet {
             String sortBy = request.getParameter("sort");
             String topicFilter = request.getParameter("topic");
             
+            // Lấy danh sách khóa học
             List<Course> courses;
-            
-            // Kiểm tra xem có filter nào được áp dụng không
             if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
-                // Sử dụng phương thức filter
                 courses = courseDAO.getFilteredCourses(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter);
             } else {
-                // Lấy tất cả khóa học nếu không có filter
                 courses = courseDAO.getAllCourse();
             }
             
-            // Đặt danh sách khóa học vào request attribute
+            // Lấy danh sách topics
+            List<Topic> allTopics = topicDAO.getAllTopics();
+            
+            // Lấy topic cho từng course
+            Map<Long, Topic> courseTopicsMap = new HashMap<>();
+            for (Course course : courses) {
+                Topic courseTopic = topicDAO.getTopicByCourseId(course.getCourse_id());
+                courseTopicsMap.put(course.getCourse_id(), courseTopic);
+            }
+            
+            // Đặt dữ liệu vào request
             request.setAttribute("allCourses", courses);
+            request.setAttribute("topics", allTopics);
+            request.setAttribute("courseTopicsMap", courseTopicsMap); // Thêm map vào request
+            request.setAttribute("totalResults", courses.size());
             
             // Đặt lại các tham số filter để giữ nguyên trạng thái UI
             request.setAttribute("searchTerm", searchTerm);
@@ -56,7 +71,6 @@ public class CourseServlet extends HttpServlet {
             
         } catch (Exception e) {
             e.printStackTrace();
-            // Xử lý lỗi nếu có
             request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách khóa học");
             request.getRequestDispatcher("courses.jsp").forward(request, response);
         }
