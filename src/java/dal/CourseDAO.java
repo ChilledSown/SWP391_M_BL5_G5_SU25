@@ -56,10 +56,31 @@ public class CourseDAO extends DBContext{
             }
         }
         
-        // Filter by topic (nếu có bảng Topic)
+        // Filter by topic
         if (topicFilter != null && !topicFilter.trim().isEmpty()) {
-            conditions.add("c.Topic_Id IN (SELECT Topic_Id FROM Topic WHERE Name LIKE ?)");
-            parameters.add("%" + topicFilter.trim() + "%");
+            String topicValue = topicFilter.trim();
+            
+            // Kiểm tra xem có phải là "Topic X" format không (từ fallback)
+            if (topicValue.startsWith("Topic ")) {
+                try {
+                    String topicIdStr = topicValue.substring(6); // Bỏ "Topic " prefix
+                    Long topicId = Long.parseLong(topicIdStr);
+                    conditions.add("c.Topic_Id = ?");
+                    parameters.add(topicId);
+                } catch (NumberFormatException e) {
+                    // Nếu không parse được, bỏ qua filter này
+                    System.err.println("Invalid topic ID format: " + topicValue);
+                }
+            } else {
+                // Thử filter theo topic name
+                try {
+                    conditions.add("c.Topic_Id IN (SELECT Topic_Id FROM Topic WHERE Name = ?)");
+                    parameters.add(topicValue);
+                } catch (Exception e) {
+                    // Nếu bảng Topic không tồn tại, bỏ qua filter này
+                    System.err.println("Topic table not accessible, skipping topic filter");
+                }
+            }
         }
         
         // Thêm WHERE clause nếu có điều kiện
@@ -104,17 +125,16 @@ public class CourseDAO extends DBContext{
             
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Course course = Course.builder()
-                        .course_id(resultSet.getLong("Course_Id"))
-                        .title(resultSet.getString("Title"))
-                        .description(resultSet.getString("Description"))
-                        .price(resultSet.getInt("Price"))
-                        .thumbnail_url(resultSet.getString("Thumbnail_Url"))
-                        .created_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()))
-                        .updated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()))
-                        .topic_id(resultSet.getLong("Topic_Id"))
-                        .averageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0)
-                        .build();
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
                 courses.add(course);
             }
         } catch (SQLException e) {
@@ -124,7 +144,7 @@ public class CourseDAO extends DBContext{
         return courses;
     }
     
-     public List<Course> getAllCourse() {
+    public List<Course> getAllCourse() {
         List<Course> courses = new ArrayList<>();
         String sql = "SELECT \n"
                 + "    c.*,\n"
@@ -136,17 +156,16 @@ public class CourseDAO extends DBContext{
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                Course course = Course.builder()
-                        .course_id(resultSet.getLong("Course_Id"))
-                        .title(resultSet.getString("Title"))
-                        .description(resultSet.getString("Description"))
-                        .price(resultSet.getInt("Price"))
-                        .thumbnail_url(resultSet.getString("Thumbnail_Url"))
-                        .created_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()))
-                        .updated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()))
-                        .topic_id(resultSet.getLong("Topic_Id"))
-                        .averageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0)
-                        .build();
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
                 courses.add(course);
             }
         } catch (SQLException e) {
@@ -167,22 +186,67 @@ public class CourseDAO extends DBContext{
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                Course course = Course.builder()
-                        .course_id(resultSet.getLong("Course_Id"))
-                        .title(resultSet.getString("Title"))
-                        .description(resultSet.getString("Description"))
-                        .price(resultSet.getInt("Price"))
-                        .thumbnail_url(resultSet.getString("Thumbnail_Url"))
-                        .created_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()))
-                        .updated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()))
-                        .topic_id(resultSet.getLong("Topic_Id"))
-                        .averageRating(resultSet.getDouble("AverageRating"))
-                        .build();
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
                 courses.add(course);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return courses;
+    }
+    
+    // Phương thức lấy tất cả topics từ database
+    public List<String> getAllTopics() {
+        List<String> topics = new ArrayList<>();
+        
+        // Thử lấy từ bảng Topic trước
+        String sql = "SELECT DISTINCT t.Name FROM Topic t ORDER BY t.Name";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            
+            while (resultSet.next()) {
+                String topicName = resultSet.getString("Name");
+                if (topicName != null && !topicName.trim().isEmpty()) {
+                    topics.add(topicName.trim());
+                }
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error getting topics from Topic table: " + e.getMessage());
+            
+            // Nếu bảng Topic không tồn tại, thử lấy từ Course table
+            try {
+                String fallbackSql = "SELECT DISTINCT c.Topic_Id FROM Course c WHERE c.Topic_Id IS NOT NULL ORDER BY c.Topic_Id";
+                PreparedStatement fallbackStatement = connection.prepareStatement(fallbackSql);
+                ResultSet fallbackResultSet = fallbackStatement.executeQuery();
+                
+                while (fallbackResultSet.next()) {
+                    Long topicId = fallbackResultSet.getLong("Topic_Id");
+                    if (topicId != null) {
+                        topics.add("Topic " + topicId);
+                    }
+                }
+                
+                fallbackResultSet.close();
+                fallbackStatement.close();
+                
+            } catch (SQLException fallbackException) {
+                System.err.println("Error getting topics from Course table: " + fallbackException.getMessage());
+            }
+        }
+        
+
+        
+        return topics;
     }
 }

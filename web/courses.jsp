@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="model.Course" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="model.*" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -30,107 +31,469 @@
     <!-- Custom CSS for Search and Filter -->
     <style>
         .search-filter-container {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: visible;
+        }
+        
+        .search-filter-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+        
+        .search-filter-container > * {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .search-filter-title {
+            text-align: center;
             margin-bottom: 30px;
+            color: white;
+        }
+        
+        .search-filter-title h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .search-filter-title p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin: 0;
         }
         
         .search-box {
             position: relative;
             display: flex;
             align-items: center;
+            margin-bottom: 25px;
         }
         
         .search-box input {
-            padding-right: 50px;
-            border-radius: 25px;
-            border: 2px solid #e9ecef;
+            padding: 18px 60px 18px 25px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255,255,255,0.95);
+            font-size: 16px;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .search-box input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+            outline: none;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
         }
         
         .search-btn {
             position: absolute;
-            right: 5px;
+            right: 0.1px;
             top: 50%;
             transform: translateY(-50%);
-            background: #007bff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         
         .search-btn:hover {
-            background: #0056b3;
             transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         
-        .filter-dropdown select {
-            border-radius: 25px;
-            border: 2px solid #e9ecef;
+        .search-btn i {
+            font-size: 18px;
+        }
+        
+        /* CSS cho Course Topic Badge */
+        .course-topic {
+            margin-bottom: 15px;
+        }
+        
+        .course-topic .badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
             transition: all 0.3s ease;
         }
         
-        .filter-dropdown select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        .course-topic .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .course-topic .badge i {
+            margin-right: 5px;
+            font-size: 10px;
+        }
+        
+        .filters-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            overflow: visible;
+        }
+
+        /* Ensure Nice Select dropdowns render above container and not clipped */
+        .nice-select { width: 100%; }
+        .nice-select .list { z-index: 10000; }
+        .nice-select.open .list { max-height: 280px; overflow-y: auto; }
+        
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
         }
         
         .filter-item {
-            margin-bottom: 10px;
+            margin-bottom: 0;
         }
         
         .filter-label {
             font-weight: 600;
-            color: #495057;
-            margin-bottom: 5px;
+            color: white;
+            margin-bottom: 8px;
             display: block;
             font-size: 14px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .filter-item select {
-            border-radius: 8px;
-            border: 2px solid #e9ecef;
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255,255,255,0.95);
+            font-size: 14px;
             transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         
         .filter-item select:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+            outline: none;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
         }
         
-        .btn-outline-secondary {
-            border-radius: 8px;
-            transition: all 0.3s ease;
+        .filter-item select:hover {
+            background: rgba(255,255,255,1);
         }
         
-        .btn-outline-secondary:hover {
-            background-color: #6c757d;
-            border-color: #6c757d;
+        .clear-filters-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border: none;
             color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .clear-filters-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .clear-filters-btn i {
+            margin-right: 8px;
+        }
+        
+        .active-filters {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .active-filters h5 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .filter-tag {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            backdrop-filter: blur(5px);
         }
         
         @media (max-width: 768px) {
             .search-filter-container {
+                padding: 25px 20px;
+                margin: 0 15px 30px 15px;
+            }
+            
+            .filters-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .search-box input {
+                padding: 15px 55px 15px 20px;
+                font-size: 14px;
+            }
+            
+            .search-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .search-filter-container {
                 padding: 20px 15px;
             }
             
-            .filter-item {
-                margin-bottom: 15px;
+            .search-filter-title h3 {
+                font-size: 20px;
+            }
+            
+            .search-filter-title p {
+                font-size: 14px;
             }
         }
+        
+        /* Course card uniform height styles - Compact version */
+        .properties.properties2 {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .properties.properties2:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .properties__card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .properties__img {
+            flex-shrink: 0;
+            height: 180px;
+            overflow: hidden;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .properties__img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .properties__caption {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            padding-bottom: 15px;
+        }
+        
+        .properties__caption > p:first-child {
+            color: #667eea;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .properties__caption h3 {
+            min-height: 40px;
+            max-height: 40px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 12px;
+            font-size: 18px;
+            line-height: 1.3;
+        }
+        
+        .properties__caption h3 a {
+            color: #2c3e50;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .properties__caption h3 a:hover {
+            color: #667eea;
+        }
+        
+        .properties__caption p:nth-of-type(2) {
+            flex: 1;
+            min-height: 45px;
+            max-height: 45px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #6c757d;
+        }
+        
+        .properties__footer {
+            flex-shrink: 0;
+            margin-bottom: 15px;
+            padding: 0;
+        }
+        
+        .properties__caption .border-btn {
+            flex-shrink: 0;
+            margin-top: auto;
+            padding: 8px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        /* Ensure all course cards in a row have the same height */
+        .row .col-lg-4 {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        
+        .row .col-lg-4 .properties.properties2 {
+            width: 100%;
+        }
+        
+        /* Rating and price styling */
+        .restaurant-name .rating {
+            margin-bottom: 5px;
+        }
+        
+        .restaurant-name .rating i {
+            color: #ffc107;
+            font-size: 14px;
+        }
+        
+        .restaurant-name p {
+            font-size: 12px;
+            color: #6c757d;
+            margin: 0;
+        }
+        
+                 .price span {
+             font-size: 18px;
+             font-weight: 700;
+             color: #667eea;
+         }
+         
+         /* Topic styling */
+         .single-topic {
+             transition: all 0.3s ease;
+         }
+         
+         .single-topic:hover {
+             transform: translateY(-5px);
+         }
+         
+         .topic-img {
+             position: relative;
+             overflow: hidden;
+             border-radius: 12px;
+             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+         }
+         
+         .topic-img img {
+             width: 100%;
+             height: 200px;
+             object-fit: cover;
+             transition: transform 0.3s ease;
+         }
+         
+         .single-topic:hover .topic-img img {
+             transform: scale(1.05);
+         }
+         
+         .topic-content-box {
+             position: absolute;
+             bottom: 0;
+             left: 0;
+             right: 0;
+             background: linear-gradient(transparent, rgba(0,0,0,0.7));
+             padding: 20px;
+             color: white;
+         }
+         
+         .topic-content h3 {
+             margin: 0;
+             font-size: 18px;
+             font-weight: 600;
+         }
+         
+         .topic-content h3 a {
+             color: white;
+             text-decoration: none;
+             transition: color 0.3s ease;
+         }
+         
+         .topic-content h3 a:hover {
+             color: #667eea;
+         }
     </style>
 </head>
 
@@ -232,10 +595,6 @@
                                     request.getAttribute("ratingFilter") != null || request.getAttribute("topicFilter") != null) { %>
                                 <div class="results-info mt-3">
                                     <p class="text-muted">
-                                        <% 
-                                        List<Course> courses = (List<Course>) request.getAttribute("allCourses");
-                                        int totalResults = courses != null ? courses.size() : 0;
-                                        %>
                                         Showing <strong>${totalResults}</strong> course(s)
                                         <% if (request.getAttribute("searchTerm") != null && !((String)request.getAttribute("searchTerm")).trim().isEmpty()) { %>
                                             for "<strong>${searchTerm}</strong>"
@@ -243,141 +602,197 @@
                                     </p>
                                 </div>
                             <% } %>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
                 
                 <!-- Search and Filter Section -->
                 <div class="row justify-content-center mb-40">
-                    <div class="col-xl-10 col-lg-12">
+                    <div class="col-xl-11 col-lg-12">
                         <form action="courses" method="GET" class="search-filter-container">
-                            <!-- Search Bar -->
-                            <div class="row mb-3">
-                                <div class="col-lg-8 col-md-8 col-sm-12">
-                                    <div class="search-box">
-                                        <input type="text" name="search" value="${searchTerm != null ? searchTerm : ''}" class="form-control" placeholder="Search for courses..." aria-label="Search courses">
-                                        <button type="submit" class="search-btn">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
+                            <!-- Title Section -->
+                            <div class="search-filter-title">
+                                <h3><i class="fas fa-search"></i> Find Your Perfect Course</h3>
+                                <p>Discover courses that match your interests and learning goals</p>
                                 </div>
-                                <div class="col-lg-4 col-md-4 col-sm-12">
-                                    <div class="filter-dropdown">
-                                        <select name="price" class="form-control" onchange="this.form.submit()">
+                            
+                            <!-- Search Bar -->
+                            <div class="search-box">
+                                <input type="text" name="search" value="${searchTerm != null ? searchTerm : ''}" class="form-control" placeholder="What would you like to learn today?" aria-label="Search courses">
+                                <button type="submit" class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                </div>
+                                
+                            <!-- Filters Section -->
+                            <div class="filters-section">
+                                <div class="filters-row">
+                                    <div class="filter-item">
+                                        <label for="priceFilter" class="filter-label">
+                                            <i class="fas fa-dollar-sign"></i> Price Range
+                                        </label>
+                                        <select name="price" id="priceFilter" onchange="this.form.submit()">
                                             <option value="">All Prices</option>
                                             <option value="0-50" ${priceFilter == '0-50' ? 'selected' : ''}>$0 - $50</option>
                                             <option value="51-100" ${priceFilter == '51-100' ? 'selected' : ''}>$51 - $100</option>
                                             <option value="101-200" ${priceFilter == '101-200' ? 'selected' : ''}>$101 - $200</option>
                                             <option value="201+" ${priceFilter == '201+' ? 'selected' : ''}>$201+</option>
                                         </select>
-                                    </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Advanced Filters -->
-                            <div class="row">
-                                <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                    
                                     <div class="filter-item">
-                                        <label for="ratingFilter" class="filter-label">Rating:</label>
-                                        <select name="rating" class="form-control form-control-sm" onchange="this.form.submit()">
+                                        <label for="ratingFilter" class="filter-label">
+                                            <i class="fas fa-star"></i> Minimum Rating
+                                        </label>
+                                        <select name="rating" id="ratingFilter" onchange="this.form.submit()">
                                             <option value="">All Ratings</option>
                                             <option value="4.5" ${ratingFilter == '4.5' ? 'selected' : ''}>4.5+ Stars</option>
                                             <option value="4.0" ${ratingFilter == '4.0' ? 'selected' : ''}>4.0+ Stars</option>
                                             <option value="3.5" ${ratingFilter == '3.5' ? 'selected' : ''}>3.5+ Stars</option>
                                             <option value="3.0" ${ratingFilter == '3.0' ? 'selected' : ''}>3.0+ Stars</option>
                                         </select>
-                                    </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                
                                     <div class="filter-item">
-                                        <label for="sortBy" class="filter-label">Sort By:</label>
-                                        <select name="sort" class="form-control form-control-sm" onchange="this.form.submit()">
+                                        <label for="sortBy" class="filter-label">
+                                            <i class="fas fa-sort"></i> Sort By
+                                        </label>
+                                        <select name="sort" id="sortBy" onchange="this.form.submit()">
                                             <option value="newest" ${sortBy == 'newest' ? 'selected' : ''}>Newest First</option>
                                             <option value="oldest" ${sortBy == 'oldest' ? 'selected' : ''}>Oldest First</option>
                                             <option value="price-low" ${sortBy == 'price-low' ? 'selected' : ''}>Price: Low to High</option>
                                             <option value="price-high" ${sortBy == 'price-high' ? 'selected' : ''}>Price: High to Low</option>
                                             <option value="rating" ${sortBy == 'rating' ? 'selected' : ''}>Highest Rated</option>
                                         </select>
-                                    </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                    
                                     <div class="filter-item">
-                                        <label for="topicFilter" class="filter-label">Topic:</label>
-                                        <select name="topic" class="form-control form-control-sm" onchange="this.form.submit()">
-                                            <option value="">All Topics</option>
-                                            <option value="programming" ${topicFilter == 'programming' ? 'selected' : ''}>Programming</option>
-                                            <option value="design" ${topicFilter == 'design' ? 'selected' : ''}>Design</option>
-                                            <option value="business" ${topicFilter == 'business' ? 'selected' : ''}>Business</option>
-                                            <option value="marketing" ${topicFilter == 'marketing' ? 'selected' : ''}>Marketing</option>
-                                        </select>
-                                    </div>
+                                        <label for="topicFilter" class="filter-label">
+                                            <i class="fas fa-tag"></i> Topic
+                                        </label>
+                                                                                 <select name="topic" id="topicFilter" onchange="this.form.submit()">
+                                             <option value="">All Topics</option>
+                                             <% if (request.getAttribute("topics") != null) { %>
+                                                 <% 
+                                                 List<Topic> topics = (List<Topic>) request.getAttribute("topics");
+                                                 for (Topic topic : topics) {
+                                                 %>
+                                                     <option value="<%= topic.getName() %>" ${topicFilter == topic.getName() ? 'selected' : ''}><%= topic.getName() %></option>
+                                                 <% } %>
+                                             <% } %>
+                                         </select>
                                 </div>
-                                <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                
                                     <div class="filter-item">
-                                        <a href="courses" class="btn btn-outline-secondary btn-sm w-100">
-                                            <i class="fas fa-times"></i> Clear Filters
+                                        <a href="courses" class="clear-filters-btn">
+                                            <i class="fas fa-times"></i> Clear All
                                         </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                                
+                                <!-- Active Filters Display -->
+                                <% if (request.getAttribute("searchTerm") != null || request.getAttribute("priceFilter") != null || 
+                                        request.getAttribute("ratingFilter") != null || request.getAttribute("topicFilter") != null) { %>
+                                <div class="active-filters">
+                                    <h5><i class="fas fa-filter"></i> Active Filters:</h5>
+                                    <div class="filter-tags">
+                                        <% if (request.getAttribute("searchTerm") != null && !((String)request.getAttribute("searchTerm")).trim().isEmpty()) { %>
+                                            <span class="filter-tag">
+                                                <i class="fas fa-search"></i> "${searchTerm}"
+                                            </span>
+                                        <% } %>
+                                        <% if (request.getAttribute("priceFilter") != null && !((String)request.getAttribute("priceFilter")).trim().isEmpty()) { %>
+                                            <span class="filter-tag">
+                                                <i class="fas fa-dollar-sign"></i> ${priceFilter}
+                                            </span>
+                                        <% } %>
+                                        <% if (request.getAttribute("ratingFilter") != null && !((String)request.getAttribute("ratingFilter")).trim().isEmpty()) { %>
+                                            <span class="filter-tag">
+                                                <i class="fas fa-star"></i> ${ratingFilter}+ Stars
+                                            </span>
+                                        <% } %>
+                                        <% if (request.getAttribute("topicFilter") != null && !((String)request.getAttribute("topicFilter")).trim().isEmpty()) { %>
+                                            <span class="filter-tag">
+                                                <i class="fas fa-tag"></i> ${topicFilter}
+                                            </span>
+                                        <% } %>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                </div>
+                        </form>
+                            </div>
+                        </div>
                 <div class="row">
                     <% if (request.getAttribute("allCourses") != null) { %>
                         <% 
                         List<Course> allCourses = (List<Course>) request.getAttribute("allCourses");
                         for (Course course : allCourses) {
                         %>
-                        <div class="col-lg-4">
-                            <div class="properties properties2 mb-30">
-                                <div class="properties__card">
-                                    <div class="properties__img overlay1">
-                                        <a href="#"><img src="<%= course.getThumbnail_url() != null ? course.getThumbnail_url() : "assets/img/gallery/featured1.png" %>" alt="<%= course.getTitle() %>"></a>
+                    <div class="col-lg-4">
+                        <div class="properties properties2 mb-30">
+                            <div class="properties__card">
+                                <div class="properties__img overlay1">
+                                    <a href="#"><img src="<%= course.getThumbnail_url() != null ? course.getThumbnail_url() : "assets/img/gallery/featured1.png" %>" alt="<%= course.getTitle() %>"></a>
+                                </div>
+                                <div class="properties__caption">
+                                    <h3><a href="#"><%= course.getTitle() %></a></h3>
+                                    <p><%= course.getDescription() != null && course.getDescription().length() > 100 ? course.getDescription().substring(0, 100) + "..." : course.getDescription() %></p>
+                                    
+                                    <% 
+                                    Map<Long, Topic> courseTopicsMap = (Map<Long, Topic>) request.getAttribute("courseTopicsMap");
+                                    if (courseTopicsMap != null && courseTopicsMap.containsKey(course.getCourse_id())) {
+                                        Topic courseTopic = courseTopicsMap.get(course.getCourse_id());
+                                        if (courseTopic != null) {
+                                    %>
+                                    <div class="course-topic">
+                                        <span class="badge">
+                                            <i class="fas fa-tag"></i><%= courseTopic.getName() %>
+                                        </span>
                                     </div>
-                                    <div class="properties__caption">
-                                        <p>Course</p>
-                                        <h3><a href="#"><%= course.getTitle() %></a></h3>
-                                        <p><%= course.getDescription() != null && course.getDescription().length() > 100 ? course.getDescription().substring(0, 100) + "..." : course.getDescription() %></p>
-                                        <div class="properties__footer d-flex justify-content-between align-items-center">
-                                            <div class="restaurant-name">
-                                                <div class="rating">
-                                                    <% 
-                                                    double rating = course.getAverageRating();
-                                                    int fullStars = (int) rating;
-                                                    boolean hasHalfStar = rating % 1 >= 0.5;
-                                                    %>
-                                                    <% for (int i = 0; i < fullStars; i++) { %>
-                                                        <i class="fas fa-star"></i>
-                                                    <% } %>
-                                                    <% if (hasHalfStar) { %>
-                                                        <i class="fas fa-star-half"></i>
-                                                    <% } %>
-                                                    <% for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) { %>
-                                                        <i class="far fa-star"></i>
-                                                    <% } %>
-                                                </div>
-                                                <p><span>(<%= String.format("%.1f", rating) %>)</span> rating</p>
+                                    <% 
+                                        }
+                                    }
+                                    %>
+                                    <div class="properties__footer d-flex justify-content-between align-items-center">
+                                        <div class="restaurant-name">
+                                            <div class="rating">
+                                                <% 
+                                                double rating = course.getAverageRating();
+                                                int fullStars = (int) rating;
+                                                boolean hasHalfStar = rating % 1 >= 0.5;
+                                                %>
+                                                <% for (int i = 0; i < fullStars; i++) { %>
+                                                    <i class="fas fa-star"></i>
+                                                <% } %>
+                                                <% if (hasHalfStar) { %>
+                                                    <i class="fas fa-star-half"></i>
+                                                <% } %>
+                                                <% for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) { %>
+                                                    <i class="far fa-star"></i>
+                                                <% } %>
                                             </div>
-                                            <div class="price">
-                                                <span>$<%= course.getPrice() %></span>
-                                            </div>
+                                            <p><span>(<%= String.format("%.1f", rating) %>)</span> rating</p>
                                         </div>
-                                        <a href="#" class="border-btn border-btn2">Find out more</a>
+                                        <div class="price">
+                                            <span>$<%= course.getPrice() %></span>
+                                        </div>
                                     </div>
+                                    <a href="#" class="border-btn border-btn2">Find out more</a>
                                 </div>
                             </div>
                         </div>
+                    </div>
                         <% } %>
                     <% } else { %>
-                        <!-- Fallback content khi không có dữ liệu -->
+                        <!-- Fallback content -->
                         <div class="col-12 text-center">
                             <p>Cannot found other courses.</p>
                         </div>
                     <% } %>
                 </div>
                 
-                <!-- Load More Button - Luôn nằm ở giữa và dưới danh sách khóa học -->
+                <!-- Load More Button -->
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mt-40">
@@ -394,107 +809,36 @@
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mb-55">
-                            <h2>Explore top subjects</h2>
+                            <h2>Explore our topic</h2>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic1.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
+                    <% if (request.getAttribute("topics") != null) { %>
+                        <% 
+                        List<Topic> topics = (List<Topic>) request.getAttribute("topics");
+                        for (int i = 0; i < topics.size() && i < 8; i++) {
+                            Topic topic = topics.get(i);
+                        %>
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="single-topic text-center mb-30">
+                                <div class="topic-img">
+                                    <img src="<%= topic.getThumbnail_url() != null ? topic.getThumbnail_url() : "assets/img/gallery/topic" + (i + 1) + ".png" %>" alt="<%= topic.getName() %>">
+                                    <div class="topic-content-box">
+                                        <div class="topic-content">
+                                            <h3><a href="#"><%= topic.getName() %></a></h3>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic2.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <!-- Fallback content -->
+                        <div class="col-12 text-center">
+                            <p>No topics available.</p>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic3.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic4.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic5.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic6.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic7.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                <img src="assets/img/gallery/topic8.png" alt="">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                        <h3><a href="#">Programing</a></h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <% } %>
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-xl-12">
