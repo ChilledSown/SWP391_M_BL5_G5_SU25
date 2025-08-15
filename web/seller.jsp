@@ -137,7 +137,7 @@
                             <p>Welcome, [Seller Name]. Manage your blogs and courses here.</p>
 
                             <!-- Course Management Section -->
-                           
+
 
                             <!-- Blog Management Section -->
                             <div id="courses" class="management-section container mt-4">
@@ -148,7 +148,7 @@
                                         <tr>
                                             <th>Title</th>
                                             <th>Price</th>
-                                            <th>Created At</th>
+                                            
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -157,17 +157,18 @@
                                             <tr>
                                                 <td>${course.title}</td>
                                                 <td>$${course.price}</td>
-                                                <td>${course.created_at}</td>
+                                               
                                                 <td>
                                                     <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}"
                                                        class="btn btn-sm btn-warning">Update</a>
-                                                       <a href="deleteCourse?courseId=${course.course_id}" 
-       class="btn btn-sm btn-danger" 
-       onclick="return confirm('Bạn có chắc muốn xóa khóa học này?');">
-        Delete
-    </a>
+                                                    <a href="deleteCourse?courseId=${course.course_id}" 
+                                                       class="btn btn-sm btn-danger" 
+                                                       onclick="return confirm('Bạn có chắc muốn xóa khóa học này?');">
+                                                        Delete
+                                                    </a>
+                                                        
                                                 </td
-                                                
+
                                             </tr>
                                         </c:forEach>
                                     </tbody>

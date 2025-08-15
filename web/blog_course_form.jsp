@@ -1,12 +1,14 @@
 <%@ page import="java.util.*" %>
 <%@ page import="model.*" %>
+<%@ page import="dal.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>Content Management | Seller Dashboard</title>
-        <meta name="description" content="Create or update a blog or course for the online learning platform">
+        <meta name="description" content="Create or update a course for the online learning platform">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="manifest" href="site.webmanifest">
         <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
@@ -26,12 +28,10 @@
         <link rel="stylesheet" href="assets/css/nice-select.css">
         <link rel="stylesheet" href="assets/css/style.css">
         <style>
-            
             <%
-    dal.TopicDAO topicDAO = new dal.TopicDAO();
-    List<Topic> topics = topicDAO.getAllTopics();
-%>
-
+                TopicDAO topicDAO = new TopicDAO();
+                List<Topic> topics = topicDAO.getAllTopics();
+            %>
             .form-container {
                 max-width: 700px;
                 margin: 20px auto;
@@ -89,7 +89,6 @@
             </div>
         </div>
         <!-- Preloader End -->
-
         <header>
             <div class="header-area header-transparent">
                 <div class="main-header">
@@ -124,7 +123,6 @@
                 </div>
             </div>
         </header>
-
         <main>
             <section class="form-area section-padding40">
                 <div class="container">
@@ -132,88 +130,97 @@
                         <%
                             String type = request.getParameter("type");
                             String action = request.getParameter("action");
+                            String courseId = request.getParameter("courseId");
                             String headerText = "";
-                            if ("course".equals(type)) {
-                                headerText = action != null && action.equals("update") ? "Update Course" : "Create New Course";
-                            } else {
-                                headerText = action != null && action.equals("update") ? "Update Blog" : "Create New Blog";
-                            }
-                            String titleValue = "";
-                            String contentValue = "";
-                            String descriptionValue = "";
-                            String priceValue = "";
-                            String thumbnailUrlValue = "";
-                            String relatedTopicValue = "";
-                            String topicIdValue = "";
-                            if ("update".equals(action)) {
-                                titleValue = "blog".equals(type) ? "Sample Blog Title" : "Sample Course Title";
-                                contentValue = "blog".equals(type) ? "Sample content here..." : "";
-                                descriptionValue = "course".equals(type) ? "Sample course description..." : "";
-                                priceValue = "course".equals(type) ? "500" : "";
-                                thumbnailUrlValue = "";
-                                relatedTopicValue = "blog".equals(type) ? "1" : "";
-                                topicIdValue = "course".equals(type) ? "1" : "";
-                            }
                             String btnText = "";
-                            if ("course".equals(type)) {
-                                btnText = action != null && action.equals("update") ? "Update Course" : "Create Course";
-                            } else {
-                                btnText = action != null && action.equals("update") ? "Update Blog" : "Create Blog";
-                            }
-                        %>
-                        <h2><%= headerText%></h2>
-                        <form action="createCourse" method="POST">
-                            <input type="hidden" name="type" value="course">
-                            <input type="hidden" name="action" value="create">
+                            String formAction = "";
+                            Course course = null;
 
+                            // Determine form mode (create or update)
+                            if ("course".equals(type)) {
+                                if ("update".equals(action) && courseId != null) {
+                                    headerText = "Update Course";
+                                    btnText = "Update Course";
+                                    formAction = "updateCourse";
+                                    // Fetch course data for update
+                                    CourseDAO courseDAO = new CourseDAO();
+                                    try {
+                                        course = courseDAO.getCourseById(Long.parseLong(courseId));
+                                    } catch (NumberFormatException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    headerText = "Create New Course";
+                                    btnText = "Create Course";
+                                    formAction = "createCourse";
+                                }
+                            }
+
+                            // Initialize form field values
+                            String titleValue = course != null ? course.getTitle() : "";
+                            String descriptionValue = course != null ? course.getDescription() : "";
+                            String priceValue = course != null ? String.valueOf(course.getPrice()) : "";
+                            String thumbnailUrlValue = course != null ? course.getThumbnail_url() : "";
+                            String topicIdValue = course != null ? String.valueOf(course.getTopic_id()) : "";
+                        %>
+                        <h2><%= headerText %></h2>
+                        <form action="<%= formAction %>" method="POST">
+                            <input type="hidden" name="type" value="course">
+                            <% if ("update".equals(action) && courseId != null) { %>
+                                <input type="hidden" name="courseId" value="<%= courseId %>">
+                            <% } %>
                             <div class="form-group">
                                 <label for="title">Title</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                                <input type="text" class="form-control" id="title" name="title" value="<%= titleValue %>" required>
                             </div>
-
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                <textarea class="form-control" id="description" name="description" rows="3" required><%= descriptionValue %></textarea>
                             </div>
-
                             <div class="form-group">
                                 <label for="price">Price ($)</label>
-                                <input type="number" class="form-control" id="price" name="price" min="0" required>
+                                <input type="number" class="form-control" id="price" name="price" min="0" value="<%= priceValue %>" required>
                             </div>
-
                             <div class="form-group">
                                 <label for="thumbnail_url">Thumbnail URL</label>
-                                <input type="text" class="form-control" id="thumbnail_url" name="thumbnail_url">
+                                <input type="text" class="form-control" id="thumbnail_url" name="thumbnail_url" value="<%= thumbnailUrlValue %>">
                             </div>
-
                             <div class="form-group">
                                 <label for="topic_id">Topic</label>
                                 <select class="form-control" id="topic_id" name="topic_id" required>
                                     <option value="">Select Topic</option>
-                                    <% for (Topic t : topics) {%>
-                                    <option value="<%= t.getTopic_id()%>" <%= String.valueOf(t.getTopic_id()).equals(topicIdValue) ? "selected" : ""%>>
-                                        <%= t.getName()%>
-                                    </option>
-                                    <% }%>
+                                    <% for (Topic t : topics) { %>
+                                        <option value="<%= t.getTopic_id() %>" <%= String.valueOf(t.getTopic_id()).equals(topicIdValue) ? "selected" : "" %>>
+                                            <%= t.getName() %>
+                                        </option>
+                                    <% } %>
                                 </select>
                             </div>
-
-
                             <div class="btn-group">
-                                <button type="submit" class="btn btn-primary">Create Course</button>
+                                <button type="submit" class="btn btn-primary"><%= btnText %></button>
                                 <a href="seller.jsp" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
-
-
-
                     </div>
                 </div>
             </section>
         </main>
-
         <footer>
             <div class="footer-wrappper footer-bg">
+                <!-- Footer Start -->
+                <div class="footer-area footer-padding">
+                    <div class="container">
+                        <div class="row justify-content-between">
+                            <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
+                                <div class="single-footer-caption mb-50">
+                                    <div class="single-footer-caption mb-30">
+                                        <!-- logo -->
+                                        <div class="footer-logo mb-25">
+                                            <a href="index.jsp"><img src="assets/img/logo/logo2_footer.png" alt=""></a>
+                                        </div>
+                                        <div class="footer-tittle">
+                                            <div class="footer-pera">
+parer" footer-bg">
                 <!-- Footer Start -->
                 <div class="footer-area footer-padding">
                     <div class="container">
@@ -255,6 +262,7 @@
                             </div>
                             <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
                                 <div class="single-footer-caption mb-50">
+941f5-391682ee794c" title="blog_course_form.jsp" contentType="text/html">
                                     <div class="footer-tittle">
                                         <h4>Support</h4>
                                         <ul>
@@ -300,12 +308,10 @@
                 </div>
             </div>
         </footer>
-
         <!-- Scroll Up -->
         <div id="back-top">
             <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
         </div>
-
         <!-- JS here -->
         <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
         <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
