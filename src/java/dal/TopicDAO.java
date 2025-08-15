@@ -4,6 +4,7 @@
  */
 package dal;
 
+import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Topic;
 
+ 
 /**
  *
  * @author sondo
@@ -113,5 +115,12 @@ public class TopicDAO extends DBContext {
         }
         
         return null;
+    }
+    public static void main(String[] args) {
+        TopicDAO topic =new TopicDAO();
+        List<Topic> topics =topic.getAllTopics();
+        for (Topic topic1 : topics) {
+            System.out.println(topics);
+        }
     }
 }

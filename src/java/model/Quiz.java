@@ -4,10 +4,19 @@
  */
 package model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  *
  * @author sondo
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Quiz {
     private Long quiz_id;
 }

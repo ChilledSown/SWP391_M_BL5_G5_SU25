@@ -1,7 +1,70 @@
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="model.*" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:choose>
+    <c:when test="${param.ajax == '1'}">
+        <div class="row" id="courses-list">
+            <c:set var="displayCourses" value="${pageCourses}" />
+            <c:if test="${empty displayCourses}">
+                <c:set var="displayCourses" value="${allCourses}" />
+            </c:if>
+            <c:forEach items="${displayCourses}" var="course">
+                <div class="col-lg-4">
+                    <div class="properties properties2 mb-30">
+                        <div class="properties__card">
+                            <div class="properties__img overlay1">
+                                <a href="#"><img src="${empty course.thumbnail_url ? 'assets/img/gallery/featured1.png' : course.thumbnail_url}" alt="${course.title}"></a>
+                            </div>
+                            <div class="properties__caption">
+                                <h3><a href="#">${course.title}</a></h3>
+                                <c:choose>
+                                    <c:when test="${not empty course.description and fn:length(course.description) > 100}">
+                                        <p>${fn:substring(course.description, 0, 100)}...</p>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <p>${course.description}</p>
+                                    </c:otherwise>
+                                </c:choose>
+                                <c:set var="courseTopic" value="${courseTopicsMap[course.course_id]}" />
+                                <c:if test="${not empty courseTopic}">
+                                    <div class="course-topic">
+                                        <span class="badge">
+                                            <i class="fas fa-tag"></i>${courseTopic.name}
+                                        </span>
+                                    </div>
+                                </c:if>
+                                <div class="properties__footer d-flex justify-content-between align-items-center">
+                                    <div class="restaurant-name">
+                                        <div class="rating">
+                                            <c:set var="rating" value="${course.averageRating}" />
+                                            <c:forEach var="i" begin="1" end="5">
+                                                <c:choose>
+                                                    <c:when test="${rating >= i}">
+                                                        <i class="fas fa-star"></i>
+                                                    </c:when>
+                                                    <c:when test="${rating >= (i - 0.5)}">
+                                                        <i class="fas fa-star-half"></i>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <i class="far fa-star"></i>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:forEach>
+                                        </div>
+                                        <p><span>(${rating})</span> rating</p>
+                                    </div>
+                                    <div class="price">
+                                        <span>$${course.price}</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="border-btn border-btn2">Find out more</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </c:when>
+    <c:otherwise>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -540,18 +603,16 @@
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mb-55">
                             <h2>Our featured courses</h2>
-                            <!-- Results counter -->
-                            <% if (request.getAttribute("searchTerm") != null || request.getAttribute("priceFilter") != null || 
-                                    request.getAttribute("ratingFilter") != null || request.getAttribute("topicFilter") != null) { %>
+                            <c:if test="${not empty searchTerm or not empty priceFilter or not empty ratingFilter or not empty topicFilter}">
                                 <div class="results-info mt-3">
                                     <p class="text-muted">
                                         Showing <strong>${totalResults}</strong> course(s)
-                                        <% if (request.getAttribute("searchTerm") != null && !((String)request.getAttribute("searchTerm")).trim().isEmpty()) { %>
+                                        <c:if test="${not empty searchTerm}">
                                             for "<strong>${searchTerm}</strong>"
-                                        <% } %>
+                                        </c:if>
                                     </p>
                                 </div>
-                            <% } %>
+                            </c:if>
                                 </div>
                             </div>
                         </div>
@@ -568,7 +629,7 @@
                             
                             <!-- Search Bar -->
                             <div class="search-box">
-                                <input type="text" name="search" value="${searchTerm != null ? searchTerm : ''}" class="form-control" placeholder="What would you like to learn today?" aria-label="Search courses">
+                                <input type="text" name="search" value="${searchTerm}" class="form-control" placeholder="What would you like to learn today?" aria-label="Search courses">
                                 <button type="submit" class="search-btn">
                                     <i class="fas fa-search"></i>
                                 </button>
@@ -583,10 +644,10 @@
                                         </label>
                                         <select name="price" id="priceFilter" onchange="this.form.submit()">
                                             <option value="">All Prices</option>
-                                            <option value="0-50" ${priceFilter == '0-50' ? 'selected' : ''}>$0 - $50</option>
-                                            <option value="51-100" ${priceFilter == '51-100' ? 'selected' : ''}>$51 - $100</option>
-                                            <option value="101-200" ${priceFilter == '101-200' ? 'selected' : ''}>$101 - $200</option>
-                                            <option value="201+" ${priceFilter == '201+' ? 'selected' : ''}>$201+</option>
+                                            <option value="0-50" <c:if test="${priceFilter == '0-50'}">selected</c:if>>$0 - $50</option>
+                                            <option value="51-100" <c:if test="${priceFilter == '51-100'}">selected</c:if>>$51 - $100</option>
+                                            <option value="101-200" <c:if test="${priceFilter == '101-200'}">selected</c:if>>$101 - $200</option>
+                                            <option value="201+" <c:if test="${priceFilter == '201+'}">selected</c:if>>$201+</option>
                                         </select>
                                 </div>
                                     
@@ -596,10 +657,10 @@
                                         </label>
                                         <select name="rating" id="ratingFilter" onchange="this.form.submit()">
                                             <option value="">All Ratings</option>
-                                            <option value="4.5" ${ratingFilter == '4.5' ? 'selected' : ''}>4.5+ Stars</option>
-                                            <option value="4.0" ${ratingFilter == '4.0' ? 'selected' : ''}>4.0+ Stars</option>
-                                            <option value="3.5" ${ratingFilter == '3.5' ? 'selected' : ''}>3.5+ Stars</option>
-                                            <option value="3.0" ${ratingFilter == '3.0' ? 'selected' : ''}>3.0+ Stars</option>
+                                            <option value="4.5" <c:if test="${ratingFilter == '4.5'}">selected</c:if>>4.5+ Stars</option>
+                                            <option value="4.0" <c:if test="${ratingFilter == '4.0'}">selected</c:if>>4.0+ Stars</option>
+                                            <option value="3.5" <c:if test="${ratingFilter == '3.5'}">selected</c:if>>3.5+ Stars</option>
+                                            <option value="3.0" <c:if test="${ratingFilter == '3.0'}">selected</c:if>>3.0+ Stars</option>
                                         </select>
                                 </div>
                                 
@@ -608,11 +669,11 @@
                                             <i class="fas fa-sort"></i> Sort By
                                         </label>
                                         <select name="sort" id="sortBy" onchange="this.form.submit()">
-                                            <option value="newest" ${sortBy == 'newest' ? 'selected' : ''}>Newest First</option>
-                                            <option value="oldest" ${sortBy == 'oldest' ? 'selected' : ''}>Oldest First</option>
-                                            <option value="price-low" ${sortBy == 'price-low' ? 'selected' : ''}>Price: Low to High</option>
-                                            <option value="price-high" ${sortBy == 'price-high' ? 'selected' : ''}>Price: High to Low</option>
-                                            <option value="rating" ${sortBy == 'rating' ? 'selected' : ''}>Highest Rated</option>
+                                            <option value="newest" <c:if test="${sortBy == 'newest'}">selected</c:if>>Newest First</option>
+                                            <option value="oldest" <c:if test="${sortBy == 'oldest'}">selected</c:if>>Oldest First</option>
+                                            <option value="price-low" <c:if test="${sortBy == 'price-low'}">selected</c:if>>Price: Low to High</option>
+                                            <option value="price-high" <c:if test="${sortBy == 'price-high'}">selected</c:if>>Price: High to Low</option>
+                                            <option value="rating" <c:if test="${sortBy == 'rating'}">selected</c:if>>Highest Rated</option>
                                         </select>
                                 </div>
                                     
@@ -622,14 +683,9 @@
                                         </label>
                                                                                  <select name="topic" id="topicFilter" onchange="this.form.submit()">
                                              <option value="">All Topics</option>
-                                             <% if (request.getAttribute("topics") != null) { %>
-                                                 <% 
-                                                 List<Topic> topics = (List<Topic>) request.getAttribute("topics");
-                                                 for (Topic topic : topics) {
-                                                 %>
-                                                     <option value="<%= topic.getName() %>" ${topicFilter == topic.getName() ? 'selected' : ''}><%= topic.getName() %></option>
-                                                 <% } %>
-                                             <% } %>
+                                             <c:forEach items="${topics}" var="topic">
+                                                 <option value="${topic.name}" <c:if test="${topicFilter == topic.name}">selected</c:if>>${topic.name}</option>
+                                             </c:forEach>
                                          </select>
                                 </div>
                                 
@@ -641,50 +697,107 @@
                     </div>
                                 
                                 <!-- Active Filters Display -->
-                                <% if (request.getAttribute("searchTerm") != null || request.getAttribute("priceFilter") != null || 
-                                        request.getAttribute("ratingFilter") != null || request.getAttribute("topicFilter") != null) { %>
+                                <c:if test="${not empty searchTerm or not empty priceFilter or not empty ratingFilter or not empty topicFilter}">
                                 <div class="active-filters">
                                     <h5><i class="fas fa-filter"></i> Active Filters:</h5>
                                     <div class="filter-tags">
-                                        <% if (request.getAttribute("searchTerm") != null && !((String)request.getAttribute("searchTerm")).trim().isEmpty()) { %>
+                                        <c:if test="${not empty searchTerm}">
                                             <span class="filter-tag">
                                                 <i class="fas fa-search"></i> "${searchTerm}"
                                             </span>
-                                        <% } %>
-                                        <% if (request.getAttribute("priceFilter") != null && !((String)request.getAttribute("priceFilter")).trim().isEmpty()) { %>
+                                        </c:if>
+                                        <c:if test="${not empty priceFilter}">
                                             <span class="filter-tag">
                                                 <i class="fas fa-dollar-sign"></i> ${priceFilter}
                                             </span>
-                                        <% } %>
-                                        <% if (request.getAttribute("ratingFilter") != null && !((String)request.getAttribute("ratingFilter")).trim().isEmpty()) { %>
+                                        </c:if>
+                    
+                                        <c:if test="${not empty ratingFilter}">
                                             <span class="filter-tag">
                                                 <i class="fas fa-star"></i> ${ratingFilter}+ Stars
                                             </span>
-                                        <% } %>
-                                        <% if (request.getAttribute("topicFilter") != null && !((String)request.getAttribute("topicFilter")).trim().isEmpty()) { %>
+                                        </c:if>
+                                        <c:if test="${not empty topicFilter}">
                                             <span class="filter-tag">
                                                 <i class="fas fa-tag"></i> ${topicFilter}
                                             </span>
-                                        <% } %>
+                                        </c:if>
                                         </div>
                                     </div>
-                                <% } %>
+                                </c:if>
                                 </div>
                         </form>
                             </div>
                         </div>
                 <div class="row" id="courses-list">
-                    <% if (request.getAttribute("allCourses") != null) { %>
-                        <% 
-                        List<Course> allCourses = (List<Course>) request.getAttribute("allCourses");
-                        request.setAttribute("pageCourses", allCourses);
-                        %>
-                        <%@ include file="partials/course_cards.jsp" %>
-                    <% } else { %>
-                        <div class="col-12 text-center">
-                            <p>Cannot found other courses.</p>
-                        </div>
-                    <% } %>
+                    <c:set var="displayCourses" value="${pageCourses}" />
+                    <c:if test="${empty displayCourses}">
+                        <c:set var="displayCourses" value="${allCourses}" />
+                    </c:if>
+                    <c:choose>
+                        <c:when test="${not empty displayCourses}">
+                            <c:forEach items="${displayCourses}" var="course">
+                                <div class="col-lg-4">
+                                    <div class="properties properties2 mb-30">
+                                        <div class="properties__card">
+                                            <div class="properties__img overlay1">
+                                                <a href="#"><img src="${empty course.thumbnail_url ? 'assets/img/gallery/featured1.png' : course.thumbnail_url}" alt="${course.title}"></a>
+                                            </div>
+                                            <div class="properties__caption">
+                                                <h3><a href="#">${course.title}</a></h3>
+                                                <c:choose>
+                                                    <c:when test="${not empty course.description and fn:length(course.description) > 100}">
+                                                        <p>${fn:substring(course.description, 0, 100)}...</p>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <p>${course.description}</p>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <c:set var="courseTopic" value="${courseTopicsMap[course.course_id]}" />
+                                                <c:if test="${not empty courseTopic}">
+                                                    <div class="course-topic">
+                                                        <span class="badge">
+                                                            <i class="fas fa-tag"></i>${courseTopic.name}
+                                                        </span>
+                                                    </div>
+                                                </c:if>
+                                                <div class="properties__footer d-flex justify-content-between align-items-center">
+                                                    <div class="restaurant-name">
+                                                        <div class="rating">
+                                                            <c:set var="rating" value="${course.averageRating}" />
+                                                            <c:forEach var="i" begin="1" end="5">
+                                                                <c:choose>
+                                                                    <c:when test="${rating >= i}">
+                                                                        <i class="fas fa-star"></i>
+                                                                    </c:when>
+                                                                    <c:when test="${rating >= (i - 0.5)}">
+                                                                        <i class="fas fa-star-half"></i>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <i class="far fa-star"></i>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:forEach>
+                                                        </div>
+                                                        <p><span>(${rating})</span> rating</p>
+                                                    </div>
+                                                    <div class="price">
+                                                        <span>$${course.price}</span>
+                                                    </div>
+                                                </div>
+                                                <a href="#" class="border-btn border-btn2">Find out more</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="col-12 text-center">
+                                <p>Cannot found other courses.</p>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 
                 <!-- Load More Button -->
@@ -935,5 +1048,7 @@
             });
         })();
     </script>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>
