@@ -189,11 +189,11 @@
                 </div> 
                 <nav class="sidebar-nav">
                     <ul>
-                        <li class="active" data-section="overview">
+                        <li data-section="overview">
                             <a href="overview">Overview</a>
                         </li>
-                        <li data-section="courses">
-                            <a href="courses">Manage Courses</a>
+                        <li class="active" data-section="courses">
+                            <a href="managecourse">Manage Courses</a>
                         </li>
                         <li data-section="users">
                             <a href="manageuser">Manage Users</a>

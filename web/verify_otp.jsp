@@ -47,6 +47,14 @@
                 background-color: #f0f0f0; /* Nền khi hover */
                 transform: scale(1.05); /* Phóng to nhẹ khi hover */
             }
+            
+            .form-input.pt-30 button.send-again {
+                color: black; 
+            }
+
+            .form-input.pt-30 button.send-again:hover {
+                color: black; 
+            }
 
         </style>
     </head>
@@ -82,7 +90,8 @@
                         <input type="text" name="otp" placeholder="enter opt" required>
                     </div>                   
                     <div class="form-input pt-30">
-                          <button type="submit">Confirm</button>
+                          <button type="submit">Confirm</button>                      
+                          <button type="button" class="send-again" onclick="window.location.href='forgot-password'">Send OTP Again</button>
                     </div>   
                     
                     <div style="color:white">${message}</div>
