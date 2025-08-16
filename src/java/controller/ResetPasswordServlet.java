@@ -42,7 +42,7 @@ public class ResetPasswordServlet extends HttpServlet {
         }
         // 1. Kiểm tra mật khẩu xác nhận
         if (!newPassword.equals(confirmPassword)) {
-            request.setAttribute("message", "Mật khẩu xác nhận không khớp!");
+            request.setAttribute("message", "Confirmation password does not match!");
             request.setAttribute("email", email);
             request.getRequestDispatcher("reset_password.jsp").forward(request, response);
             return;
@@ -61,17 +61,17 @@ public class ResetPasswordServlet extends HttpServlet {
             int updated = ps.executeUpdate();
 
             if (updated > 0) {
-                request.setAttribute("message", "Mật khẩu đã được đặt lại thành công!");
+                request.setAttribute("message", "Password was reset successfully!");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             } else {
-                request.setAttribute("message", "Không tìm thấy người dùng hoặc OTP chưa xác thực.");
+                request.setAttribute("message", "User not found or OTP not authenticated.");
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("reset_password.jsp").forward(request, response);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("message", "Có lỗi xảy ra: " + e.getMessage());
+            request.setAttribute("message", "Errorr: " + e.getMessage());
             request.setAttribute("email", email);
             request.getRequestDispatcher("reset_password.jsp").forward(request, response);
         } catch (Exception ex) {
