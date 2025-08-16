@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Course;
 
 /**
@@ -21,22 +19,22 @@ public class CourseDAO extends DBContext {
 
     public List<Course> getFilteredCourses(String searchTerm, String priceFilter, String ratingFilter, String sortBy, String topicFilter) {
         List<Course> courses = new ArrayList<>();
-
+        
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n");
         sql.append("FROM Course c\n");
-        sql.append("LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n");
-        // Thêm WHERE clause cho search và filter
+        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
+        
+        // Add WHERE clause for search and filter
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
-
-        // Search by title hoặc description
+        
+        // Search by title
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-            conditions.add("(c.Title LIKE ? OR c.Description LIKE ?)");
-            parameters.add("%" + searchTerm.trim() + "%");
+            conditions.add("(c.Title LIKE ?)");
             parameters.add("%" + searchTerm.trim() + "%");
         }
-
+        
         // Filter by price
         if (priceFilter != null && !priceFilter.trim().isEmpty()) {
             switch (priceFilter) {
@@ -54,20 +52,19 @@ public class CourseDAO extends DBContext {
                     break;
             }
         }
-
+        
         // Filter by topic
         if (topicFilter != null && !topicFilter.trim().isEmpty()) {
             String topicValue = topicFilter.trim();
-
-            // Kiểm tra xem có phải là "Topic X" format không (từ fallback)
+            
+            // Check the condition of fallback condition
             if (topicValue.startsWith("Topic ")) {
                 try {
-                    String topicIdStr = topicValue.substring(6); // Bỏ "Topic " prefix
+                    String topicIdStr = topicValue.substring(6); // REmove "Topic " prefix
                     Long topicId = Long.parseLong(topicIdStr);
                     conditions.add("c.Topic_Id = ?");
                     parameters.add(topicId);
                 } catch (NumberFormatException e) {
-                    // Nếu không parse được, bỏ qua filter này
                     System.err.println("Invalid topic ID format: " + topicValue);
                 }
             } else {
@@ -81,22 +78,20 @@ public class CourseDAO extends DBContext {
                 }
             }
         }
-
-        // Thêm WHERE clause nếu có điều kiện
-        if (!conditions.isEmpty()) {
-            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
-        }
-
-        sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n");
-
-        // Thêm HAVING clause cho rating filter
+        
+        // Rating filter
         if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
             double minRating = Double.parseDouble(ratingFilter);
             conditions.add("ISNULL(ar.AverageRating, 0) >= ?");
             parameters.add(minRating);
         }
-
-        // Thêm ORDER BY clause
+        
+        // Add WHERE clause if there is a condition
+        if (!conditions.isEmpty()) {
+            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
+        }
+        
+        // Add ORDER BY clause
         sql.append("ORDER BY ");
         switch (sortBy != null ? sortBy : "newest") {
             case "oldest":
@@ -115,13 +110,13 @@ public class CourseDAO extends DBContext {
                 sql.append("c.Created_At DESC");
                 break;
         }
-
+        
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
             // Set parameters
             for (int i = 0; i < parameters.size(); i++) {
                 statement.setObject(i + 1, parameters.get(i));
             }
-
+            
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Course course = new Course();
@@ -139,20 +134,18 @@ public class CourseDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        
         return courses;
     }
 
     public List<Course> getAllCourse() {
         List<Course> courses = new ArrayList<>();
-        String sql = "SELECT \n"
-                + "    c.*,\n"
-                + "    AVG(r.Rating) AS AverageRating\n"
+        String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n"
                 + "FROM Course c\n"
-                + "LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n"
-                + "GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n"
+                + "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n"
                 + "ORDER BY c.Created_At DESC;";
-        try (PreparedStatement statement = connection.prepareStatement(sql); ResultSet resultSet = statement.executeQuery()) {
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Course course = new Course();
                 course.setCourse_id(resultSet.getLong("Course_Id"));
@@ -178,7 +171,7 @@ public class CourseDAO extends DBContext {
         sql.append("SELECT COUNT(*) AS Total FROM (\n");
         sql.append("SELECT c.Course_Id\n");
         sql.append("FROM Course c\n");
-        sql.append("LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n");
+        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
 
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
@@ -223,15 +216,14 @@ public class CourseDAO extends DBContext {
             }
         }
 
-        if (!conditions.isEmpty()) {
-            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
+        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
+            double minRating = Double.parseDouble(ratingFilter);
+            conditions.add("ISNULL(ar.AverageRating, 0) >= ?");
+            parameters.add(minRating);
         }
 
-        sql.append("GROUP BY c.Course_Id\n");
-
-        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            sql.append("HAVING AVG(r.Rating) >= ?\n");
-            parameters.add(Double.parseDouble(ratingFilter));
+        if (!conditions.isEmpty()) {
+            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
         }
 
         sql.append(") t");
@@ -266,9 +258,9 @@ public class CourseDAO extends DBContext {
     public List<Course> getFilteredCoursesPaged(String searchTerm, String priceFilter, String ratingFilter, String sortBy, String topicFilter, int offset, int limit) {
         List<Course> courses = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT c.*, AVG(r.Rating) AS AverageRating\n");
+        sql.append("SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n");
         sql.append("FROM Course c\n");
-        sql.append("LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n");
+        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
 
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
@@ -313,15 +305,14 @@ public class CourseDAO extends DBContext {
             }
         }
 
-        if (!conditions.isEmpty()) {
-            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
+        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
+            double minRating = Double.parseDouble(ratingFilter);
+            conditions.add("ISNULL(ar.AverageRating, 0) >= ?");
+            parameters.add(minRating);
         }
 
-        sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n");
-
-        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            sql.append("HAVING AVG(r.Rating) >= ?\n");
-            parameters.add(Double.parseDouble(ratingFilter));
+        if (!conditions.isEmpty()) {
+            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
         }
 
         sql.append("ORDER BY ");
@@ -336,7 +327,7 @@ public class CourseDAO extends DBContext {
                 sql.append("c.Price DESC\n");
                 break;
             case "rating":
-                sql.append("AverageRating DESC\n");
+                sql.append("ar.AverageRating DESC\n");
                 break;
             default:
                 sql.append("c.Created_At DESC\n");
@@ -551,24 +542,38 @@ public class CourseDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        // Tạo đối tượng DAO
-        CourseDAO dao = new CourseDAO();
-
-        // Gọi hàm lấy course theo id, ví dụ id = 1
-        Long courseId = 1L;
-        List<Course> courses = dao.getCoursesByCreator(1);
-
-        // In ra để kiểm tra
-        for (Course c : courses) {
-            System.out.println("ID: " + c.getCourse_id());
-            System.out.println("Title: " + c.getTitle());
-            System.out.println("Description: " + c.getDescription());
-            System.out.println("Price: " + c.getPrice());
-            System.out.println("Thumbnail URL: " + c.getThumbnail_url());
-            System.out.println("Created At: " + c.getCreated_at());
-            System.out.println("Updated At: " + c.getUpdated_at());
-            System.out.println("Topic ID: " + c.getTopic_id());
-            System.out.println("-----------------------");
+        CourseDAO cdao = new CourseDAO();
+        
+        // Test basic query without filters
+        System.out.println("=== Testing basic query ===");
+        List<Course> allCourses = cdao.getAllCourse();
+        System.out.println("Total courses found: " + allCourses.size());
+        if (!allCourses.isEmpty()) {
+            System.out.println("First course: " + allCourses.get(0).getTitle());
+        }
+        
+        // Test filtered query
+        System.out.println("\n=== Testing filtered query ===");
+        List<Course> filteredCourses = cdao.getFilteredCourses("", "", "", "newest", "");
+        System.out.println("Filtered courses found: " + filteredCourses.size());
+        if (!filteredCourses.isEmpty()) {
+            System.out.println("First filtered course: " + filteredCourses.get(0).getTitle());
+        }
+        
+        // Test with search term
+        System.out.println("\n=== Testing with search term ===");
+        List<Course> searchCourses = cdao.getFilteredCourses("Java", "", "", "newest", "");
+        System.out.println("Search results found: " + searchCourses.size());
+        if (!searchCourses.isEmpty()) {
+            System.out.println("First search result: " + searchCourses.get(0).getTitle());
+        }
+        
+        // Test with price filter
+        System.out.println("\n=== Testing with price filter ===");
+        List<Course> priceCourses = cdao.getFilteredCourses("", "0-50", "", "newest", "");
+        System.out.println("Price filtered courses found: " + priceCourses.size());
+        if (!priceCourses.isEmpty()) {
+            System.out.println("First price filtered course: " + priceCourses.get(0).getTitle() + " - Price: $" + priceCourses.get(0).getPrice());
         }
     }
 

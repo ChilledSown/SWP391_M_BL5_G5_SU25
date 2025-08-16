@@ -1,70 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:choose>
-    <c:when test="${param.ajax == '1'}">
-        <div class="row" id="courses-list">
-            <c:set var="displayCourses" value="${pageCourses}" />
-            <c:if test="${empty displayCourses}">
-                <c:set var="displayCourses" value="${allCourses}" />
-            </c:if>
-            <c:forEach items="${displayCourses}" var="course">
-                <div class="col-lg-4">
-                    <div class="properties properties2 mb-30">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="${empty course.thumbnail_url ? 'assets/img/gallery/featured1.png' : course.thumbnail_url}" alt="${course.title}"></a>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">${course.title}</a></h3>
-                                <c:choose>
-                                    <c:when test="${not empty course.description and fn:length(course.description) > 100}">
-                                        <p>${fn:substring(course.description, 0, 100)}...</p>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <p>${course.description}</p>
-                                    </c:otherwise>
-                                </c:choose>
-                                <c:set var="courseTopic" value="${courseTopicsMap[course.course_id]}" />
-                                <c:if test="${not empty courseTopic}">
-                                    <div class="course-topic">
-                                        <span class="badge">
-                                            <i class="fas fa-tag"></i>${courseTopic.name}
-                                        </span>
-                                    </div>
-                                </c:if>
-                                <div class="properties__footer d-flex justify-content-between align-items-center">
-                                    <div class="restaurant-name">
-                                        <div class="rating">
-                                            <c:set var="rating" value="${course.averageRating}" />
-                                            <c:forEach var="i" begin="1" end="5">
-                                                <c:choose>
-                                                    <c:when test="${rating >= i}">
-                                                        <i class="fas fa-star"></i>
-                                                    </c:when>
-                                                    <c:when test="${rating >= (i - 0.5)}">
-                                                        <i class="fas fa-star-half"></i>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <i class="far fa-star"></i>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </c:forEach>
-                                        </div>
-                                        <p><span>(${rating})</span> rating</p>
-                                    </div>
-                                    <div class="price">
-                                        <span>$${course.price}</span>
-                                    </div>
-                                </div>
-                                <a href="#" class="border-btn border-btn2">Find out more</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </c:forEach>
-        </div>
-    </c:when>
-    <c:otherwise>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -730,29 +665,35 @@
                             </div>
                         </div>
                 <div class="row" id="courses-list">
-                    <c:set var="displayCourses" value="${pageCourses}" />
-                    <c:if test="${empty displayCourses}">
-                        <c:set var="displayCourses" value="${allCourses}" />
-                    </c:if>
-                    <c:choose>
-                        <c:when test="${not empty displayCourses}">
-                            <c:forEach items="${displayCourses}" var="course">
-                                <div class="col-lg-4">
-                                    <div class="properties properties2 mb-30">
-                                        <div class="properties__card">
-                                            <div class="properties__img overlay1">
-                                                <a href="#"><img src="${empty course.thumbnail_url ? 'assets/img/gallery/featured1.png' : course.thumbnail_url}" alt="${course.title}"></a>
-                                            </div>
-                                            <div class="properties__caption">
-                                                <h3><a href="#">${course.title}</a></h3>
+                    <c:if test="${not empty allCourses}">
+                        <c:forEach var="course" items="${allCourses}">
+                            <div class="col-lg-4">
+                                <div class="properties properties2 mb-30">
+                                    <div class="properties__card">
+                                        <div class="properties__img overlay1">
+                                            <a href="#"><img src="<c:out value="${empty course.thumbnail_url ? 'assets/img/gallery/featured1.png' : course.thumbnail_url}" />" alt="${course.title}"></a>
+                                        </div>
+                                        <div class="properties__caption">
+                                            <h3><a href="#">${course.title}</a></h3>
+                                            <p>
                                                 <c:choose>
-                                                    <c:when test="${not empty course.description and fn:length(course.description) > 100}">
-                                                        <p>${fn:substring(course.description, 0, 100)}...</p>
+                                                    <c:when test="${empty course.description}">
+                                                        No description available
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <p>${course.description}</p>
+                                                        <c:choose>
+                                                            <c:when test="${fn:length(course.description) > 100}">
+                                                                ${fn:substring(course.description, 0, 100)}...
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                ${course.description}
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </c:otherwise>
                                                 </c:choose>
+                                            </p>
+                                            
+                                            <c:if test="${not empty courseTopicsMap}">
                                                 <c:set var="courseTopic" value="${courseTopicsMap[course.course_id]}" />
                                                 <c:if test="${not empty courseTopic}">
                                                     <div class="course-topic">
@@ -761,57 +702,53 @@
                                                         </span>
                                                     </div>
                                                 </c:if>
-                                                <div class="properties__footer d-flex justify-content-between align-items-center">
-                                                    <div class="restaurant-name">
-                                                        <div class="rating">
-                                                            <c:set var="rating" value="${course.averageRating}" />
-                                                            <c:forEach var="i" begin="1" end="5">
-                                                                <c:choose>
-                                                                    <c:when test="${rating >= i}">
-                                                                        <i class="fas fa-star"></i>
-                                                                    </c:when>
-                                                                    <c:when test="${rating >= (i - 0.5)}">
-                                                                        <i class="fas fa-star-half"></i>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <i class="far fa-star"></i>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </c:forEach>
-                                                        </div>
-                                                        <p><span>(${rating})</span> rating</p>
+                                            </c:if>
+                                            
+                                            <div class="properties__footer d-flex justify-content-between align-items-center">
+                                                <div class="restaurant-name">
+                                                    <div class="rating">
+                                                        <c:set var="rating" value="${course.averageRating}" />
+                                                        <c:forEach begin="1" end="5" var="i">
+                                                            <c:choose>
+                                                                <c:when test="${i <= rating}">
+                                                                    <i class="fas fa-star"></i>
+                                                                </c:when>
+                                                                <c:when test="${(i - 0.5) <= rating and rating < i}">
+                                                                    <i class="fas fa-star-half"></i>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <i class="far fa-star"></i>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:forEach>
                                                     </div>
-                                                    <div class="price">
-                                                        <span>$${course.price}</span>
-                                                    </div>
+                                                    <p><span>(${rating})</span> rating</p>
                                                 </div>
-                                                <a href="#" class="border-btn border-btn2">Find out more</a>
+                                                <div class="price">
+                                                    <span>$${course.price}</span>
+                                                </div>
                                             </div>
+                                            <a href="#" class="border-btn border-btn2">Find out more</a>
                                         </div>
                                     </div>
                                 </div>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="col-12 text-center">
-                                <p>Cannot found other courses.</p>
                             </div>
-                        </c:otherwise>
-                    </c:choose>
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${empty allCourses}">
+                        <div class="col-12 text-center">
+                            <p>Cannot found other courses.</p>
+                        </div>
+                    </c:if>
                 </div>
                 
                 <!-- Load More Button -->
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mt-40">
-                            <c:choose>
-                                <c:when test="${hasMore}">
-                                    <button id="loadMoreBtn" class="border-btn" data-page="${page}" data-size="${size}">Load More</button>
-                                </c:when>
-                                <c:otherwise>
-                                    <button id="loadMoreBtn" class="border-btn" data-page="${page}" data-size="${size}" style="display:none">Load More</button>
-                                </c:otherwise>
-                            </c:choose>
+                            <c:if test="${hasMore}">
+                                <button id="loadMoreBtn" class="border-btn" onclick="loadMore()">Load More</button>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -1014,41 +951,12 @@
     
     <!-- Load more pagination -->
     <script>
-        (function(){
-            const btn = document.getElementById('loadMoreBtn');
-            if(!btn) return;
-            btn.addEventListener('click', function(e){
-                e.preventDefault();
-                const list = document.getElementById('courses-list');
-                let page = parseInt(btn.getAttribute('data-page') || '1', 10);
-                const size = parseInt(btn.getAttribute('data-size') || '6', 10);
-                const params = new URLSearchParams(window.location.search);
-                params.set('page', String(page + 1));
-                params.set('size', String(size));
-                params.set('ajax', '1');
-                fetch('courses?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-                  .then(r => r.text())
-                  .then(html => {
-                      const temp = document.createElement('div');
-                      temp.innerHTML = html;
-                      const newItems = temp.querySelectorAll('.col-lg-4');
-                      if (newItems.length === 0) {
-                          btn.style.display = 'none';
-                          return;
-                      }
-                      newItems.forEach(el => list.appendChild(el));
-                      btn.setAttribute('data-page', String(page + 1));
-                      const total = parseInt('${totalResults}', 10);
-                      const displayed = list.querySelectorAll('.col-lg-4').length;
-                      if (displayed >= total) {
-                          btn.style.display = 'none';
-                      }
-                  })
-                  .catch(() => btn.style.display = 'none');
-            });
-        })();
+        function loadMore() {
+            const currentUrl = new URL(window.location);
+            const currentPage = parseInt(currentUrl.searchParams.get('page') || '1');
+            currentUrl.searchParams.set('page', currentPage + 1);
+            window.location.href = currentUrl.toString();
+        }
     </script>
-    </c:otherwise>
-</c:choose>
 </body>
 </html>
