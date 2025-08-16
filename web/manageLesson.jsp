@@ -1,9 +1,8 @@
-<%-- 
-    Document   : manageLesson
+<%--
+    Document : manageLesson
     Created on : Aug 15, 2025, 4:21:01 PM
-    Author     : Admin
+    Author : Admin
 --%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -13,8 +12,7 @@
     </head>
     <body class="container mt-5">
         <h2>Manage Lessons for Course ID: ${courseId}</h2>
-        <a href="courseDetail?courseId=${courseId}" class="btn btn-secondary mb-3" > Back to Course Detail </a>
-
+        <a href="courseDetail?courseId=${courseId}" class="btn btn-secondary mb-3">Back to Course Detail</a>
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -26,12 +24,10 @@
                     <th>Action</th>
                     <th>Edit</th>
                 </tr>
-
             </thead>
             <tbody>
                 <c:forEach var="lesson" items="${lessons}">
                     <tr>
-
                         <td>${lesson.title}</td>
                         <td><a href="${lesson.videoUrl}" target="_blank">Video</a></td>
                         <td>${lesson.content}</td>
@@ -44,22 +40,16 @@
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                             </form>
                         </td>
-                        
                         <td>
                             <button class="btn btn-warning btn-sm"
                                     onclick="openEditLesson('${lesson.lessonId}', '${courseId}')">
                                 Edit
                             </button>
                         </td>
-
-
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
-
-
-
         <!-- Nút mở popup modal -->
         <button class="btn btn-success" onclick="openLessonForm('${param.courseId}')">
             Add Lesson
@@ -69,7 +59,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add Lesson</h5>
+                        <h5 class="modal-title" id="lessonFormModalLabel">Add Lesson</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-0" style="height: 500px;">
@@ -78,30 +68,23 @@
                 </div>
             </div>
         </div>
-
-
         <!-- Bootstrap 5 modal script -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             function openLessonForm(courseId) {
                 var url = 'lesson_form.jsp?courseId=' + courseId;
                 document.getElementById('lessonFormFrame').src = url;
+                document.getElementById('lessonFormModalLabel').innerText = 'Add Lesson';
                 var modal = new bootstrap.Modal(document.getElementById('lessonFormModal'));
                 modal.show();
             }
-
             function openEditLesson(lessonId, courseId) {
-                var url = 'lesson_form.jsp?lessonId=' + lessonId + '&courseId=' + courseId;
+                var url = 'editLesson?lessonId=' + lessonId + '&courseId=' + courseId;
                 document.getElementById('lessonFormFrame').src = url;
+                document.getElementById('lessonFormModalLabel').innerText = 'Edit Lesson';
                 var modal = new bootstrap.Modal(document.getElementById('lessonFormModal'));
                 modal.show();
             }
         </script>
-
-
-
-
     </body>
 </html>
-
-

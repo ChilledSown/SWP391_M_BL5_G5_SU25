@@ -11,7 +11,6 @@
 <c:if test="${totalPages > 1}">
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
-
             <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
                 <a class="page-link" href="${baseUrl}&page=${currentPage - 1}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
@@ -29,7 +28,6 @@
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
-
         </ul>
     </nav>
 </c:if>

@@ -36,10 +36,17 @@ public class ForgotPasswordServlet extends HttpServlet {
 
         String email = request.getParameter("email");
 
-        // Kiểm tra email tồn tại
+       if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("message", "Email cannot be empty.");
+            request.setAttribute("email", email); 
+            request.getRequestDispatcher("forgot_password.jsp").forward(request, response);
+            return;
+        }
+
         User user = userDAO.getUserByEmail(email);
         if (user == null) {
-            request.setAttribute("error", "Email không tồn tại.");
+            request.setAttribute("message", "Email does not exist.");
+            request.setAttribute("email", email); 
             request.getRequestDispatcher("forgot_password.jsp").forward(request, response);
             return;
         }

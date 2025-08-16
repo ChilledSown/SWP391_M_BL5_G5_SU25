@@ -356,6 +356,10 @@
                                                     sections.forEach(section => section.style.display = 'none');
                                                 }
                                             });
+
         </script>
+
+
     </body>
+    <jsp:include page="pagination.jsp" />
 </html>
