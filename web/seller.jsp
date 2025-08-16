@@ -151,13 +151,13 @@
 
                                 <!-- Search by title -->
                                 <div class="form-group mr-3">
-                                    <label for="title" class="mr-2">Title:</label>
+                                    <label for="title" class="mr-2">Search Courses</label>
                                     <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
                                 </div>
 
                                 <!-- Search by created date -->
                                 <div class="form-group mr-3">
-                                    <label for="createdDate" class="mr-2">Created Date:</label>
+                                    <label for="createdDate" class="mr-2">Date:</label>
                                     <input type="date" class="form-control" name="createdDate" id="createdDate" value="${param.createdDate}">
                                 </div>
 

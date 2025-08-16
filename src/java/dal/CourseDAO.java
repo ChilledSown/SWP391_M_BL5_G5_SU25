@@ -590,35 +590,36 @@ public class CourseDAO extends DBContext {
     public List<Course> getFilteredCoursesByCreatorPaged(int creatorId, String title, String createdDate, Long topicId, int offset, int limit) {
         List<Course> courses = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id, c.Status, ISNULL(ar.AverageRating, 0) AS AverageRating\n");
-        sql.append("FROM Course c\n");
-        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
-        sql.append("WHERE c.Created_By = ? AND c.Status = 'active'\n");
+        sql.append("SELECT c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, ");
+        sql.append("c.Created_At, c.Updated_At, c.Topic_Id, c.Status, ");
+        sql.append("ISNULL(ar.AverageRating, 0) AS AverageRating ");
+        sql.append("FROM Course c ");
+        sql.append("LEFT JOIN ( ");
+        sql.append("    SELECT Course_Id, AVG(Rating) AS AverageRating ");
+        sql.append("    FROM Review GROUP BY Course_Id ");
+        sql.append(") ar ON ar.Course_Id = c.Course_Id ");
+        sql.append("WHERE c.Created_By = ? AND c.Status = 'active' ");
 
         List<Object> parameters = new ArrayList<>();
         parameters.add(creatorId);
 
-        // Filter by title
-        if (title != null && !title.trim().isEmpty()) {
-            sql.append("AND c.Title LIKE ?\n");
-            parameters.add("%" + title.trim() + "%");
-        }
+        // 🔍 Fuzzy search theo title
+        sql.append(buildFuzzySqlCondition(title, parameters));
 
         // Filter by created date
         if (createdDate != null && !createdDate.trim().isEmpty()) {
-            sql.append("AND CAST(c.Created_At AS DATE) = ?\n");
+            sql.append(" AND CAST(c.Created_At AS DATE) = ? ");
             parameters.add(createdDate);
         }
 
         // Filter by topic
         if (topicId != null && topicId > 0) {
-            sql.append("AND c.Topic_Id = ?\n");
+            sql.append(" AND c.Topic_Id = ? ");
             parameters.add(topicId);
         }
 
-        sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id, c.Status\n");
-        sql.append("ORDER BY c.Title ASC\n");
-        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
+        sql.append("ORDER BY c.Title ASC ");
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
 
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
@@ -650,28 +651,25 @@ public class CourseDAO extends DBContext {
 
     public int countFilteredCoursesByCreator(int creatorId, String title, String createdDate, Long topicId) {
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT COUNT(*) AS Total\n");
-        sql.append("FROM Course c\n");
-        sql.append("WHERE c.Created_By = ? AND c.Status = 'active'\n");
+        sql.append("SELECT COUNT(*) AS Total ");
+        sql.append("FROM Course c ");
+        sql.append("WHERE c.Created_By = ? AND c.Status = 'active' ");
 
         List<Object> parameters = new ArrayList<>();
         parameters.add(creatorId);
 
-        // Filter by title
-        if (title != null && !title.trim().isEmpty()) {
-            sql.append("AND c.Title LIKE ?\n");
-            parameters.add("%" + title.trim() + "%");
-        }
+        // 🔍 Fuzzy search theo title
+        sql.append(buildFuzzySqlCondition(title, parameters));
 
         // Filter by created date
         if (createdDate != null && !createdDate.trim().isEmpty()) {
-            sql.append("AND CAST(c.Created_At AS DATE) = ?\n");
+            sql.append(" AND CAST(c.Created_At AS DATE) = ? ");
             parameters.add(createdDate);
         }
 
         // Filter by topic
         if (topicId != null && topicId > 0) {
-            sql.append("AND c.Topic_Id = ?\n");
+            sql.append(" AND c.Topic_Id = ? ");
             parameters.add(topicId);
         }
 
@@ -688,6 +686,21 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    // Tách từ khoá và build SQL LIKE nhiều phần validate seacj
+    private String buildFuzzySqlCondition(String input, List<Object> params) {
+        StringBuilder condition = new StringBuilder();
+        if (input != null && !input.trim().isEmpty()) {
+            String cleaned = input.trim().toLowerCase().replaceAll("\\s+", " ");
+            String[] keywords = cleaned.split(" ");
+
+            for (String keyword : keywords) {
+                condition.append(" AND LOWER(c.Title) LIKE ? ");
+                params.add("%" + keyword + "%");
+            }
+        }
+        return condition.toString();
     }
 
 }

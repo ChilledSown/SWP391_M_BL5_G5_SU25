@@ -4,8 +4,7 @@
  */
 package controller;
 
-import dal.CourseDAO;
-import dal.LessonDAO;
+import dal.QuizDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,14 +13,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Lesson;
+import model.Quiz;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ManageLessonServlet", urlPatterns = {"/manageLesson"})
-public class ManageLessonServlet extends HttpServlet {
+@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuiz"})
+public class ManageQuizServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +39,10 @@ public class ManageLessonServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageLessonServlet</title>");
+            out.println("<title>Servlet ManageQuizServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageLessonServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageQuizServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,52 +57,29 @@ public class ManageLessonServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        long courseId = Long.parseLong(request.getParameter("courseId"));
-        String title = request.getParameter("title");
-        String createdDate = request.getParameter("createdDate");
+  @Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        int page = 1;
-        int pageSize = 2;
-        String pageParam = request.getParameter("page");
-        if (pageParam != null) {
-            try {
-                page = Math.max(1, Integer.parseInt(pageParam));
-            } catch (NumberFormatException ignored) {
-            }
-        }
-        int offset = (page - 1) * pageSize;
+    String lessonIdRaw = request.getParameter("lessonId");
 
-        LessonDAO dao = new LessonDAO();
-
-        // Lấy dữ liệu phân trang
-        List<Lesson> lessons = dao.getFilteredLessonsByCoursePaged(courseId, title, createdDate, offset, pageSize);
-        int totalItems = dao.countFilteredLessonsByCourse(courseId, title, createdDate);
-        int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
-
-        // Truyền attribute
-        request.setAttribute("lessons", lessons);
-        request.setAttribute("courseId", courseId);
-        request.setAttribute("title", title);
-        request.setAttribute("createdDate", createdDate);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-
-        // Tạo baseUrl để phân trang giữ lại filter
-        StringBuilder baseUrl = new StringBuilder("manageLesson?courseId=" + courseId);
-        if (title != null) {
-            baseUrl.append("&title=").append(title);
-        }
-        if (createdDate != null) {
-            baseUrl.append("&createdDate=").append(createdDate);
-        }
-        baseUrl.append("&page"); // giữ chỗ cho ?page=X
-        request.setAttribute("baseUrl", baseUrl.toString());
-
-        request.getRequestDispatcher("manageLesson.jsp").forward(request, response);
+    if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing lessonId parameter.");
+        return;
     }
+
+    long lessonId = Long.parseLong(lessonIdRaw);
+
+    QuizDAO dao = new QuizDAO();
+    List<Quiz> quizzes = dao.getQuizzesByLessonId(lessonId);
+
+    // Gửi dữ liệu sang JSP
+    request.setAttribute("lessonId", lessonId);
+    request.setAttribute("quizzes", quizzes);
+
+    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
+}
+
 
     /**
      * Handles the HTTP <code>POST</code> method.
