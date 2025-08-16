@@ -210,6 +210,7 @@
                     <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
                 </header>
                 <div style="color:green">${message}</div>                         
+
             </main>
         </div>     
     </body>
