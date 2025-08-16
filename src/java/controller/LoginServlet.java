@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
                         response.sendRedirect("home");
                         break;
                     case "seller":
-                        response.sendRedirect("seller");
+                        response.sendRedirect("listCousera");
                         break;
                 }
             } else {

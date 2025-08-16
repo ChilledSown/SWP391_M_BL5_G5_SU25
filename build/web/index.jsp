@@ -321,7 +321,6 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">                                                                                          
-
                                                 <li class="active" ><a href="home">Home</a></li>
                                                 <li><a href="courses">Courses</a></li>
                                                 <li><a href="about.jsp">About</a></li>

@@ -20,6 +20,8 @@ import model.Course;
  *
  * @author Admin
  */
+// list , pagintion , search
+
 @WebServlet(name = "ListCouseraSeller", urlPatterns = {"/listCousera"})
 //@WebServlet(urlPatterns = {"/listCousera"})
 public class ListCouseraSeller extends HttpServlet {
@@ -59,43 +61,45 @@ public class ListCouseraSeller extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-//   @Override
-//protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//        throws ServletException, IOException {
-//
-//    HttpSession session = request.getSession();
-//    model.User currentUser = (model.User) session.getAttribute("currentUser");
-//
-    ////    if (currentUser == null || !"seller".equals(currentUser.getRole())) {
-////        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập.");
-////        return;
-////    }
-//
-//    CourseDAO dao = new CourseDAO();
-//    List<Course> courses = dao.getCoursesByCreator(currentUser.getUser_id().intValue());
-//
-//    request.setAttribute("courses", courses);
-//    request.getRequestDispatcher("list_course.jsp").forward(request, response);
-//}
-// check truoc khi luu sesssion
-    
- @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String idParam = request.getParameter("userId");
-        int userId = 2; // mặc định
-        if (idParam != null && !idParam.isEmpty()) {
+        HttpSession session = request.getSession();
+        model.User currentUser = (model.User) session.getAttribute("user");
+
+        if (currentUser == null || !"seller".equals(currentUser.getRole())) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        int userId = currentUser.getUser_id().intValue();
+
+        // Lấy page và pageSize
+        int page = 1;
+        int pageSize = 3;
+
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
             try {
-                userId = Integer.parseInt(idParam);
+                page = Math.max(1, Integer.parseInt(pageParam));
             } catch (NumberFormatException ignored) {
             }
         }
+        int offset = (page - 1) * pageSize;
 
         CourseDAO dao = new CourseDAO();
-        List<Course> courses = dao.getCoursesByCreator(userId);
 
+        // Lấy total và danh sách phân trang
+        int totalItems = dao.getTotalCoursesByCreator(userId);
+        int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
+        List<Course> courses = dao.getCoursesByCreatorPaged(userId, offset, pageSize);
+
+        // Gửi sang JSP
         request.setAttribute("courses", courses);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("baseUrl", "listCousera"); // dùng cho phân trang
         request.getRequestDispatcher("seller.jsp").forward(request, response);
     }
 

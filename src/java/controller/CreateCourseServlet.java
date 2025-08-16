@@ -73,40 +73,6 @@ public class CreateCourseServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//
-//        request.setCharacterEncoding("UTF-8");
-//
-//        String title = request.getParameter("title");
-//        String description = request.getParameter("description");
-//        int price = Integer.parseInt(request.getParameter("price"));
-//        String thumbnailUrl = request.getParameter("thumbnail_url");
-//        Long topicId = Long.parseLong(request.getParameter("topic_id"));
-//
-//        HttpSession session = request.getSession();
-//        User currentUser = (User) session.getAttribute("currentUser");
-//
-//        if (currentUser == null) {
-//            response.sendRedirect("login.jsp");
-//            return;
-//        }
-//
-//        Course course = new Course();
-//        course.setTitle(title);
-//        course.setDescription(description);
-//        course.setPrice(price);
-//        course.setThumbnail_url(thumbnailUrl);
-//        course.setCreated_at(new Date());
-//        course.setTopic_id(topicId);
-//
-//        CourseDAO dao = new CourseDAO();
-//        dao.insertCourse(course, currentUser.getUser_id());
-//
-//        response.sendRedirect("listCousera");
-//
-//    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -119,8 +85,20 @@ public class CreateCourseServlet extends HttpServlet {
         String thumbnailUrl = request.getParameter("thumbnail_url");
         Long topicId = Long.parseLong(request.getParameter("topic_id"));
 
-        long hardcodedUserId = 2;
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
 
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        CourseDAO dao = new CourseDAO();
+
+        // 🔍 Kiểm tra trùng title
+        boolean isDuplicate = dao.isTitleExists(title);
+
+        // ✅ Tiếp tục thêm vào CSDL
         Course course = new Course();
         course.setTitle(title);
         course.setDescription(description);
@@ -129,8 +107,12 @@ public class CreateCourseServlet extends HttpServlet {
         course.setCreated_at(new Date());
         course.setTopic_id(topicId);
 
-        CourseDAO dao = new CourseDAO();
-        dao.insertCourse(course, hardcodedUserId); // sử dụng user_id = 2
+        dao.insertCourse(course, currentUser.getUser_id());
+
+        // ✅ Gửi thông báo nếu có trùng
+        if (isDuplicate) {
+            request.getSession().setAttribute("duplicateMessage", "⚠️ Course title already exists. You may want to use a different title.");
+        }
 
         response.sendRedirect("listCousera");
     }

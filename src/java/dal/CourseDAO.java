@@ -171,7 +171,7 @@ public class CourseDAO extends DBContext {
         }
         return courses;
     }
-    
+
     // Pagination helpers
     public int countFilteredCourses(String searchTerm, String priceFilter, String ratingFilter, String topicFilter) {
         StringBuilder sql = new StringBuilder();
@@ -375,9 +375,9 @@ public class CourseDAO extends DBContext {
     public List<Course> getAllCoursePaged(int offset, int limit) {
         List<Course> courses = new ArrayList<>();
         String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating "
-                   + "FROM Course c "
-                   + "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id "
-                   + "ORDER BY c.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                + "FROM Course c "
+                + "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id "
+                + "ORDER BY c.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, offset);
             statement.setInt(2, limit);
@@ -400,7 +400,7 @@ public class CourseDAO extends DBContext {
         }
         return courses;
     }
-    
+
     public List<Course> get3LatestCourse() {
         List<Course> courses = new ArrayList<>();
         String sql = "SELECT TOP 3 c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n"
@@ -520,74 +520,174 @@ public class CourseDAO extends DBContext {
         }
         return null;
     }
-    
+
     // lay phan trang theo ID chu khong phai All tren kia 
-    
     public List<Course> getCoursesByCreatorPaged(int creatorId, int offset, int limit) {
-    List<Course> courses = new ArrayList<>();
-    String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating "
-               + "FROM Course c "
-               + "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id "
-               + "WHERE c.creator_id = ? "
-               + "ORDER BY c.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setInt(1, creatorId);
-        statement.setInt(2, offset);
-        statement.setInt(3, limit);
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            Course course = new Course();
-            course.setCourse_id(resultSet.getLong("Course_Id"));
-            course.setTitle(resultSet.getString("Title"));
-            course.setDescription(resultSet.getString("Description"));
-            course.setPrice(resultSet.getInt("Price"));
-            course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
-            course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
-            course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
-            course.setTopic_id(resultSet.getLong("Topic_Id"));
-            course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
-            courses.add(course);
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n"
+                + "FROM Course c\n"
+                + "LEFT JOIN (\n"
+                + "    SELECT Course_Id, AVG(Rating) AS AverageRating\n"
+                + "    FROM Review\n"
+                + "    GROUP BY Course_Id\n"
+                + ") ar ON ar.Course_Id = c.Course_Id\n"
+                + "WHERE c.Created_By = ? AND c.Status = 'active'\n"
+                + "ORDER BY c.Title ASC\n"
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, creatorId);
+            statement.setInt(2, offset);
+            statement.setInt(3, limit);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return courses;
     }
-    return courses;
-}
+
     // lay count de phan trang 
     public int getTotalCoursesByCreator(int creatorId) {
-    String sql = "SELECT COUNT(*) FROM Course WHERE creator_id = ?";
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setInt(1, creatorId);
-        ResultSet rs = statement.executeQuery();
-        if (rs.next()) {
-            return rs.getInt(1);
+        String sql = "SELECT COUNT(*) FROM Course WHERE Created_By = ? AND Status = 'active'";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, creatorId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return 0;
     }
-    return 0;
-}
 
-
-    public static void main(String[] args) {
-        // Tạo đối tượng DAO
-        CourseDAO dao = new CourseDAO();
-
-        // Gọi hàm lấy course theo id, ví dụ id = 1
-        Long courseId = 1L;
-        List<Course> courses = dao.getCoursesByCreator(1);
-
-        // In ra để kiểm tra
-        for (Course c : courses) {
-            System.out.println("ID: " + c.getCourse_id());
-            System.out.println("Title: " + c.getTitle());
-            System.out.println("Description: " + c.getDescription());
-            System.out.println("Price: " + c.getPrice());
-            System.out.println("Thumbnail URL: " + c.getThumbnail_url());
-            System.out.println("Created At: " + c.getCreated_at());
-            System.out.println("Updated At: " + c.getUpdated_at());
-            System.out.println("Topic ID: " + c.getTopic_id());
-            System.out.println("-----------------------");
+    //check title trung 
+    public boolean isTitleExists(String title) {
+        String sql = "SELECT 1 FROM Course WHERE Title = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, title);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // Nếu có bản ghi => title đã tồn tại
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
+
+    // filter by ID 
+    public List<Course> getFilteredCoursesByCreatorPaged(int creatorId, String title, String createdDate, Long topicId, int offset, int limit) {
+        List<Course> courses = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id, c.Status, ISNULL(ar.AverageRating, 0) AS AverageRating\n");
+        sql.append("FROM Course c\n");
+        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
+        sql.append("WHERE c.Created_By = ? AND c.Status = 'active'\n");
+
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(creatorId);
+
+        // Filter by title
+        if (title != null && !title.trim().isEmpty()) {
+            sql.append("AND c.Title LIKE ?\n");
+            parameters.add("%" + title.trim() + "%");
+        }
+
+        // Filter by created date
+        if (createdDate != null && !createdDate.trim().isEmpty()) {
+            sql.append("AND CAST(c.Created_At AS DATE) = ?\n");
+            parameters.add(createdDate);
+        }
+
+        // Filter by topic
+        if (topicId != null && topicId > 0) {
+            sql.append("AND c.Topic_Id = ?\n");
+            parameters.add(topicId);
+        }
+
+        sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id, c.Status\n");
+        sql.append("ORDER BY c.Title ASC\n");
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
+
+        try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            for (Object param : parameters) {
+                statement.setObject(paramIndex++, param);
+            }
+            statement.setInt(paramIndex++, offset);
+            statement.setInt(paramIndex, limit);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
+
+    public int countFilteredCoursesByCreator(int creatorId, String title, String createdDate, Long topicId) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) AS Total\n");
+        sql.append("FROM Course c\n");
+        sql.append("WHERE c.Created_By = ? AND c.Status = 'active'\n");
+
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(creatorId);
+
+        // Filter by title
+        if (title != null && !title.trim().isEmpty()) {
+            sql.append("AND c.Title LIKE ?\n");
+            parameters.add("%" + title.trim() + "%");
+        }
+
+        // Filter by created date
+        if (createdDate != null && !createdDate.trim().isEmpty()) {
+            sql.append("AND CAST(c.Created_At AS DATE) = ?\n");
+            parameters.add(createdDate);
+        }
+
+        // Filter by topic
+        if (topicId != null && topicId > 0) {
+            sql.append("AND c.Topic_Id = ?\n");
+            parameters.add(topicId);
+        }
+
+        try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            for (Object param : parameters) {
+                statement.setObject(paramIndex++, param);
+            }
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }
