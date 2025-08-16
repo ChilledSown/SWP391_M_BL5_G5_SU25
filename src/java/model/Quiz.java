@@ -1,22 +1,81 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Date;
 
-/**
- *
- * @author sondo
- */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Quiz {
-    private Long quiz_id;
+    private Long quizId;
+    private String question;
+    private String answerOptions;
+    private String correctAnswer;
+    private Date createdAt;
+    private Date updatedAt;
+    private Long lessonId;
+    private String lessonTitle;
+     
+
+public String getLessonTitle() {
+    return lessonTitle;
+}
+
+public void setLessonTitle(String lessonTitle) {
+    this.lessonTitle = lessonTitle;
+}
+
+
+    // Getter & Setter
+    public Long getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(Long quizId) {
+        this.quizId = quizId;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswerOptions() {
+        return answerOptions;
+    }
+
+    public void setAnswerOptions(String answerOptions) {
+        this.answerOptions = answerOptions;
+    }
+
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(Long lessonId) {
+        this.lessonId = lessonId;
+    }
 }

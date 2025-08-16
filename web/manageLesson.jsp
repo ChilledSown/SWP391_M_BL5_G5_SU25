@@ -13,6 +13,24 @@
     <body class="container mt-5">
         <h2>Manage Lessons for Course ID: ${courseId}</h2>
         <a href="courseDetail?courseId=${courseId}" class="btn btn-secondary mb-3">Back to Course Detail</a>
+        <form method="get" action="manageLesson" class="mb-3">
+            <input type="hidden" name="courseId" value="${courseId}" />
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="createdDate" class="form-control" value="${param.createdDate}" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+                <div class="col-md-2">
+                    <a href="manageLesson?courseId=${courseId}" class="btn btn-secondary w-100">Reset</a>
+                </div>
+            </div>
+        </form>
+
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -23,6 +41,7 @@
                     <th>Updated</th>
                     <th>Action</th>
                     <th>Edit</th>
+                    <th>Quiz</th>   <%-- Thêm cột Quiz --%>
                 </tr>
             </thead>
             <tbody>
@@ -34,7 +53,8 @@
                         <td>${lesson.createdAt}</td>
                         <td>${lesson.updatedAt}</td>
                         <td>
-                            <form action="deleteLesson" method="post" onsubmit="return confirm('Are you sure you want to delete this lesson?');">
+                            <form action="deleteLesson" method="post" 
+                                  onsubmit="return confirm('Are you sure you want to delete this lesson?');">
                                 <input type="hidden" name="lessonId" value="${lesson.lessonId}" />
                                 <input type="hidden" name="courseId" value="${courseId}" />
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -46,10 +66,23 @@
                                 Edit
                             </button>
                         </td>
+                        <td>
+                            <a href="manageQuiz?lessonId=${lesson.lessonId}" 
+                               class="btn btn-info btn-sm">
+                                Manage Quiz
+                            </a>
+                        </td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
+
+        <jsp:include page="pagination.jsp">
+            <jsp:param name="currentPage" value="${currentPage}" />
+            <jsp:param name="totalPages" value="${totalPages}" />
+            <jsp:param name="baseUrl" value="${baseUrl}" />
+        </jsp:include>
+
         <!-- Nút mở popup modal -->
         <button class="btn btn-success" onclick="openLessonForm('${param.courseId}')">
             Add Lesson
