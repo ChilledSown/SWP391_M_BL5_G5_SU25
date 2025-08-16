@@ -78,7 +78,7 @@
 
                     <div class="form-input">
                         <label for="name">Email</label>
-                        <input  type="email" name="email" placeholder="example@gmail.com">
+                        <input  type="email" name="email" value="${email}" placeholder="example@gmail.com">
                     </div>   
 
                     <div class="form-input pt-30">                    
