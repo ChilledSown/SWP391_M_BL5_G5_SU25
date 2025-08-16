@@ -65,6 +65,11 @@
         }
         .main-header {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .user-table {
             width: 100%;
@@ -120,28 +125,62 @@
             cursor: pointer;
             font-weight: bold;
             margin-bottom: 20px;
+            transition: background-color 0.3s ease;
         }
         .create-btn:hover {
             background-color: #2980b9;
         }
         .search-section {
-            margin-bottom: 20px;
             display: flex;
             gap: 10px;
             align-items: center;
         }
         .search-section input[type="text"] {
-            padding: 8px 12px;
+            padding: 10px 12px;
             font-size: 16px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 4px;
             width: 300px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-section input[type="text"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+        .role-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .role-section label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+        .role-section select {
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .role-section select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+        .role-section select:hover {
+            border-color: #3498db;
         }
         .search-section button {
             background-color: #2ecc71;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
@@ -154,7 +193,7 @@
             background-color: #e67e22;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 10px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
@@ -164,7 +203,7 @@
             background-color: #d35400;
         }
         .edit-btn {
-            background-color: #7f0055;
+            background-color: #2ecc71;
             border: none;
             padding: 8px 12px;
             border-radius: 4px;
@@ -190,6 +229,22 @@
         .delete-btn:hover {
             background-color: #c0392b;
         }
+        @media (max-width: 768px) {
+            .main-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-section input[type="text"] {
+                width: 100%;
+            }
+            .role-section {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .role-section select {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -211,14 +266,28 @@
         <main class="main-content">
             <header class="main-header">
                 <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
+                <!-- Role Dropdown -->
+                <div class="role-section">
+                    <label for="role">Select Role:</label>
+                    <form action="manageuser" method="get">
+                        <input type="hidden" name="searchQuery" value="${searchQuery}">
+                        <select name="role" id="role" onchange="this.form.submit()">
+                            <option value="all" <c:if test="${selectedRole == 'all'}">selected</c:if>>All</option>
+                            <option value="admin" <c:if test="${selectedRole == 'admin'}">selected</c:if>>Admin</option>
+                            <option value="seller" <c:if test="${selectedRole == 'seller'}">selected</c:if>>Seller</option>
+                            <option value="customer" <c:if test="${selectedRole == 'customer'}">selected</c:if>>Customer</option>
+                        </select>
+                    </form>
+                </div>
             </header>
             <div style="color:green">${message}</div>
             <!-- Search Section -->
             <div class="search-section">
                 <form action="manageuser" method="get">
+                    <input type="hidden" name="role" value="${selectedRole}">
                     <input type="text" name="searchQuery" value="${searchQuery}" placeholder="Enter user name...">
-                    <button type="submit">Apply</button>
-                    <a href="manageuser"><button type="button" class="reset-btn">Reset</button></a>
+                    <button type="submit">Search</button>
+                    <a href="manageuser?role=${selectedRole}"><button type="button" class="reset-btn">Reset</button></a>
                 </form>
             </div>
             <a href="manageuser?action=add"><button class="create-btn">Create User</button></a>
@@ -232,7 +301,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                 <th>Full Name</th>
+                                <th>Full Name</th>
                                 <th>Phone</th>
                                 <th>Address</th>
                                 <th>Email</th>
@@ -249,7 +318,7 @@
                                     <td>${user.phone}</td>
                                     <td>${user.address}</td>
                                     <td>${user.email}</td>
-                                     <td><fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy"/></td>
+                                    <td><fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy"/></td>
                                     <td>${user.accountStatus}</td>
                                     <td>
                                         <form action="manageuser" method="get" style="display:inline;">
@@ -273,18 +342,18 @@
             <!-- Pagination -->
             <div class="pagination">
                 <c:if test="${currentPage > 1}">
-                    <a href="manageuser?page=${currentPage - 1}&searchQuery=${searchQuery}">Previous</a>
+                    <a href="manageuser?page=${currentPage - 1}&searchQuery=${searchQuery}&role=${selectedRole}">Previous</a>
                 </c:if>
                 <c:if test="${currentPage <= 1}">
                     <a class="disabled">Previous</a>
                 </c:if>
 
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="manageuser?page=${i}&searchQuery=${searchQuery}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
+                    <a href="manageuser?page=${i}&searchQuery=${searchQuery}&role=${selectedRole}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
                 </c:forEach>
 
                 <c:if test="${currentPage < totalPages}">
-                    <a href="manageuser?page=${currentPage + 1}&searchQuery=${searchQuery}">Next</a>
+                    <a href="manageuser?page=${currentPage + 1}&searchQuery=${searchQuery}&role=${selectedRole}">Next</a>
                 </c:if>
                 <c:if test="${currentPage >= totalPages}">
                     <a class="disabled">Next</a>

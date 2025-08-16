@@ -29,7 +29,7 @@ public class UserDAO extends DBContext {
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
                     rs.getDate("Created_At"),
-                    rs.getDate("Updated_At") ,
+                    rs.getDate("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
@@ -147,13 +147,24 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    public List<User> getUsers(int page, int pageSize) {
+    public List<User> getUsers(int page, int pageSize, String role) {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM Users ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM Users");
+        boolean hasWhere = false;
+        if (!"all".equalsIgnoreCase(role)) {
+            sqlBuilder.append(" WHERE Role = ?");
+            hasWhere = true;
+        }
+        sqlBuilder.append(" ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        String sql = sqlBuilder.toString();
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, (page - 1) * pageSize);
-            ps.setInt(2, pageSize);
+            int paramIndex = 1;
+            if (hasWhere) {
+                ps.setString(paramIndex++, role);
+            }
+            ps.setInt(paramIndex++, (page - 1) * pageSize);
+            ps.setInt(paramIndex, pageSize);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 users.add(new User(
@@ -178,10 +189,121 @@ public class UserDAO extends DBContext {
         return users;
     }
 
-    public int getTotalUsers() {
-        String sql = "SELECT COUNT(*) FROM Users";
+    public int getTotalUsers(String role) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM Users");
+        boolean hasWhere = false;
+        if (!"all".equalsIgnoreCase(role)) {
+            sqlBuilder.append(" WHERE Role = ?");
+            hasWhere = true;
+        }
+        String sql = sqlBuilder.toString();
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
+            if (hasWhere) {
+                ps.setString(1, role);
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<User> getUsersByName(String searchQuery, int page, int pageSize, String role) {
+        List<User> users = new ArrayList<>();
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return getUsers(page, pageSize, role);  // Nếu không search, dùng getUsers với role
+        }
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
+        String[] keywords = searchQuery.split(" ");
+        if (keywords.length == 0) {
+            return getUsers(page, pageSize, role);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM Users WHERE ");
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sqlBuilder.append(" AND ");
+            }
+            sqlBuilder.append("(LOWER(FirstName) LIKE ? OR LOWER(MiddleName) LIKE ? OR LOWER(LastName) LIKE ?)");
+        }
+        if (!"all".equalsIgnoreCase(role)) {
+            sqlBuilder.append(" AND Role = ?");
+        }
+        sqlBuilder.append(" ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        String sql = sqlBuilder.toString();
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            for (String keyword : keywords) {
+                String pattern = "%" + keyword.toLowerCase() + "%";
+                ps.setString(paramIndex++, pattern);
+                ps.setString(paramIndex++, pattern);
+                ps.setString(paramIndex++, pattern);
+            }
+            if (!"all".equalsIgnoreCase(role)) {
+                ps.setString(paramIndex++, role);
+            }
+            ps.setInt(paramIndex++, (page - 1) * pageSize);
+            ps.setInt(paramIndex, pageSize);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new User(
+                    rs.getLong("UserID"),
+                    rs.getString("FirstName"),
+                    rs.getString("MiddleName"),
+                    rs.getString("LastName"),
+                    rs.getString("Avata_Url"),
+                    rs.getString("Phone"),
+                    rs.getString("Address"),
+                    rs.getString("Email"),
+                    rs.getString("PasswordHash"),
+                    rs.getString("Role"),
+                    rs.getDate("Created_At"),
+                    rs.getDate("Updated_At"),
+                    rs.getString("Account_Status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public int getTotalUsersByName(String searchQuery, String role) {
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return getTotalUsers(role);  // Nếu không search, dùng getTotalUsers với role
+        }
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
+        String[] keywords = searchQuery.split(" ");
+        if (keywords.length == 0) {
+            return getTotalUsers(role);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM Users WHERE ");
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sqlBuilder.append(" AND ");
+            }
+            sqlBuilder.append("(LOWER(FirstName) LIKE ? OR LOWER(MiddleName) LIKE ? OR LOWER(LastName) LIKE ?)");
+        }
+        if (!"all".equalsIgnoreCase(role)) {
+            sqlBuilder.append(" AND Role = ?");
+        }
+        String sql = sqlBuilder.toString();
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            for (String keyword : keywords) {
+                String pattern = "%" + keyword.toLowerCase() + "%";
+                ps.setString(paramIndex++, pattern);
+                ps.setString(paramIndex++, pattern);
+                ps.setString(paramIndex++, pattern);
+            }
+            if (!"all".equalsIgnoreCase(role)) {
+                ps.setString(paramIndex, role);
+            }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -267,95 +389,5 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public List<User> getUsersByName(String searchQuery, int page, int pageSize) {
-        List<User> users = new ArrayList<>();
-        if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            return users;
-        }
-        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
-        String[] keywords = searchQuery.split(" ");
-        if (keywords.length == 0) {
-            return users;
-        }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM Users WHERE ");
-        for (int i = 0; i < keywords.length; i++) {
-            if (i > 0) {
-                sqlBuilder.append(" AND ");
-            }
-            sqlBuilder.append("(LOWER(FirstName) LIKE ? OR LOWER(MiddleName) LIKE ? OR LOWER(LastName) LIKE ?)");
-        }
-        sqlBuilder.append(" ORDER BY UserID OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-        String sql = sqlBuilder.toString();
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            int paramIndex = 1;
-            for (String keyword : keywords) {
-                String pattern = "%" + keyword.toLowerCase() + "%";
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-            }
-            ps.setInt(paramIndex++, (page - 1) * pageSize);
-            ps.setInt(paramIndex, pageSize);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                users.add(new User(
-                    rs.getLong("UserID"),
-                    rs.getString("FirstName"),
-                    rs.getString("MiddleName"),
-                    rs.getString("LastName"),
-                    rs.getString("Avata_Url"),
-                    rs.getString("Phone"),
-                    rs.getString("Address"),
-                    rs.getString("Email"),
-                    rs.getString("PasswordHash"),
-                    rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
-                    rs.getString("Account_Status")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return users;
-    }
-
-    public int getTotalUsersByName(String searchQuery) {
-        if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            return 0;
-        }
-        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
-        String[] keywords = searchQuery.split(" ");
-        if (keywords.length == 0) {
-            return 0;
-        }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM Users WHERE ");
-        for (int i = 0; i < keywords.length; i++) {
-            if (i > 0) {
-                sqlBuilder.append(" AND ");
-            }
-            sqlBuilder.append("(LOWER(FirstName) LIKE ? OR LOWER(MiddleName) LIKE ? OR LOWER(LastName) LIKE ?)");
-        }
-        String sql = sqlBuilder.toString();
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            int paramIndex = 1;
-            for (String keyword : keywords) {
-                String pattern = "%" + keyword.toLowerCase() + "%";
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-                ps.setString(paramIndex++, pattern);
-            }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 }

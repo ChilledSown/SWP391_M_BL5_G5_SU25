@@ -50,14 +50,19 @@ public class ManageUserServlet extends HttpServlet {
         }
 
         String searchQuery = request.getParameter("searchQuery");
+        String role = request.getParameter("role");
+        if (role == null || role.trim().isEmpty()) {
+            role = "all"; // Mặc định all
+        }
+
         List<User> users;
         int totalUsers;
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            users = userDAO.getUsersByName(searchQuery, page, PAGE_SIZE);
-            totalUsers = userDAO.getTotalUsersByName(searchQuery);
+            users = userDAO.getUsersByName(searchQuery, page, PAGE_SIZE, role);
+            totalUsers = userDAO.getTotalUsersByName(searchQuery, role);
         } else {
-            users = userDAO.getUsers(page, PAGE_SIZE);
-            totalUsers = userDAO.getTotalUsers();
+            users = userDAO.getUsers(page, PAGE_SIZE, role);
+            totalUsers = userDAO.getTotalUsers(role);
         }
         int totalPages = (int) Math.ceil((double) totalUsers / PAGE_SIZE);
 
@@ -65,6 +70,7 @@ public class ManageUserServlet extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("searchQuery", searchQuery);
+        request.setAttribute("selectedRole", role); // Để giữ selected trong dropdown
 
         String message = (String) request.getSession().getAttribute("message");
         if (message != null) {
