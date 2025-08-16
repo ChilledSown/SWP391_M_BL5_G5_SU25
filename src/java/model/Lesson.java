@@ -1,27 +1,43 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
-import java.sql.Date;
+import java.util.Date;
 
+/**
+ *
+ * @author sondo
+ */
 public class Lesson {
-    private Long lesson_id;
+    private Long lessonId;
     private String title;
-    private String video_url;
+    private String videoUrl;
     private String content;
-    private Date created_at;
-    private Date updated_at;
-    private Long course_id;
+    private Date createdAt;
+    private Date updatedAt;
+    private Long courseId;
 
-    // Constructor
     public Lesson() {
     }
 
-    // Getters and Setters
-    public Long getLesson_id() {
-        return lesson_id;
+    public Lesson(Long lessonId, String title, String videoUrl, String content, Date createdAt, Date updatedAt, Long courseId) {
+        this.lessonId = lessonId;
+        this.title = title;
+        this.videoUrl = videoUrl;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.courseId = courseId;
     }
 
-    public void setLesson_id(Long lesson_id) {
-        this.lesson_id = lesson_id;
+    public Long getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(Long lessonId) {
+        this.lessonId = lessonId;
     }
 
     public String getTitle() {
@@ -32,12 +48,12 @@ public class Lesson {
         this.title = title;
     }
 
-    public String getVideo_url() {
-        return video_url;
+    public String getVideoUrl() {
+        return videoUrl;
     }
 
-    public void setVideo_url(String video_url) {
-        this.video_url = video_url;
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 
     public String getContent() {
@@ -48,27 +64,35 @@ public class Lesson {
         this.content = content;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getUpdated_at() {
-        return updated_at;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public Long getCourse_id() {
-        return course_id;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public void setCourse_id(Long course_id) {
-        this.course_id = course_id;
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
+
+    @Override
+    public String toString() {
+        return "Lesson{" + "lessonId=" + lessonId + ", title=" + title + ", videoUrl=" + videoUrl + ", content=" + content + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", courseId=" + courseId + '}';
+    }
+
+    
+    
 }
