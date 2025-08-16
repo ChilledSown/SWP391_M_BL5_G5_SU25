@@ -107,6 +107,7 @@
                     String topicIdValue = course != null ? String.valueOf(course.getTopic_id()) : "";
                 %>
                 <h2><%= headerText %></h2>
+                
                 <form action="<%= formAction %>" method="POST">
                     <input type="hidden" name="type" value="course">
                     <% if ("update".equals(action) && courseId != null) { %>
@@ -141,7 +142,7 @@
                     </div>
                     <div class="btn-group">
                         <button type="submit" class="btn btn-primary"><%= btnText %></button>
-                        <a href="seller.jsp" class="btn btn-secondary">Cancel</a>
+                        <a href="listCousera" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>

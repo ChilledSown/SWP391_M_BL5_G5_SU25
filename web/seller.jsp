@@ -2,6 +2,9 @@
 <%@ page import="model.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="dal.TopicDAO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Topic" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
     <head>
@@ -138,6 +141,44 @@
 
                             <!-- Course Management Section -->
 
+                            <%
+                                TopicDAO topicDAO = new TopicDAO();
+                                List<Topic> topics = topicDAO.getAllTopics(); // hoặc topicDAO.getTopicsByCreator nếu cần theo seller
+                            %>
+
+                            <form action="listCousera" method="get" class="form-inline mb-4">
+                                <input type="hidden" name="page" value="1" />
+
+                                <!-- Search by title -->
+                                <div class="form-group mr-3">
+                                    <label for="title" class="mr-2">Title:</label>
+                                    <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
+                                </div>
+
+                                <!-- Search by created date -->
+                                <div class="form-group mr-3">
+                                    <label for="createdDate" class="mr-2">Created Date:</label>
+                                    <input type="date" class="form-control" name="createdDate" id="createdDate" value="${param.createdDate}">
+                                </div>
+
+                                <!-- Filter by topic -->
+                                <div class="form-group mr-3">
+                                    <label for="topicId" class="mr-2">Topic:</label>
+                                    <select name="topicId" id="topicId" class="form-control">
+                                        <option value="">All Topics</option>
+                                        <% for (Topic t : topics) {%>
+                                        <option value="<%= t.getTopic_id()%>" <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : ""%>>
+                                            <%= t.getName()%>
+                                        </option>
+                                        <% }%>
+                                    </select>
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </form>
 
                             <!-- Blog Management Section -->
                             <div id="courses" class="management-section container mt-4">
@@ -163,7 +204,7 @@
                                                        class="btn btn-sm btn-warning">Update</a>
                                                     <a href="deleteCourse?courseId=${course.course_id}" 
                                                        class="btn btn-sm btn-danger" 
-                                                       onclick="return confirm('Bạn có chắc muốn xóa khóa học này?');">
+                                                       onclick="return confirm('Are you sure you want to delete this course??');">
                                                         Delete
                                                     </a>
 
@@ -176,6 +217,7 @@
                                         </c:forEach>
                                     </tbody>
                                 </table>
+                                <jsp:include page="pagination.jsp" />
                             </div>
 
                             <!-- Other Placeholder Sections -->
@@ -346,14 +388,15 @@
                                                     });
                                                 });
 
-                                                // Set initial active section to none (or use URL hash if present)
+                                                // Set initial active section to #courses by default
                                                 const initialSection = window.location.hash || '';
                                                 if (initialSection) {
                                                     document.querySelector(`#sidebarNav a[href="${initialSection}"]`).classList.add('active');
                                                     document.getElementById(initialSection.substring(1)).style.display = 'block';
                                                 } else {
-                                                    // No default section visible on load
-                                                    sections.forEach(section => section.style.display = 'none');
+                                                    // Mặc định hiển thị section courses nếu không có hash
+                                                    document.querySelector('#sidebarNav a[href="#courses"]').classList.add('active');
+                                                    document.getElementById('courses').style.display = 'block';
                                                 }
                                             });
 
@@ -361,5 +404,5 @@
 
 
     </body>
-    <jsp:include page="pagination.jsp" />
+
 </html>
