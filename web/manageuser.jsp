@@ -65,11 +65,13 @@
         }
         .main-header {
             margin-bottom: 20px;
+        }
+        .header-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
         .user-table {
             width: 100%;
@@ -134,6 +136,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex: 1;
         }
         .search-section input[type="text"] {
             padding: 10px 12px;
@@ -230,9 +233,12 @@
             background-color: #c0392b;
         }
         @media (max-width: 768px) {
-            .main-header {
+            .header-controls {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            .search-section {
+                width: 100%;
             }
             .search-section input[type="text"] {
                 width: 100%;
@@ -266,29 +272,30 @@
         <main class="main-content">
             <header class="main-header">
                 <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
-                <!-- Role Dropdown -->
+            </header>
+            <div style="color:green">${message}</div>
+            <!-- Search and Role Section -->
+            <div class="header-controls">
+                <div class="search-section">
+                    <form action="manageuser" method="get">
+                        <input type="hidden" name="role" value="${selectedRole}">
+                        <input type="text" name="searchQuery" value="${searchQuery}" placeholder="enter user name...">
+                        <button type="submit">Search</button>
+                        <a href="manageuser?role=${selectedRole}"><button type="button" class="reset-btn">Reset</button></a>
+                    </form>
+                </div>
                 <div class="role-section">
                     <label for="role">Select Role:</label>
                     <form action="manageuser" method="get">
                         <input type="hidden" name="searchQuery" value="${searchQuery}">
                         <select name="role" id="role" onchange="this.form.submit()">
-                            <option value="all" <c:if test="${selectedRole == 'all'}">selected</c:if>>All</option>
-                            <option value="admin" <c:if test="${selectedRole == 'admin'}">selected</c:if>>Admin</option>
-                            <option value="seller" <c:if test="${selectedRole == 'seller'}">selected</c:if>>Seller</option>
-                            <option value="customer" <c:if test="${selectedRole == 'customer'}">selected</c:if>>Customer</option>
+                            <option value="all" <c:if test="${selectedRole == 'all'}">selected</c:if>>all role</option>
+                            <option value="admin" <c:if test="${selectedRole == 'admin'}">selected</c:if>>admin</option>
+                            <option value="seller" <c:if test="${selectedRole == 'seller'}">selected</c:if>>seller</option>
+                            <option value="customer" <c:if test="${selectedRole == 'customer'}">selected</c:if>>customer</option>
                         </select>
                     </form>
                 </div>
-            </header>
-            <div style="color:green">${message}</div>
-            <!-- Search Section -->
-            <div class="search-section">
-                <form action="manageuser" method="get">
-                    <input type="hidden" name="role" value="${selectedRole}">
-                    <input type="text" name="searchQuery" value="${searchQuery}" placeholder="Enter user name...">
-                    <button type="submit">Search</button>
-                    <a href="manageuser?role=${selectedRole}"><button type="button" class="reset-btn">Reset</button></a>
-                </form>
             </div>
             <a href="manageuser?action=add"><button class="create-btn">Create User</button></a>
             <!-- User Table -->
