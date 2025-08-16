@@ -66,19 +66,20 @@ public class ForgotPasswordServlet extends HttpServlet {
             tokenDAO.insertToken(token);
 
             // Gửi email OTP
-            String subject = "OTP đặt lại mật khẩu";
-            String content = "Xin chào <b>" + user.getFullName() + "</b>,<br/>" +
-                    "Mã OTP của bạn là: <b>" + otp + "</b><br/>" +
-                    "Mã này sẽ hết hạn trong 5 phút.";
+            String subject = "OTP Reset For Your Password";
+            String content = "Hello, <b>" + user.getFirstName() +" "+ user.getMiddleName() +" "+ user.getLastName()+ "</b>,<br/>" +
+                    "OTP code your is: <b>" + otp + "</b><br/>" +
+                    "This code will expire in 5 minutes, please change your password now.<br/>"+
+                    "<b>Thank you!</b>";
             EmailUtil.sendEmail(email, subject, content);
 
             request.setAttribute("email", email);
-            request.setAttribute("message", "Mã OTP đã được gửi đến email của bạn!");
+            request.setAttribute("message", "OTP code has been sent to your email! Please check your email");
             request.getRequestDispatcher("verify_otp.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra khi gửi OTP: " + e.getMessage());
+            request.setAttribute("error", "Errorr for sent OTP: " + e.getMessage());
             request.getRequestDispatcher("forgot_password.jsp").forward(request, response);
         }
     }
