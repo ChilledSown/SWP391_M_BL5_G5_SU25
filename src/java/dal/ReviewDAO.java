@@ -19,9 +19,7 @@ import model.Review;
  */
 public class ReviewDAO extends DBContext {
     
-    /**
-     * Get all reviews for a specific course
-     */
+
     public List<Review> getReviewsByCourseId(long courseId) {
         List<Review> reviews = new ArrayList<>();
         String sql = "SELECT * FROM Review WHERE Course_Id = ? ORDER BY Created_At DESC";
@@ -48,10 +46,7 @@ public class ReviewDAO extends DBContext {
         
         return reviews;
     }
-    
-    /**
-     * Get review by user and course
-     */
+
     public Review getReviewByUserAndCourse(long userId, long courseId) {
         String sql = "SELECT * FROM Review WHERE User_Id = ? AND Course_Id = ?";
         
@@ -79,9 +74,7 @@ public class ReviewDAO extends DBContext {
         return null;
     }
     
-    /**
-     * Get review by ID
-     */
+ 
     public Review getReviewById(long reviewId) {
         String sql = "SELECT * FROM Review WHERE Review_Id = ?";
         
@@ -108,9 +101,7 @@ public class ReviewDAO extends DBContext {
         return null;
     }
     
-    /**
-     * Insert new review
-     */
+
     public boolean insertReview(Review review) {
         String sql = "INSERT INTO Review (Course_Id, User_Id, Rating, Comment, Created_At) VALUES (?, ?, ?, ?, ?)";
         
@@ -130,9 +121,7 @@ public class ReviewDAO extends DBContext {
         }
     }
     
-    /**
-     * Update existing review
-     */
+
     public boolean updateReview(Review review) {
         String sql = "UPDATE Review SET Rating = ?, Comment = ? WHERE Review_Id = ?";
         
@@ -150,9 +139,7 @@ public class ReviewDAO extends DBContext {
         }
     }
     
-    /**
-     * Delete review by ID
-     */
+    
     public boolean deleteReview(long reviewId) {
         String sql = "DELETE FROM Review WHERE Review_Id = ?";
         
@@ -168,9 +155,7 @@ public class ReviewDAO extends DBContext {
         }
     }
     
-    /**
-     * Get average rating for a course
-     */
+
     public double getAverageRatingByCourseId(long courseId) {
         String sql = "SELECT AVG(Rating) as AverageRating FROM Review WHERE Course_Id = ?";
         
@@ -191,9 +176,7 @@ public class ReviewDAO extends DBContext {
         return 0.0;
     }
     
-    /**
-     * Get review count for a course
-     */
+
     public int getReviewCountByCourseId(long courseId) {
         String sql = "SELECT COUNT(*) as ReviewCount FROM Review WHERE Course_Id = ?";
         
@@ -213,9 +196,7 @@ public class ReviewDAO extends DBContext {
         return 0;
     }
     
-    /**
-     * Get all reviews by user ID
-     */
+
     public List<Review> getReviewsByUserId(long userId) {
         List<Review> reviews = new ArrayList<>();
         String sql = "SELECT * FROM Review WHERE User_Id = ? ORDER BY Created_At DESC";
@@ -242,10 +223,7 @@ public class ReviewDAO extends DBContext {
         
         return reviews;
     }
-    
-    /**
-     * Check if user has reviewed a course
-     */
+
     public boolean hasUserReviewedCourse(long userId, long courseId) {
         String sql = "SELECT COUNT(*) FROM Review WHERE User_Id = ? AND Course_Id = ?";
         

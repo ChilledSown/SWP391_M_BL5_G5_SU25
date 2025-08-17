@@ -351,16 +351,8 @@
                             <!-- Cart Summary -->
                             <div class="cart-summary">
                                 <div class="summary-row">
-                                    <span class="summary-label">Subtotal:</span>
+                                    <span class="summary-label">Total:</span>
                                     <span class="summary-value">$${cartTotal}</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span class="summary-label">Tax:</span>
-                                    <span class="summary-value">$0.00</span>
-                                </div>
-                                <div class="summary-row total-row">
-                                    <span class="summary-label total-label">Total:</span>
-                                    <span class="summary-value total-value">$${cartTotal}</span>
                                 </div>
                                 
                                 <div class="cart-actions">

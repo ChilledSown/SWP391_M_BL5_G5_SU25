@@ -16,11 +16,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Cart;
 import model.Course;
 import model.Lesson;
 import model.Review;
 import model.Topic;
+import model.User;
 
 /**
  *
@@ -34,7 +36,6 @@ public class CustomerCourseDetailServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            // Get course ID from request
             String courseIdStr = request.getParameter("id");
             if (courseIdStr == null || courseIdStr.trim().isEmpty()) {
                 response.sendRedirect("courses");
@@ -69,10 +70,9 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             // Get average rating and review count
             double averageRating = reviewDAO.getAverageRatingByCourseId(courseId);
             int reviewCount = reviewDAO.getReviewCountByCourseId(courseId);
-            
-            // For testing, use a fixed user ID
-            long userId = 1;
-            
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+            long userId = user.getUser_id();
             Review userReview = null;
             Cart userCart = null;
             boolean isCourseInCart = false;
@@ -100,8 +100,6 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             // Forward to JSP
             request.getRequestDispatcher("customer-course-detail.jsp").forward(request, response);
             
-        } catch (NumberFormatException e) {
-            response.sendRedirect("courses");
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("courses");
