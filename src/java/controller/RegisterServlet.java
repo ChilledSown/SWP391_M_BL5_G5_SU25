@@ -19,18 +19,6 @@ public class RegisterServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-
-        String fullName = request.getParameter("fullName");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
-
-        request.setAttribute("fullName", fullName);
-        request.setAttribute("email", email);
-        request.setAttribute("password", password);
-        request.setAttribute("phone", phone);
-        request.setAttribute("address", address);
         request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 
@@ -41,44 +29,94 @@ public class RegisterServlet extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        String fullName = request.getParameter("fullName");
+        String firstName = request.getParameter("firstName");
+        String middleName = request.getParameter("middleName");
+        String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
 
+        // Validation
+        if (firstName == null || firstName.trim().isEmpty() ||
+            middleName == null || middleName.trim().isEmpty() ||
+            lastName == null || lastName.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            password == null || password.trim().isEmpty() ||
+            phone == null || phone.trim().isEmpty() ||
+            address == null || address.trim().isEmpty()) {
+            request.setAttribute("message", "Please fill in all fields completely..");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate email format
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            request.setAttribute("message", "Invalid email.");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate phone format (simple regex for 10-digit phone number)
+        if (!phone.matches("^[0-9]{10}$")) {
+            request.setAttribute("message", "Phone number must be 10 digits.");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        // Validate password length
+        if (password.length() < 6) {
+            request.setAttribute("message", "Password must be at least 6 characters.");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
         UserDAO dao = new UserDAO();
 
-         // Validate password length
-        if (password != null && password.length() < 6) {
-            request.setAttribute("message", "Password must be at least 6 characters long.");
-            request.setAttribute("fullName", fullName);
-            request.setAttribute("email", email);
-            request.setAttribute("password", password); // Không hiển thị lại password (bảo mật)
-            request.setAttribute("phone", phone);
-            request.setAttribute("address", address);
-            request.getRequestDispatcher("register.jsp").forward(request, response);
-            return;
-        }
-
-        // Check email trùng
+        // Check for duplicate email
         if (dao.getUserByEmail(email) != null) {
-            request.setAttribute("message", "Email đã tồn tại, vui lòng dùng email khác!");
-            request.setAttribute("fullName", fullName);
+            request.setAttribute("message", "Email already exists, please use another email!");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
             request.setAttribute("email", email);
-            request.setAttribute("password", password);
             request.setAttribute("phone", phone);
             request.setAttribute("address", address);
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        // Check số điện thoại trùng
+        // Check for duplicate phone
         if (dao.getUserByPhone(phone) != null) {
-            request.setAttribute("message", "Số điện thoại đã tồn tại, vui lòng dùng số khác!");
-            request.setAttribute("fullName", fullName);
+            request.setAttribute("message", "Phone number already exists, please use another number!");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
             request.setAttribute("email", email);
-            request.setAttribute("password", password); 
             request.setAttribute("phone", phone);
             request.setAttribute("address", address);
             request.getRequestDispatcher("register.jsp").forward(request, response);
@@ -90,29 +128,40 @@ public class RegisterServlet extends HttpServlet {
             String hashedPassword = PasswordHashUtil.hashPassword(password);
 
             User user = new User();
-            user.setFullName(fullName);
-            user.setAvataUrl("default-avatar.png"); // nếu chưa có avatar
+            user.setFirstName(firstName);
+            user.setMiddleName(middleName);
+            user.setLastName(lastName);
+            user.setAvataUrl("default-avatar.png");
             user.setPhone(phone);
             user.setAddress(address);
             user.setEmail(email);
             user.setPasswordHash(hashedPassword);
             user.setRole("customer");
+            user.setAccountStatus("active");
 
             if (dao.insertUser(user)) {
-                request.setAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
-                request.setAttribute("messageType", "success");
-                request.getRequestDispatcher("register.jsp").forward(request, response);
+                request.setAttribute("message", "Registration successful! Please login now.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
             } else {
-                request.setAttribute("message", "Đăng ký thất bại, vui lòng thử lại.");
-                request.setAttribute("messageType", "error");
+                request.setAttribute("message", "Registration failed, please try again.");
+                request.setAttribute("firstName", firstName);
+                request.setAttribute("middleName", middleName);
+                request.setAttribute("lastName", lastName);
+                request.setAttribute("email", email);
+                request.setAttribute("phone", phone);
+                request.setAttribute("address", address);
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "Có lỗi xảy ra, vui lòng thử lại.");
-            request.setAttribute("messageType", "error");
+            request.setAttribute("message", "An error occurred, Please try again..");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
-
 }

@@ -57,7 +57,7 @@ public class VerifyOtpServlet extends HttpServlet {
                     request.getRequestDispatcher("reset_password.jsp").forward(request, response);
                 } else {
                     request.setAttribute("email", email); 
-                    request.setAttribute("message", "OTP không hợp lệ hoặc đã hết hạn.");                  
+                    request.setAttribute("message", "OTP is invalid or expired. Please try again!");                  
                     request.getRequestDispatcher("verify_otp.jsp").forward(request, response);          
                 }
             }
