@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dal.CourseDAO;
+import dal.QuizDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +12,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.Date;
-import model.Course;
-import model.User;
+import java.util.List;
+import model.Quiz;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "CreateCourseServlet", urlPatterns = {"/createCourse"})
-public class CreateCourseServlet extends HttpServlet {
+@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuiz"})
+public class ManageQuizServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class CreateCourseServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CreateCourseServlet</title>");
+            out.println("<title>Servlet ManageQuizServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CreateCourseServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageQuizServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,11 +57,29 @@ public class CreateCourseServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+  @Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    String lessonIdRaw = request.getParameter("lessonId");
+
+    if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing lessonId parameter.");
+        return;
     }
+
+    long lessonId = Long.parseLong(lessonIdRaw);
+
+    QuizDAO dao = new QuizDAO();
+    List<Quiz> quizzes = dao.getQuizzesByLessonId(lessonId);
+
+    // Gửi dữ liệu sang JSP
+    request.setAttribute("lessonId", lessonId);
+    request.setAttribute("quizzes", quizzes);
+
+    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
+}
+
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -76,45 +92,7 @@ public class CreateCourseServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-
-        String title = request.getParameter("title");
-        String description = request.getParameter("description");
-        int price = Integer.parseInt(request.getParameter("price"));
-        String thumbnailUrl = request.getParameter("thumbnail_url");
-        Long topicId = Long.parseLong(request.getParameter("topic_id"));
-
-        HttpSession session = request.getSession();
-        User currentUser = (User) session.getAttribute("user");
-
-        if (currentUser == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        CourseDAO dao = new CourseDAO();
-
-        // 🔍 Kiểm tra trùng title
-        boolean isDuplicate = dao.isTitleExists(title);
-
-        // ✅ Tiếp tục thêm vào CSDL
-        Course course = new Course();
-        course.setTitle(title);
-        course.setDescription(description);
-        course.setPrice(price);
-        course.setThumbnail_url(thumbnailUrl);
-        course.setCreated_at(new Date());
-        course.setTopic_id(topicId);
-
-        dao.insertCourse(course, currentUser.getUser_id());
-
-        // ✅ Gửi thông báo nếu có trùng
-        if (isDuplicate) {
-            request.getSession().setAttribute("duplicateMessage", "⚠️ Course title already exists. You may want to use a different title.");
-        }
-
-        response.sendRedirect("listCousera");
+        processRequest(request, response);
     }
 
     /**
