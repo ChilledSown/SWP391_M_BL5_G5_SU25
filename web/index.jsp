@@ -383,8 +383,7 @@
                                                 </li>
                                                 <li><a href="contact.jsp">Contact</a></li>
                                                 <!-- Button -->
-                                                <li class="button-header margin-left "><a href="#" class="btn">Join</a></li>
-                                                <li class="button-header"><a href="login.jsp" class="btn btn3">Log in</a></li>
+                                                <li class="button-header"><a href="login" class="btn btn3">Log in</a></li>
                                                 <li class="button-header"><a href="listCousera" class="btn btn3">Seller</a></li>
                                             </ul>
                                         </nav>
@@ -605,7 +604,7 @@
                                                     <span>$${course.price}</span>
                                                 </div>
                                             </div>
-                                            <a href="#" class="border-btn border-btn2">Find out more</a>
+                                            <a href="customer-course-detail?id=${course.course_id}" class="border-btn border-btn2">Find out more</a>
                                         </div>
                                     </div>
                                 </div>
