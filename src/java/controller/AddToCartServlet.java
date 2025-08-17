@@ -38,8 +38,6 @@ public class AddToCartServlet extends HttpServlet {
             }
             
             long courseId = Long.parseLong(courseIdStr);
-            
-            // Get DAOs
             CartDAO cartDAO = new CartDAO();
             CourseDAO courseDAO = new CourseDAO();
             
@@ -74,10 +72,7 @@ public class AddToCartServlet extends HttpServlet {
                 // Add course to cart
                 cartDAO.addCourseToCart(userCart.getCart_id(), courseId, course.getPrice());
             }
-            
-            // Redirect back to course detail page
             response.sendRedirect("customer-course-detail?id=" + courseId);
-            
         } catch (NumberFormatException e) {
             response.sendRedirect("courses");
         } catch (Exception e) {

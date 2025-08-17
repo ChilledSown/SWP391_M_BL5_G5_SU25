@@ -11,20 +11,9 @@
     <link rel="manifest" href="site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
 
-    <!-- CSS here -->
+    <!-- CSS here - Optimized for performance -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="assets/css/slicknav.css">
-    <link rel="stylesheet" href="assets/css/flaticon.css">
-    <link rel="stylesheet" href="assets/css/progressbar_barfiller.css">
-    <link rel="stylesheet" href="assets/css/gijgo.css">
-    <link rel="stylesheet" href="assets/css/animate.min.css">
-    <link rel="stylesheet" href="assets/css/animated-headline.css">
-    <link rel="stylesheet" href="assets/css/magnific-popup.css">
     <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/css/themify-icons.css">
-    <link rel="stylesheet" href="assets/css/slick.css">
-    <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
     
     <!-- Custom CSS for Course Detail -->
@@ -306,7 +295,7 @@
         
         .review-form {
             display: flex;
-            align-items: flex-start;
+            flex-direction: column;
             gap: 20px;
         }
         
@@ -326,7 +315,7 @@
         }
         
         .btn-send-review {
-            padding: 12px 25px;
+            padding: 15px 30px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -334,6 +323,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            align-self: flex-start;
+            font-size: 16px;
         }
         
         .btn-send-review:hover {
@@ -448,6 +439,121 @@
             border: none;
             border-radius: 25px;
             cursor: pointer;
+        }
+        
+        /* Review Rating Section Styles */
+        .review-rating-section {
+            margin-bottom: 20px;
+        }
+        
+        .rating-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .star-rating-input {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .star-rating-input .star-input {
+            display: none;
+        }
+        
+        .star-rating-input .star-label {
+            font-size: 28px;
+            color: #bdc3c7;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            margin: 0;
+        }
+        
+        /* Star rating hover effect */
+        .star-rating-input .star-label:hover,
+        .star-rating-input .star-label:hover ~ .star-label {
+            color: #f39c12;
+        }
+        
+        /* Star rating selected state - khi chọn sao thứ N, tất cả sao từ 1 đến N sẽ sáng */
+        .star-rating-input .star-input:checked + .star-label,
+        .star-rating-input .star-input:checked ~ .star-label {
+            color: #f39c12;
+        }
+        
+        /* No Reviews Message */
+        .no-reviews-message {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .no-reviews-message p {
+            color: #6c757d;
+            font-size: 16px;
+            margin: 0;
+            font-style: italic;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* Review Content Section */
+        .review-content-section {
+            margin-bottom: 20px;
+        }
+        
+        .review-textarea {
+            width: 100%;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 15px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: border-color 0.3s ease;
+        }
+        
+        .review-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .review-textarea::placeholder {
+            color: #95a5a6;
+            font-style: italic;
         }
     </style>
 </head>
@@ -634,19 +740,56 @@
                         <div class="review-content">${review.comment}</div>
                     </div>
                 </c:forEach>
-                
+                <!-- No Reviews Message -->
+                <c:if test="${empty reviews}">
+                    <div class="no-reviews-message">
+                        <p>Be the first one to review this course!</p>
+                    </div>
+                </c:if>
                 <!-- Add Review Form -->
                 <c:if test="${user != null && userReview == null}">
                     <div class="add-review">
-                        <form class="review-form" onsubmit="submitReview(event)">
+                        <form class="review-form" action="addReview" method="POST">
                             <div class="user-avatar">
                                 Me
                             </div>
-                            <textarea class="review-textarea" placeholder="Type here" name="comment" required></textarea>
+                            
+                            <!-- Star Rating Section -->
+                            <div class="review-rating-section">
+                                <label class="rating-label">Rate this course:</label>
+                                <div class="star-rating-input">
+                                    <c:forEach begin="1" end="5" var="i">
+                                        <input type="radio" name="rating" value="${i}" id="review-star${i}" class="star-input" required>
+                                        <label for="review-star${i}" class="star-label">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                            
+                            <!-- Review Content Section -->
+                            <div class="review-content-section">
+                                <textarea 
+                                    id="reviewComment" 
+                                    name="comment" 
+                                    class="review-textarea" 
+                                    placeholder="Share your thoughts about this course..."
+                                    rows="4"
+                                ></textarea>
+                            </div>
+                            
+                            <!-- Hidden inputs for course and user ID -->
+                            <input type="hidden" name="courseId" value="${course.course_id}">
+                            <input type="hidden" name="userId" value="${user.user_id}">
+                            
                             <button type="submit" class="btn-send-review">Send review</button>
                         </form>
                     </div>
                 </c:if>
+                
+                
+                
+             
             </div>
         </section>
     </main>
@@ -774,43 +917,13 @@
     <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
 </div>
 
-<!-- JS here -->
-<script src="assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<!-- JS here - Optimized for performance -->
 <script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/owl.carousel.min.js"></script>
-<script src="assets/js/slick.min.js"></script>
-<script src="assets/js/jquery.slicknav.min.js"></script>
-<script src="assets/js/wow.min.js"></script>
-<script src="assets/js/animated.headline.js"></script>
-<script src="assets/js/jquery.magnific-popup.js"></script>
-<script src="assets/js/gijgo.min.js"></script>
-<script src="assets/js/jquery.nice-select.min.js"></script>
-<script src="assets/js/jquery.sticky.js"></script>
-<script src="assets/js/contact.js"></script>
-<script src="assets/js/jquery.form.js"></script>
-<script src="assets/js/jquery.validate.min.js"></script>
-<script src="assets/js/mail-script.js"></script>
-<script src="assets/js/jquery.ajaxchimp.min.js"></script>
-<script src="assets/js/plugins.js"></script>
 <script src="assets/js/main.js"></script>
 
 <script>    
-    // Review dropdown functionality
-    function toggleReviewDropdown(reviewId) {
-        const dropdown = document.getElementById('dropdown-' + reviewId);
-        const allDropdowns = document.querySelectorAll('.review-dropdown');
-        
-        // Close all other dropdowns
-        allDropdowns.forEach(d => {
-            if (d !== dropdown) {
-                d.classList.remove('show');
-            }
-        });
-        
-        dropdown.classList.toggle('show');
-    }
+    
     
     // Close dropdowns when clicking outside
     document.addEventListener('click', function(event) {
@@ -840,6 +953,56 @@
             closeUpdateModal();
         }
     }
+    
+    // Star rating functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const starInputs = document.querySelectorAll('.star-rating-input .star-input');
+        const starLabels = document.querySelectorAll('.star-rating-input .star-label');
+        
+        starInputs.forEach((input, index) => {
+            input.addEventListener('change', function() {
+                const rating = parseInt(this.value);
+                
+                // Reset all stars to gray
+                starLabels.forEach(label => {
+                    label.style.color = '#bdc3c7';
+                });
+                
+                // Color stars from 1 to rating with gold
+                for (let i = 0; i < rating; i++) {
+                    starLabels[i].style.color = '#f39c12';
+                }
+            });
+        });
+        
+        // Hover effects
+        starLabels.forEach((label, index) => {
+            label.addEventListener('mouseenter', function() {
+                // Color stars from 1 to current hover position
+                for (let i = 0; i <= index; i++) {
+                    starLabels[i].style.color = '#f39c12';
+                }
+            });
+            
+            label.addEventListener('mouseleave', function() {
+                // Reset to selected state
+                const checkedInput = document.querySelector('.star-rating-input .star-input:checked');
+                if (checkedInput) {
+                    const rating = parseInt(checkedInput.value);
+                    starLabels.forEach((label, i) => {
+                        label.style.color = i < rating ? '#f39c12' : '#bdc3c7';
+                    });
+                } else {
+                    // No star selected, reset all to gray
+                    starLabels.forEach(label => {
+                        label.style.color = '#bdc3c7';
+                    });
+                }
+            });
+        });
+    });
+    
+
 </script>
 
 </body>

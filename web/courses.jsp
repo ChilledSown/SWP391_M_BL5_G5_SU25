@@ -484,7 +484,7 @@
                                             <li><a href="contact.jsp">Contact</a></li>
                                             <!-- Button -->
                                             <li class="button-header margin-left "><a href="profile" class="btn">Profile</a></li>
-                                            <li class="button-header"><a href="logout" class="btn btn3">Logout</a></li>
+                                            <li class="button-header"><a href="login" class="btn btn3">Logout</a></li>
                                         </ul>
                                     </nav>
                                 </div>

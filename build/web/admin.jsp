@@ -207,7 +207,7 @@
 
             <main class="main-content">
                 <header class="main-header">
-                    <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
+                     <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
                 </header>
                 <div style="color:green">${message}</div>                         
                 
