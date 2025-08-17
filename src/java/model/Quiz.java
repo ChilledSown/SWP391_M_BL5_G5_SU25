@@ -1,27 +1,34 @@
 package model;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Quiz {
-    private Long quiz_id;
+    private Long quizId;
     private String question;
-    private String answer_options;
-    private String correct_answer;
-    private Date created_at;
-    private Date updated_at;
-    private Long lesson_id;
+    private String answerOptions;
+    private String correctAnswer;
+    private Date createdAt;
+    private Date updatedAt;
+    private Long lessonId;
+    private String lessonTitle;
+     
 
-    // Constructor
-    public Quiz() {
+public String getLessonTitle() {
+    return lessonTitle;
+}
+
+public void setLessonTitle(String lessonTitle) {
+    this.lessonTitle = lessonTitle;
+}
+
+
+    // Getter & Setter
+    public Long getQuizId() {
+        return quizId;
     }
 
-    // Getters and Setters
-    public Long getQuiz_id() {
-        return quiz_id;
-    }
-
-    public void setQuiz_id(Long quiz_id) {
-        this.quiz_id = quiz_id;
+    public void setQuizId(Long quizId) {
+        this.quizId = quizId;
     }
 
     public String getQuestion() {
@@ -32,43 +39,43 @@ public class Quiz {
         this.question = question;
     }
 
-    public String getAnswer_options() {
-        return answer_options;
+    public String getAnswerOptions() {
+        return answerOptions;
     }
 
-    public void setAnswer_options(String answer_options) {
-        this.answer_options = answer_options;
+    public void setAnswerOptions(String answerOptions) {
+        this.answerOptions = answerOptions;
     }
 
-    public String getCorrect_answer() {
-        return correct_answer;
+    public String getCorrectAnswer() {
+        return correctAnswer;
     }
 
-    public void setCorrect_answer(String correct_answer) {
-        this.correct_answer = correct_answer;
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getUpdated_at() {
-        return updated_at;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public Long getLesson_id() {
-        return lesson_id;
+    public Long getLessonId() {
+        return lessonId;
     }
 
-    public void setLesson_id(Long lesson_id) {
-        this.lesson_id = lesson_id;
+    public void setLessonId(Long lessonId) {
+        this.lessonId = lessonId;
     }
 }
