@@ -269,13 +269,67 @@
             </nav>
         </aside>
 
-        <main class="main-content">
-            <header class="main-header">
-                <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
-            </header>
-            <div style="color:green">${message}</div>
-            <!-- Search and Role Section -->
-            <div class="header-controls">
+
+            .search-section button {
+                background-color: #2ecc71;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+
+            .search-section button:hover {
+                background-color: #27ae60;
+            }
+            .reset-btn {
+                background-color: #e67e22;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+
+            .reset-btn:hover {
+                background-color: #d35400;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="dashboard-container">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>Admin Dashboard</h3>
+                </div>               
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li data-section="overview">
+                            <a href="overview">Overview</a>
+                        </li>
+                        <li data-section="courses">
+                            <a href="managetopic">Manage Topic</a>
+                        </li>
+                        <li class="active" data-section="users">
+                            <a href="manageuser">Manage Users</a>
+                        </li>               
+                        <li data-section="settings">
+                            <a href="login">Logout</a>
+                        </li>
+                    </ul>
+                </nav>              
+            </aside>
+
+            <main class="main-content">
+                <header class="main-header">
+                    <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
+                </header>
+                <div style="color:green">${message}</div>
+                <!-- Search Section -->
                 <div class="search-section">
                     <form action="manageuser" method="get">
                         <input type="hidden" name="role" value="${selectedRole}">

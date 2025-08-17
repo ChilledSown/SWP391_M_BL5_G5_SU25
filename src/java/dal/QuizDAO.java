@@ -43,6 +43,8 @@ public class QuizDAO extends DBContext {
         }
         return quizzes;
     }
+    
+    
 
     public static void main(String[] args) {
         QuizDAO quizDAO = new QuizDAO();
