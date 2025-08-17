@@ -62,11 +62,45 @@ public class ManageLessonServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         long courseId = Long.parseLong(request.getParameter("courseId"));
-        LessonDAO dao = new LessonDAO();
-        List<Lesson> lessons = dao.getLessonsByCourseId(courseId);
+        String title = request.getParameter("title");
+        String createdDate = request.getParameter("createdDate");
 
+        int page = 1;
+        int pageSize = 2;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageParam));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        int offset = (page - 1) * pageSize;
+
+        LessonDAO dao = new LessonDAO();
+
+        // Lấy dữ liệu phân trang
+        List<Lesson> lessons = dao.getFilteredLessonsByCoursePaged(courseId, title, createdDate, offset, pageSize);
+        int totalItems = dao.countFilteredLessonsByCourse(courseId, title, createdDate);
+        int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
+
+        // Truyền attribute
         request.setAttribute("lessons", lessons);
         request.setAttribute("courseId", courseId);
+        request.setAttribute("title", title);
+        request.setAttribute("createdDate", createdDate);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+
+        // Tạo baseUrl để phân trang giữ lại filter
+        StringBuilder baseUrl = new StringBuilder("manageLesson?courseId=" + courseId);
+        if (title != null && !title.isEmpty()) {
+            baseUrl.append("&title=").append(java.net.URLEncoder.encode(title, java.nio.charset.StandardCharsets.UTF_8));
+        }
+        if (createdDate != null && !createdDate.isEmpty()) {
+            baseUrl.append("&createdDate=").append(createdDate);
+        }
+        request.setAttribute("baseUrl", baseUrl.toString());
+
         request.getRequestDispatcher("manageLesson.jsp").forward(request, response);
     }
 
