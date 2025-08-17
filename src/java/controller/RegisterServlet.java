@@ -19,7 +19,6 @@ public class RegisterServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-
         request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 
@@ -141,7 +140,6 @@ public class RegisterServlet extends HttpServlet {
             user.setAccountStatus("active");
 
             if (dao.insertUser(user)) {
-
                 request.setAttribute("message", "Registration successful! Please login now.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             } else {
@@ -156,7 +154,6 @@ public class RegisterServlet extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
-
             request.setAttribute("message", "An error occurred, Please try again..");
             request.setAttribute("firstName", firstName);
             request.setAttribute("middleName", middleName);
