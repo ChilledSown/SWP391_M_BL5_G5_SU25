@@ -1,0 +1,525 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!doctype html>
+<html class="no-js" lang="zxx">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Cart | Education</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="assets/css/slicknav.css">
+    <link rel="stylesheet" href="assets/css/flaticon.css">
+    <link rel="stylesheet" href="assets/css/progressbar_barfiller.css">
+    <link rel="stylesheet" href="assets/css/gijgo.css">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/animated-headline.css">
+    <link rel="stylesheet" href="assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/slick.css">
+    <link rel="stylesheet" href="assets/css/nice-select.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Custom CSS for Cart -->
+    <style>
+        .cart-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+            min-height: 70vh;
+        }
+        
+        .cart-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .cart-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .cart-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 1px solid #ecf0f1;
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .course-image {
+            width: 120px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-right: 25px;
+            flex-shrink: 0;
+        }
+        
+        .course-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .course-info {
+            flex: 1;
+        }
+        
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .course-description {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .course-price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-left: 25px;
+        }
+        
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+        }
+        
+        .remove-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .cart-summary {
+            background: #f8f9fa;
+            padding: 30px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .summary-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        
+        .total-row {
+            border-top: 2px solid #ecf0f1;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        
+        .total-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .total-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+        
+        .cart-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .btn-continue {
+            padding: 15px 30px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-continue:hover {
+            background: #7f8c8d;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-checkout {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 80px 30px;
+        }
+        
+        .empty-cart-icon {
+            font-size: 5rem;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+        
+        .empty-cart-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .empty-cart-text {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .btn-shop {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-shop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ? Preloader Start -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="assets/img/logo/loder.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Preloader Start -->
+    
+    <header>
+        <!-- Header Start -->
+        <div class="header-area header-transparent">
+            <div class="main-header ">
+                <div class="header-bottom  header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <!-- Logo -->
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <!-- Main-menu -->
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">                                                                                          
+                                                <li><a href="home">Home</a></li>
+                                                <li><a href="courses">Course</a></li>
+                                                <li><a href="blog">Blog</a></li>
+                                                <li class="active"><a href="cart.jsp">Cart</a></li>
+                                                <li><a href="profile.jsp">Profile</a></li>
+                                                <li><a href="wishlist.jsp">Wishlist</a></li>
+                                                <li><a href="my-courses.jsp">My Courses</a></li>
+                                                <!-- Button -->
+                                                <li class="button-header margin-left "><a href="logout" class="btn">Logout</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div> 
+                            <!-- Mobile Menu -->
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+    </header>
+
+    <main>
+        <!-- Cart Section -->
+        <section class="cart-section">
+            <div class="container">
+                <div class="cart-container">
+                    <div class="cart-header">
+                        <h1 class="cart-title">Shopping Cart</h1>
+                    </div>
+                    
+                    <c:choose>
+                        <c:when test="${empty cartItems}">
+                            <div class="empty-cart">
+                                <div class="empty-cart-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <h2 class="empty-cart-title">Your cart is empty</h2>
+                                <p class="empty-cart-text">Looks like you haven't added any courses to your cart yet.</p>
+                                <a href="courses" class="btn-shop">Start Shopping</a>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Cart Items -->
+                            <c:forEach items="${cartItems}" var="cartItem">
+                                <div class="cart-item">
+                                    <div class="course-image">
+                                        <img src="${cartItem.courseThumbnail}" alt="${cartItem.courseTitle}">
+                                    </div>
+                                    <div class="course-info">
+                                        <h3 class="course-title">${cartItem.courseTitle}</h3>
+                                        <p class="course-description">${cartItem.courseDescription}</p>
+                                    </div>
+                                    <div class="course-price">$${cartItem.price}</div>
+                                    <button class="remove-btn" onclick="removeFromCart(${cartItem.cart_item_id})">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </div>
+                            </c:forEach>
+                            
+                            <!-- Cart Summary -->
+                            <div class="cart-summary">
+                                <div class="summary-row">
+                                    <span class="summary-label">Subtotal:</span>
+                                    <span class="summary-value">$${cartTotal}</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label">Tax:</span>
+                                    <span class="summary-value">$0.00</span>
+                                </div>
+                                <div class="summary-row total-row">
+                                    <span class="summary-label total-label">Total:</span>
+                                    <span class="summary-value total-value">$${cartTotal}</span>
+                                </div>
+                                
+                                <div class="cart-actions">
+                                    <a href="courses" class="btn-continue">Continue Shopping</a>
+                                    <a href="#" class="btn-checkout">Proceed to Checkout</a>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-wrappper footer-bg">
+            <!-- Footer Start-->
+            <div class="footer-area footer-padding">
+                <div class="container">
+                    <div class="row justify-content-between">
+                        <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="single-footer-caption mb-30">
+                                    <!-- logo -->
+                                    <div class="footer-logo mb-25">
+                                        <a href="index.jsp"><img src="assets/img/logo/logo2_footer.png" alt=""></a>
+                                    </div>
+                                    <div class="footer-tittle">
+                                        <div class="footer-pera">
+                                            <p>The automated process starts as soon as your clothes go into the machine.</p>
+                                        </div>
+                                    </div>
+                                    <!-- social -->
+                                    <div class="footer-social">
+                                        <a href="#"><i class="fab fa-twitter"></i></a>
+                                        <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
+                                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>Our solutions</h4>
+                                    <ul>
+                                        <li><a href="#">Design & creatives</a></li>
+                                        <li><a href="#">Telecommunication</a></li>
+                                        <li><a href="#">Restaurant</a></li>
+                                        <li><a href="#">Programing</a></li>
+                                        <li><a href="#">Architecture</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>Support</h4>
+                                    <ul>
+                                        <li><a href="#">Design & creatives</a></li>
+                                        <li><a href="#">Telecommunication</a></li>
+                                        <li><a href="#">Restaurant</a></li>
+                                        <li><a href="#">Programing</a></li>
+                                        <li><a href="#">Architecture</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>Company</h4>
+                                    <ul>
+                                        <li><a href="#">Design & creatives</a></li>
+                                        <li><a href="#">Telecommunication</a></li>
+                                        <li><a href="#">Restaurant</a></li>
+                                        <li><a href="#">Programing</a></li>
+                                        <li><a href="#">Architecture</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- footer-bottom area -->
+            <div class="footer-bottom-area">
+                <div class="container">
+                    <div class="footer-border">
+                        <div class="row d-flex align-items-center">
+                            <div class="col-xl-12 ">
+                                <div class="footer-copy-right text-center">
+                                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                      Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                                      <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- Footer End-->
+      </div>
+  </footer> 
+  <!-- Scroll Up -->
+  <div id="back-top" >
+    <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
+</div>
+
+<!-- JS here -->
+<script src="assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script src="assets/js/slick.min.js"></script>
+<script src="assets/js/jquery.slicknav.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/animated.headline.js"></script>
+<script src="assets/js/jquery.magnific-popup.js"></script>
+<script src="assets/js/gijgo.min.js"></script>
+<script src="assets/js/jquery.nice-select.min.js"></script>
+<script src="assets/js/jquery.sticky.js"></script>
+<script src="assets/js/contact.js"></script>
+<script src="assets/js/jquery.form.js"></script>
+<script src="assets/js/jquery.validate.min.js"></script>
+<script src="assets/js/mail-script.js"></script>
+<script src="assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/main.js"></script>
+
+<script>
+    // Remove from cart functionality
+    function removeFromCart(cartItemId) {
+        if (confirm('Are you sure you want to remove this item from your cart?')) {
+            fetch('remove-from-cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'cartItemId=' + cartItemId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to remove item from cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error removing item from cart');
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

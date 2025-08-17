@@ -1,0 +1,846 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!doctype html>
+<html class="no-js" lang="zxx">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Course Detail | Education</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="assets/css/slicknav.css">
+    <link rel="stylesheet" href="assets/css/flaticon.css">
+    <link rel="stylesheet" href="assets/css/progressbar_barfiller.css">
+    <link rel="stylesheet" href="assets/css/gijgo.css">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/animated-headline.css">
+    <link rel="stylesheet" href="assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/themify-icons.css">
+    <link rel="stylesheet" href="assets/css/slick.css">
+    <link rel="stylesheet" href="assets/css/nice-select.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Custom CSS for Course Detail -->
+    <style>
+        .course-detail-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .course-image {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .course-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        
+        .course-info {
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .course-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .course-price {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        
+        .course-description {
+            color: #7f8c8d;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+        
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .star {
+            color: #f39c12;
+            font-size: 20px;
+            margin-right: 5px;
+        }
+        
+        .star.empty {
+            color: #bdc3c7;
+        }
+        
+        .rating-count {
+            margin-left: 10px;
+            color: #7f8c8d;
+        }
+        
+        .course-topic {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .btn-purchase {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-purchase:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+            color: white;
+        }
+        
+        .btn-cart {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+        
+        .btn-cart.in-cart {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+        
+        .what-you-learn {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+        
+        .lessons-list {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+        }
+        
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .lesson-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .lesson-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 20px;
+        }
+        
+        .lesson-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .reviews-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .review-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .review-user {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .review-actions {
+            position: relative;
+        }
+        
+        .review-settings {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #7f8c8d;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .review-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            min-width: 120px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .review-dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 8px 15px;
+            color: #2c3e50;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s ease;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+        
+        .dropdown-item.delete {
+            color: #e74c3c;
+        }
+        
+        .review-content {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+        
+        .add-review {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .review-form {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        
+        .review-textarea {
+            flex: 1;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 15px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .review-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-send-review {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-send-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #2c3e50;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .star-input {
+            display: none;
+        }
+        
+        .star-label {
+            font-size: 30px;
+            color: #bdc3c7;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .star-label:hover,
+        .star-label:hover ~ .star-label,
+        .star-input:checked ~ .star-label {
+            color: #f39c12;
+        }
+        
+        .modal-textarea {
+            width: 100%;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 15px;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+            margin-bottom: 20px;
+        }
+        
+        .modal-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .btn-cancel {
+            padding: 10px 20px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        
+        .btn-update {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ? Preloader Start -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="assets/img/logo/loder.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Preloader Start -->
+    
+    <header>
+        <!-- Header Start -->
+        <div class="header-area header-transparent">
+            <div class="main-header ">
+                <div class="header-bottom  header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <!-- Logo -->
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <!-- Main-menu -->
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">                                                                                          
+                                                <li class="active" ><a href="home">Home</a></li>
+                                                <li><a href="courses">Courses</a></li>
+                                                <li><a href="about.jsp">About</a></li>
+                                                <li><a href="blog">Blog</a>
+                                                </li>
+                                                <li><a href="contact.jsp">Contact</a></li>
+                                                <!-- Button -->
+                                                <li class="button-header"><a href="login.jsp" class="btn btn3">Log in</a></li>
+                                                <li class="button-header"><a href="listCousera" class="btn btn3">Seller</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div> 
+                            <!-- Mobile Menu -->
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+    </header>
+
+    <main>
+        <!-- Course Detail Section -->
+        <section class="course-detail-section">
+            <div class="container">
+                <div class="row">
+                    <!-- Course Image -->
+                    <div class="col-lg-6">
+                        <div class="course-image">
+                            <img src="${course.thumbnail_url}" alt="${course.title}">
+                        </div>
+                    </div>
+                    
+                    <!-- Course Info -->
+                    <div class="col-lg-6">
+                        <div class="course-info">
+                            <h1 class="course-title">${course.title}</h1>
+                            <div class="course-price">$${course.price}</div>
+                            <p class="course-description">${course.description}</p>
+                            
+                            <!-- Rating -->
+                            <div class="rating-stars">
+                                <c:forEach begin="1" end="5" var="i">
+                                    <span class="star ${i <= averageRating ? '' : 'empty'}">
+                                        <i class="fas fa-star"></i>
+                                    </span>
+                                </c:forEach>
+                                <span class="rating-count">${reviewCount} ratings</span>
+                            </div>
+                             <div class="course-topic">
+                                 <c:choose>
+                                     <c:when test="${not empty topic}">
+                                         ${topic.name}
+                                     </c:when>
+                                     <c:otherwise>
+                                         Course topic
+                                     </c:otherwise>
+                                 </c:choose>
+                             </div>
+                            
+                                                         <!-- Action Buttons -->
+                             <div class="action-buttons">
+                                 <a href="#" class="btn-purchase">Purchase now</a>
+                                 <c:choose>
+                                     <c:when test="${isCourseInCart}">
+                                         <button class="btn-cart in-cart" disabled>In Cart</button>
+                                     </c:when>
+                                     <c:otherwise>
+                                         <form action="add-to-cart" method="POST" style="display: inline;">
+                                             <input type="hidden" name="courseId" value="${course.course_id}">
+                                             <button type="submit" class="btn-cart">Add to cart</button>
+                                         </form>
+                                     </c:otherwise>
+                                 </c:choose>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What You Will Learn Section -->
+        <section class="what-you-learn">
+            <div class="container">
+                <h2 class="section-title">What will you learn from this course</h2>
+                <div class="lessons-list">
+                    <c:forEach items="${lessons}" var="lesson" varStatus="status">
+                        <div class="lesson-item">
+                            <div class="lesson-number">${status.index + 1}</div>
+                            <div class="lesson-title">${lesson.title}</div>
+                        </div>
+                    </c:forEach>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="reviews-section">
+            <div class="container">
+                <h2 class="section-title">Reviews</h2>
+                
+                <!-- Existing Reviews -->
+                <c:forEach items="${reviews}" var="review">
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div class="review-user">
+                                <div class="user-avatar">
+                                    <c:choose>
+                                        <c:when test="${review.user_id == user.user_id}">Me</c:when>
+                                        <c:otherwise>Username</c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div>
+                                    <div class="user-name">
+                                        <c:choose>
+                                            <c:when test="${review.user_id == user.user_id}">Me</c:when>
+                                            <c:otherwise>Username</c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="rating-stars">
+                                        <c:forEach begin="1" end="5" var="i">
+                                            <span class="star ${i <= review.rating ? '' : 'empty'}">
+                                                <i class="fas fa-star"></i>
+                                            </span>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <c:if test="${review.user_id == user.user_id}">
+                                <div class="review-actions">
+                                    <button class="review-settings" onclick="toggleReviewDropdown(${review.review_id})">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="review-dropdown" id="dropdown-${review.review_id}">
+                                        <a href="#" class="dropdown-item" onclick="openUpdateModal(${review.review_id}, ${review.rating}, '${review.comment}')">Update</a>
+                                        <a href="#" class="dropdown-item delete" onclick="deleteReview(${review.review_id})">Delete</a>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
+                        <div class="review-content">${review.comment}</div>
+                    </div>
+                </c:forEach>
+                
+                <!-- Add Review Form -->
+                <c:if test="${user != null && userReview == null}">
+                    <div class="add-review">
+                        <form class="review-form" onsubmit="submitReview(event)">
+                            <div class="user-avatar">
+                                Me
+                            </div>
+                            <textarea class="review-textarea" placeholder="Type here" name="comment" required></textarea>
+                            <button type="submit" class="btn-send-review">Send review</button>
+                        </form>
+                    </div>
+                </c:if>
+            </div>
+        </section>
+    </main>
+
+    <!-- Update Review Modal -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Review</h3>
+                <span class="close" onclick="closeUpdateModal()">&times;</span>
+            </div>
+            <form onsubmit="updateReview(event)">
+                <input type="hidden" id="updateReviewId" name="reviewId">
+                <div class="star-rating">
+                    <c:forEach begin="1" end="5" var="i">
+                        <input type="radio" name="rating" value="${i}" id="star${i}" class="star-input">
+                        <label for="star${i}" class="star-label">
+                            <i class="fas fa-star"></i>
+                        </label>
+                    </c:forEach>
+                </div>
+                <textarea class="modal-textarea" name="comment" placeholder="Write your review..." required></textarea>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
+                    <button type="submit" class="btn-update">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-wrappper footer-bg">
+            <!-- Footer Start-->
+            <div class="footer-area footer-padding">
+                <div class="container">
+                    <div class="row justify-content-between">
+                        <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="single-footer-caption mb-30">
+                                    <!-- logo -->
+                                    <div class="footer-logo mb-25">
+                                        <a href="index.jsp"><img src="assets/img/logo/logo2_footer.png" alt=""></a>
+                                    </div>
+                                    <div class="footer-tittle">
+                                        <div class="footer-pera">
+                                            <p>The automated process starts as soon as your clothes go into the machine.</p>
+                                        </div>
+                                    </div>
+                                    <!-- social -->
+                                    <div class="footer-social">
+                                        <a href="#"><i class="fab fa-twitter"></i></a>
+                                        <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
+                                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>Our solutions</h4>
+                                    <ul>
+                                        <li><a href="#">Design & creatives</a></li>
+                                        <li><a href="#">Telecommunication</a></li>
+                                        <li><a href="#">Restaurant</a></li>
+                                        <li><a href="#">Programing</a></li>
+                                        <li><a href="#">Architecture</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>Support</h4>
+                                    <ul>
+                                        <li><a href="#">Design & creatives</a></li>
+                                        <li><a href="#">Telecommunication</a></li>
+                                        <li><a href="#">Restaurant</a></li>
+                                        <li><a href="#">Programing</a></li>
+                                        <li><a href="#">Architecture</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                            <div class="single-footer-caption mb-50">
+                                <div class="footer-tittle">
+                                    <h4>Company</h4>
+                                    <ul>
+                                        <li><a href="#">Design & creatives</a></li>
+                                        <li><a href="#">Telecommunication</a></li>
+                                        <li><a href="#">Restaurant</a></li>
+                                        <li><a href="#">Programing</a></li>
+                                        <li><a href="#">Architecture</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- footer-bottom area -->
+            <div class="footer-bottom-area">
+                <div class="container">
+                    <div class="footer-border">
+                        <div class="row d-flex align-items-center">
+                            <div class="col-xl-12 ">
+                                <div class="footer-copy-right text-center">
+                                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                      Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                                      <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- Footer End-->
+      </div>
+  </footer> 
+  <!-- Scroll Up -->
+  <div id="back-top" >
+    <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
+</div>
+
+<!-- JS here -->
+<script src="assets/js/vendor/modernizr-3.5.0.min.js"></script>
+<script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="assets/js/popper.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script src="assets/js/slick.min.js"></script>
+<script src="assets/js/jquery.slicknav.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/animated.headline.js"></script>
+<script src="assets/js/jquery.magnific-popup.js"></script>
+<script src="assets/js/gijgo.min.js"></script>
+<script src="assets/js/jquery.nice-select.min.js"></script>
+<script src="assets/js/jquery.sticky.js"></script>
+<script src="assets/js/contact.js"></script>
+<script src="assets/js/jquery.form.js"></script>
+<script src="assets/js/jquery.validate.min.js"></script>
+<script src="assets/js/mail-script.js"></script>
+<script src="assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/main.js"></script>
+
+<script>    
+    // Review dropdown functionality
+    function toggleReviewDropdown(reviewId) {
+        const dropdown = document.getElementById('dropdown-' + reviewId);
+        const allDropdowns = document.querySelectorAll('.review-dropdown');
+        
+        // Close all other dropdowns
+        allDropdowns.forEach(d => {
+            if (d !== dropdown) {
+                d.classList.remove('show');
+            }
+        });
+        
+        dropdown.classList.toggle('show');
+    }
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.review-actions')) {
+            document.querySelectorAll('.review-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+    });
+   
+    // Update review modal
+    function openUpdateModal(reviewId, rating, comment) {
+        document.getElementById('updateReviewId').value = reviewId;
+        document.querySelector('input[name="rating"][value="' + rating + '"]').checked = true;
+        document.querySelector('.modal-textarea[name="comment"]').value = comment;
+        document.getElementById('updateModal').style.display = 'block';
+    }
+    
+    function closeUpdateModal() {
+        document.getElementById('updateModal').style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('updateModal');
+        if (event.target === modal) {
+            closeUpdateModal();
+        }
+    }
+</script>
+
+</body>
+</html>

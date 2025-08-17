@@ -540,41 +540,28 @@ public class CourseDAO extends DBContext {
         }
         return null;
     }
-
-    public static void main(String[] args) {
-        CourseDAO cdao = new CourseDAO();
-        
-        // Test basic query without filters
-        System.out.println("=== Testing basic query ===");
-        List<Course> allCourses = cdao.getAllCourse();
-        System.out.println("Total courses found: " + allCourses.size());
-        if (!allCourses.isEmpty()) {
-            System.out.println("First course: " + allCourses.get(0).getTitle());
+    public List<Course> getCoursesByTopicId(long topicId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT * FROM Course WHERE Topic_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourse_id(rs.getLong("Course_Id"));
+                c.setTitle(rs.getString("Title"));
+                c.setDescription(rs.getString("Description"));
+                c.setPrice(rs.getInt("Price"));
+                c.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                c.setCreated_at(rs.getDate("Created_At"));
+                c.setUpdated_at(rs.getDate("Updated_At"));
+                c.setTopic_id(rs.getLong("Topic_Id"));
+                courses.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        
-        // Test filtered query
-        System.out.println("\n=== Testing filtered query ===");
-        List<Course> filteredCourses = cdao.getFilteredCourses("", "", "", "newest", "");
-        System.out.println("Filtered courses found: " + filteredCourses.size());
-        if (!filteredCourses.isEmpty()) {
-            System.out.println("First filtered course: " + filteredCourses.get(0).getTitle());
-        }
-        
-        // Test with search term
-        System.out.println("\n=== Testing with search term ===");
-        List<Course> searchCourses = cdao.getFilteredCourses("Java", "", "", "newest", "");
-        System.out.println("Search results found: " + searchCourses.size());
-        if (!searchCourses.isEmpty()) {
-            System.out.println("First search result: " + searchCourses.get(0).getTitle());
-        }
-        
-        // Test with price filter
-        System.out.println("\n=== Testing with price filter ===");
-        List<Course> priceCourses = cdao.getFilteredCourses("", "0-50", "", "newest", "");
-        System.out.println("Price filtered courses found: " + priceCourses.size());
-        if (!priceCourses.isEmpty()) {
-            System.out.println("First price filtered course: " + priceCourses.get(0).getTitle() + " - Price: $" + priceCourses.get(0).getPrice());
-        }
+        return courses;
     }
 
 }

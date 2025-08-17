@@ -479,17 +479,12 @@
                                             <li class="active" ><a href="home">Home</a></li>
                                             <li><a href="courses">Courses</a></li>
                                             <li><a href="about.jsp">About</a></li>
-                                            <li><a href="#">Blog</a>
-                                                <ul class="submenu">
-                                                    <li><a href="blog.jsp">Blog</a></li>
-                                                    <li><a href="blog_details.jsp">Blog Details</a></li>
-                                                    <li><a href="elements.jsp">Element</a></li>
-                                                </ul>
-                                            </li>
+                                            <li><a href="blog">Blog</a></li>
+                                            <li><a href="cart">Cart</a></li>
                                             <li><a href="contact.jsp">Contact</a></li>
                                             <!-- Button -->
-                                            <li class="button-header margin-left "><a href="#" class="btn">Join</a></li>
-                                            <li class="button-header"><a href="login.jsp" class="btn btn3">Log in</a></li>
+                                            <li class="button-header margin-left "><a href="profile" class="btn">Profile</a></li>
+                                            <li class="button-header"><a href="logout" class="btn btn3">Logout</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -728,7 +723,7 @@
                                                     <span>$${course.price}</span>
                                                 </div>
                                             </div>
-                                            <a href="#" class="border-btn border-btn2">Find out more</a>
+                                            <a href="customer-course-detail?id=${course.course_id}" class="border-btn border-btn2">Find out more</a>
                                         </div>
                                     </div>
                                 </div>
