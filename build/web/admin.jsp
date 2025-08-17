@@ -193,7 +193,7 @@
                             <a href="overview">Overview</a>
                         </li>
                         <li data-section="courses">
-                            <a href="managecourse">Manage Courses</a>
+                            <a href="managetopic">Manage Topic</a>
                         </li>
                         <li data-section="users">
                             <a href="manageuser">Manage Users</a>
