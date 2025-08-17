@@ -36,7 +36,8 @@
 
                             <a href="deleteQuiz?quizId=${quiz.quizId}&lessonId=${lessonId}" 
                                class="btn btn-sm btn-danger">Delete</a>
-
+                                 <a href="quizDetail?quizId=${quiz.quizId}&lessonId=${lessonId}" 
+                       class="btn btn-sm btn-info">Detail</a>
                         </td>
                     </tr>
                 </c:forEach>
