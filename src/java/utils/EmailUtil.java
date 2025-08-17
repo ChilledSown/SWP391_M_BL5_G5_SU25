@@ -34,7 +34,7 @@ public class EmailUtil {
         Session session = Session.getInstance(props, auth);
 
         Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from,"Notify System", "UTF-8"));
+        message.setFrom(new InternetAddress(from,"OnlineLearning System Notify", "UTF-8"));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         message.setSubject(MimeUtility.encodeText(subject, "UTF-8", "B"));
         message.setContent(content, "text/html; charset=UTF-8");

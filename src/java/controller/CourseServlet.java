@@ -28,7 +28,6 @@ public class CourseServlet extends HttpServlet {
             CourseDAO courseDAO = new CourseDAO();
             TopicDAO topicDAO = new TopicDAO();
             
-            // Lấy các tham số filter từ request
             String searchTerm = request.getParameter("search");
             String priceFilter = request.getParameter("price");
             String ratingFilter = request.getParameter("rating");
@@ -39,60 +38,51 @@ public class CourseServlet extends HttpServlet {
             int page = 1;
             int size = 6;
             try {
-                if (request.getParameter("page") != null) page = Integer.parseInt(request.getParameter("page"));
-                if (request.getParameter("size") != null) size = Integer.parseInt(request.getParameter("size"));
+                if (request.getParameter("page") != null) {
+                    page = Integer.parseInt(request.getParameter("page"));
+                }
             } catch (NumberFormatException ignored) {}
             if (page < 1) page = 1;
-            if (size < 1) size = 6;
             int offset = (page - 1) * size;
 
-            // Lấy danh sách khóa học (phân trang)
+            // List of pagination courses
             List<Course> courses;
             int totalCount;
             if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
-                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, offset, size);
+                // Take all filtered courses with paginaation
+                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, 0, page * size);
                 totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, ratingFilter, topicFilter);
             } else {
-                courses = courseDAO.getAllCoursePaged(offset, size);
+                // If no filter, take all courses with pagination
+                courses = courseDAO.getAllCoursePaged(0, page * size);
                 totalCount = courseDAO.countAllCourses();
             }
             
-            // Lấy danh sách topics
             List<Topic> allTopics = topicDAO.getAllTopics();
             
-            // Lấy topic cho từng course
+            // Take topic for all specific course
             Map<Long, Topic> courseTopicsMap = new HashMap<>();
             for (Course course : courses) {
                 Topic courseTopic = topicDAO.getTopicByCourseId(course.getCourse_id());
                 courseTopicsMap.put(course.getCourse_id(), courseTopic);
             }
             
-            // Đặt dữ liệu vào request
             request.setAttribute("allCourses", courses);
             request.setAttribute("topics", allTopics);
-            request.setAttribute("courseTopicsMap", courseTopicsMap); // Thêm map vào request
+            request.setAttribute("courseTopicsMap", courseTopicsMap);
             request.setAttribute("totalResults", totalCount);
             request.setAttribute("page", page);
             request.setAttribute("size", size);
-            request.setAttribute("hasMore", (page * size) < totalCount);
+            request.setAttribute("hasMore", totalCount > (page * size));
             
-            // Đặt lại các tham số filter để giữ nguyên trạng thái UI
+            // Reset filter parameters
             request.setAttribute("searchTerm", searchTerm);
             request.setAttribute("priceFilter", priceFilter);
             request.setAttribute("ratingFilter", ratingFilter);
             request.setAttribute("sortBy", sortBy != null ? sortBy : "newest");
             request.setAttribute("topicFilter", topicFilter);
             
-            // Nếu là request AJAX để load thêm, trả về fragment HTML
-            String ajax = request.getParameter("ajax");
-            if ("1".equals(ajax)) {
-                // For fragment rendering, provide the list via 'pageCourses'
-                request.setAttribute("pageCourses", courses);
-                request.getRequestDispatcher("/partials/course_cards.jsp").forward(request, response);
-            } else {
-                // Forward đến trang courses.jsp
-                request.getRequestDispatcher("courses.jsp").forward(request, response);
-            }
+            request.getRequestDispatcher("courses.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();

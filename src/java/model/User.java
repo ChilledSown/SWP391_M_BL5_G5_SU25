@@ -1,30 +1,42 @@
 package model;
 
+import java.util.Date;
+
 public class User {
 
     private Long user_id;
-    private String fullName;
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private String avataUrl;
     private String phone;
     private String address;
     private String email;
     private String passwordHash;
     private String role;
+    private Date createdAt;
+    private Date updatedAt;
+    private String accountStatus;
 
     public User() {
     }
 
-    public User(Long user_id, String fullName, String avataUrl, String phone, String address, String email, String passwordHash, String role) {
+    public User(Long user_id, String firstName, String middleName, String lastName, String avataUrl, String phone, String address, String email, String passwordHash, String role, Date createdAt, Date updatedAt, String accountStatus) {
         this.user_id = user_id;
-        this.fullName = fullName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
         this.avataUrl = avataUrl;
         this.phone = phone;
         this.address = address;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.accountStatus = accountStatus;
     }
-    
+
     public Long getUser_id() {
         return user_id;
     }
@@ -33,12 +45,28 @@ public class User {
         this.user_id = user_id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getAvataUrl() {
@@ -89,9 +117,33 @@ public class User {
         this.role = role;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "user_id=" + user_id + ", fullName=" + fullName + ", avataUrl=" + avataUrl + ", phone=" + phone + ", address=" + address + ", email=" + email + ", passwordHash=" + passwordHash + ", role=" + role + '}';
+        return "User{" + "user_id=" + user_id + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", avataUrl=" + avataUrl + ", phone=" + phone + ", address=" + address + ", email=" + email + ", passwordHash=" + passwordHash + ", role=" + role + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", accountStatus=" + accountStatus + '}';
     }
     
     

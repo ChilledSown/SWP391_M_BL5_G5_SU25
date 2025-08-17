@@ -1,5 +1,3 @@
-<%@ page import="java.util.*" %>
-<%@ page import="model.*" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!doctype html>
@@ -29,43 +27,31 @@
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
     
-    <!-- Custom CSS for Topic Section and Dynamic Slider -->
+    <!-- Custom CSS for Professional Product Slider -->
     <style>
-        /* Dynamic Slider Styling */
-        .dynamic-slider-area {
+        /* Professional Product Slider Styling */
+        .product-slider-area {
             position: relative;
-            height: 600px;
+            height: 500px;
             overflow: hidden;
-            background: #000;
-            margin: 40px 0;
+            background: #f8f9fa;
+            margin: 0;
+            width: 100%;
         }
         
-        /* Debug info - remove in production */
-        .slider-debug {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 100;
-        }
-        
-        .dynamic-slider-container {
+        .product-slider-container {
             position: relative;
             width: 100%;
             height: 100%;
         }
         
-        .dynamic-slider-wrapper {
+        .product-slider-wrapper {
             position: relative;
             width: 100%;
             height: 100%;
         }
         
-        .dynamic-slider-slide {
+        .product-slider-slide {
             position: absolute;
             top: 0;
             left: 0;
@@ -76,12 +62,12 @@
             z-index: 1;
         }
         
-        .dynamic-slider-slide.active {
+        .product-slider-slide.active {
             opacity: 1;
             z-index: 2;
         }
         
-        .dynamic-slider-image {
+        .product-slider-image {
             position: absolute;
             top: 0;
             left: 0;
@@ -89,69 +75,93 @@
             height: 100%;
         }
         
-        .dynamic-slider-image img {
+        .product-slider-image img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* show full image without cropping */
-            background-color: #000; /* letterbox background */
-            filter: brightness(0.9);
+            object-fit: cover;
+            object-position: center;
         }
         
-        .dynamic-slider-content {
-            position: relative;
-            z-index: 3;
+        .product-slider-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
             display: flex;
-            align-items: center; /* vertical center */
-            justify-content: flex-start; /* left aligned */
-            padding-left: 60px;
-            padding-right: 60px;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
         }
         
-        .hero__caption h1 {
+        .product-slider-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%);
+            z-index: 2;
+        }
+        
+        .product-slider-text {
+            text-align: center;
             color: white;
-            font-size: 48px;
+            z-index: 4;
+            position: relative;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        
+        .product-slider-title {
+            font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            line-height: 1.2;
+            letter-spacing: -0.5px;
         }
         
-        .hero__caption p {
-            color: rgba(255,255,255,0.9);
-            font-size: 18px;
+        .product-slider-subtitle {
+            font-size: 1.25rem;
+            font-weight: 400;
             margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+            opacity: 0.95;
         }
         
-        .hero-btn {
+        .product-slider-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 15px 40px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .hero-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        .product-slider-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
             color: white;
             text-decoration: none;
         }
         
-        /* Navigation Arrows */
-        .dynamic-slider-nav {
+        /* Professional Navigation Arrows */
+        .product-slider-nav {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            border: none;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
             color: white;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -159,56 +169,101 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            font-size: 1.2rem;
         }
         
-        .dynamic-slider-nav:hover {
-            background: rgba(255,255,255,0.3);
+        .product-slider-nav:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
             transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
         
-        .dynamic-slider-prev {
+        .product-slider-prev {
             left: 30px;
         }
         
-        .dynamic-slider-next {
+        .product-slider-next {
             right: 30px;
         }
         
-        .dynamic-slider-nav i {
-            font-size: 20px;
+        .product-slider-nav i {
+            font-size: 24px;
+            font-weight: bold;
         }
         
-        /* Indicators */
-        .dynamic-slider-indicators {
+        /* Professional Indicators */
+        .product-slider-indicators {
             position: absolute;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 12px;
             z-index: 10;
         }
         
-        .dynamic-indicator {
-            width: 12px;
-            height: 12px;
+        .product-indicator {
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.4);
+            border: 2px solid rgba(255,255,255,0.6);
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
-        .dynamic-indicator:hover {
-            background: rgba(255,255,255,0.8);
+        .product-indicator:hover {
+            background: rgba(255,255,255,0.7);
+            border-color: rgba(255,255,255,0.9);
             transform: scale(1.2);
         }
         
-        .dynamic-indicator.active {
+        .product-indicator.active {
             background: white;
-            transform: scale(1.2);
+            border-color: white;
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
         }
         
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .product-slider-area {
+                height: 400px;
+            }
+            
+            .product-slider-title {
+                font-size: 2.5rem;
+            }
+            
+            .product-slider-subtitle {
+                font-size: 1rem;
+            }
+            
+            .product-slider-nav {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .product-slider-nav i {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-slider-area {
+                height: 350px;
+            }
+            
+            .product-slider-title {
+                font-size: 2rem;
+            }
+            
+            .product-slider-subtitle {
+                font-size: 0.9rem;
+            }
+        }
         
         /* Topic styling */
         .topic-area {
@@ -328,8 +383,7 @@
                                                 </li>
                                                 <li><a href="contact.jsp">Contact</a></li>
                                                 <!-- Button -->
-                                                <li class="button-header margin-left "><a href="#" class="btn">Join</a></li>
-                                                <li class="button-header"><a href="login.jsp" class="btn btn3">Log in</a></li>
+                                                <li class="button-header"><a href="login" class="btn btn3">Log in</a></li>
                                                 <li class="button-header"><a href="listCousera" class="btn btn3">Seller</a></li>
                                             </ul>
                                         </nav>
@@ -408,103 +462,98 @@
             </div>
         </div>
         
-        <!--? Dynamic Slider Area Start-->
-        <section class="dynamic-slider-area">
-            
-            <div class="container-fluid p-0">
-                <div class="dynamic-slider-container">
-                    <div class="dynamic-slider-wrapper">
-                        <c:choose>
-                            <c:when test="${not empty sliders}">
-                                <c:forEach var="slider" items="${sliders}" varStatus="status">
-                                    <div class="dynamic-slider-slide ${status.index == 0 ? 'active' : ''}" data-index="${status.index}">
-                                        <div class="dynamic-slider-image">
-                                            <c:choose>
-                                                <c:when test="${not empty slider.image_url}">
-                                                    <c:choose>
-                                                        <c:when test="${fn:startsWith(slider.image_url, 'http')}">
-                                            <img src="${slider.image_url}" alt="${slider.title}">
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <img src="<c:url value='${slider.image_url}'/>" alt="${slider.title}">
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <img src="assets/img/hero/h1_hero.png" alt="${slider.title}">
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </div>
-                                        <div class="dynamic-slider-content">
-                                            <div class="container">
-                                                <div class="row">
-                                                    <div class="col-xl-6 col-lg-7 col-md-12">
-                                                        <div class="hero__caption">
-                                                            <h1 data-animation="fadeInLeft" data-delay="0.2s">${slider.title}</h1>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+        <!--? Professional Product Slider Area Start-->
+        <section class="product-slider-area">
+            <div class="product-slider-container">
+                <div class="product-slider-wrapper">
+                    <c:choose>
+                        <c:when test="${not empty sliders}">
+                            <c:forEach var="slider" items="${sliders}" varStatus="status">
+                                <div class="product-slider-slide ${status.index == 0 ? 'active' : ''}" data-index="${status.index}">
+                                    <div class="product-slider-image">
+                                        <c:choose>
+                                            <c:when test="${not empty slider.image_url}">
+                                                <c:choose>
+                                                    <c:when test="${fn:startsWith(slider.image_url, 'http')}">
+                                                        <img src="${slider.image_url}" alt="${slider.title}">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="<c:url value='${slider.image_url}'/>" alt="${slider.title}">
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="assets/img/hero/h1_hero.png" alt="${slider.title}">
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <!-- Fallback slider content when no data from database -->
-                                <div class="dynamic-slider-slide active" data-index="0">
-                                    <div class="dynamic-slider-image">
-                                        <img src="assets/img/gallery/slider1.jpg" alt="Online Learning Platform">
-                                    </div>
-                                    <div class="dynamic-slider-content">
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col-xl-6 col-lg-7 col-md-12">
-                                                    <div class="hero__caption">
-                                                        <h1 data-animation="fadeInLeft" data-delay="0.2s">Online learning<br> platform</h1>
-                                                        <p data-animation="fadeInLeft" data-delay="0.4s">Build skills with courses, certificates, and degrees online from world-class universities and companies</p>
-                                                        <a href="#" class="btn hero-btn" data-animation="fadeInLeft" data-delay="0.7s">Join for Free</a>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <div class="product-slider-overlay"></div>
+                                    <div class="product-slider-content">
+                                        <div class="product-slider-text">
+                                            <h1 class="product-slider-title" data-animation="fadeInUp" data-delay="0.2s">
+                                                ${slider.title}
+                                            </h1>
                                         </div>
                                     </div>
                                 </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                    
-                    <!-- Navigation Arrows -->
-                    <button class="dynamic-slider-nav dynamic-slider-prev" onclick="changeSlide(-1)" aria-label="Previous slide">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="dynamic-slider-nav dynamic-slider-next" onclick="changeSlide(1)" aria-label="Next slide">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    
-                    <!-- Indicators -->
-                    <div class="dynamic-slider-indicators">
-                        <c:choose>
-                            <c:when test="${not empty sliders}">
-                                <c:forEach var="slider" items="${sliders}" varStatus="status">
-                                    <c:choose>
-                                        <c:when test="${status.index == 0}">
-                                            <span class="dynamic-indicator active" onclick="goToSlide(<c:out value='${status.index}'/>)"></span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="dynamic-indicator" onclick="goToSlide(<c:out value='${status.index}'/>)"></span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <span class="dynamic-indicator active" onclick="goToSlide(0)"></span>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Fallback slider content when no data from database -->
+                            <div class="product-slider-slide active" data-index="0">
+                                <div class="product-slider-image">
+                                    <img src="assets/img/gallery/slider1.jpg" alt="Professional Product Showcase">
+                                </div>
+                                <div class="product-slider-overlay"></div>
+                                <div class="product-slider-content">
+                                    <div class="product-slider-text">
+                                        <h1 class="product-slider-title" data-animation="fadeInUp" data-delay="0.2s">
+                                            Professional<br>Product Showcase
+                                        </h1>
+                                        <p class="product-slider-subtitle" data-animation="fadeInUp" data-delay="0.4s">
+                                            Discover amazing products and services designed for your success
+                                        </p>
+                                        <a href="#" class="product-slider-btn" data-animation="fadeInUp" data-delay="0.6s">
+                                            Explore Now
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                
+                <!-- Professional Navigation Arrows -->
+                <button class="product-slider-nav product-slider-prev" onclick="changeProductSlide(-1)" aria-label="Previous slide">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="product-slider-nav product-slider-next" onclick="changeProductSlide(1)" aria-label="Next slide">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <!-- Professional Indicators -->
+                <div class="product-slider-indicators">
+                    <c:choose>
+                        <c:when test="${not empty sliders}">
+                            <c:forEach var="slider" items="${sliders}" varStatus="status">
+                                <c:choose>
+                                    <c:when test="${status.index == 0}">
+                                        <span class="product-indicator active" onclick="goToProductSlide(<c:out value='${status.index}'/>)"></span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="product-indicator" onclick="goToProductSlide(<c:out value='${status.index}'/>)"></span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="product-indicator active" onclick="goToProductSlide(0)"></span>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
         </section>
-        <!-- Dynamic Slider Area End -->
+        <!-- Professional Product Slider Area End -->
         
         <!-- Courses area start -->
         <div class="courses-area section-padding40 fix">
@@ -517,81 +566,82 @@
                     </div>
                 </div>
                 <div class="courses-actives">
-                    <% if (request.getAttribute("latestCourses") != null) { %>
-                        <% 
-                        List<Course> latestCourses = (List<Course>) request.getAttribute("latestCourses");
-                        for (Course course : latestCourses) {
-                        %>
-                        <!-- Single Course -->
-                        <div class="properties pb-20">
-                            <div class="properties__card">
-                                <div class="properties__img overlay1">
-                                    <a href="#"><img src="<%= course.getThumbnail_url() != null ? course.getThumbnail_url() : "assets/img/gallery/featured1.png" %>" alt="<%= course.getTitle() %>"></a>
+                    <c:choose>
+                        <c:when test="${not empty latestCourses}">
+                            <c:forEach var="course" items="${latestCourses}">
+                                <!-- Single Course -->
+                                <div class="properties pb-20">
+                                    <div class="properties__card">
+                                        <div class="properties__img overlay1">
+                                            <a href="#"><img src="${not empty course.thumbnail_url ? course.thumbnail_url : 'assets/img/gallery/featured1.png'}" alt="${course.title}"></a>
+                                        </div>
+                                        <div class="properties__caption">
+                                            <p>Course</p>
+                                            <h3><a href="#">${course.title}</a></h3>
+                                            <p>${not empty course.description ? course.description : 'No description available'}</p>
+                                            <div class="properties__footer d-flex justify-content-between align-items-center">
+                                                <div class="restaurant-name">
+                                                    <div class="rating">
+                                                        <c:set var="rating" value="${course.averageRating != null ? course.averageRating : 0.0}" />
+                                                        <c:set var="fullStars" value="${fn:substringBefore(rating, '.')}" />
+                                                        <c:set var="hasHalfStar" value="${rating % 1 >= 0.5}" />
+                                                        
+                                                        <c:forEach begin="1" end="${fullStars}" var="i">
+                                                            <i class="fa fa-star"></i>
+                                                        </c:forEach>
+                                                        
+                                                        <c:if test="${hasHalfStar}">
+                                                            <i class="fa fa-star-half-o"></i>
+                                                        </c:if>
+                                                        
+                                                        <c:forEach begin="1" end="${5 - fullStars - (hasHalfStar ? 1 : 0)}" var="i">
+                                                            <i class="fa fa-star-o"></i>
+                                                        </c:forEach>
+                                                    </div>
+                                                    <p><span>(${fn:substringBefore(rating, '.')}.${fn:substringAfter(rating, '.')})</span> based on reviews</p>
+                                                </div>
+                                                <div class="price">
+                                                    <span>$${course.price}</span>
+                                                </div>
+                                            </div>
+                                            <a href="customer-course-detail?id=${course.course_id}" class="border-btn border-btn2">Find out more</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="properties__caption">
-                                    <p>Course</p>
-                                    <h3><a href="#"><%= course.getTitle() %></a></h3>
-                                    <p><%= course.getDescription() != null ? course.getDescription() : "No description available" %></p>
-                                    <div class="properties__footer d-flex justify-content-between align-items-center">
-                                        <div class="restaurant-name">
-                                            <div class="rating">
-                                                <% 
-                                                double rating = course.getAverageRating() != null ? course.getAverageRating() : 0.0;
-                                                int fullStars = (int) rating;
-                                                boolean hasHalfStar = rating % 1 >= 0.5;
-                                                %>
-                                                <% for (int i = 0; i < fullStars; i++) { %>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Fallback content if no courses are available -->
+                            <div class="properties pb-20">
+                                <div class="properties__card">
+                                    <div class="properties__img overlay1">
+                                        <a href="#"><img src="assets/img/gallery/featured1.png" alt=""></a>
+                                    </div>
+                                    <div class="properties__caption">
+                                        <p>User Experience</p>
+                                        <h3><a href="#">Fundamental of UX for Application design</a></h3>
+                                        <p>The automated process all your website tasks. Discover tools and techniques to engage effectively with vulnerable children and young people.</p>
+                                        <div class="properties__footer d-flex justify-content-between align-items-center">
+                                            <div class="restaurant-name">
+                                                <div class="rating">
                                                     <i class="fa fa-star"></i>
-                                                <% } %>
-                                                <% if (hasHalfStar) { %>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
                                                     <i class="fa fa-star-half-o"></i>
-                                                <% } %>
-                                                <% for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) { %>
-                                                    <i class="fa fa-star-o"></i>
-                                                <% } %>
+                                                </div>
+                                                <p><span>(4.5)</span> based on 120</p>
                                             </div>
-                                            <p><span>(<%= String.format("%.1f", rating) %>)</span> based on reviews</p>
+                                            <div class="price">
+                                                <span>$135</span>
+                                            </div>
                                         </div>
-                                        <div class="price">
-                                            <span>$<%= course.getPrice() %></span>
-                                        </div>
+                                        <a href="#" class="border-btn border-btn2">Find out more</a>
                                     </div>
-                                    <a href="#" class="border-btn border-btn2">Find out more</a>
                                 </div>
                             </div>
-                        </div>
-                        <% } %>
-                    <% } else { %>
-                        <!-- Fallback content if no courses are available -->
-                        <div class="properties pb-20">
-                            <div class="properties__card">
-                                <div class="properties__img overlay1">
-                                    <a href="#"><img src="assets/img/gallery/featured1.png" alt=""></a>
-                                </div>
-                                <div class="properties__caption">
-                                    <p>User Experience</p>
-                                    <h3><a href="#">Fundamental of UX for Application design</a></h3>
-                                    <p>The automated process all your website tasks. Discover tools and techniques to engage effectively with vulnerable children and young people.</p>
-                                    <div class="properties__footer d-flex justify-content-between align-items-center">
-                                        <div class="restaurant-name">
-                                            <div class="rating">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star-half-o"></i>
-                                            </div>
-                                            <p><span>(4.5)</span> based on 120</p>
-                                        </div>
-                                        <div class="price">
-                                            <span>$135</span>
-                                        </div>
-                                    </div>
-                                    <a href="#" class="border-btn border-btn2">Find out more</a>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
         </div>
@@ -664,31 +714,32 @@
                     </div>
                 </div>
                 <div class="row">
-                    <% if (request.getAttribute("topics") != null) { %>
-                        <% 
-                        List<Topic> topics = (List<Topic>) request.getAttribute("topics");
-                        for (int i = 0; i < topics.size() && i < 8; i++) {
-                            Topic topic = topics.get(i);
-                        %>
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="single-topic text-center mb-30">
-                            <div class="topic-img">
-                                    <img src="<%= topic.getThumbnail_url() != null ? topic.getThumbnail_url() : "assets/img/gallery/topic" + (i + 1) + ".png" %>" alt="<%= topic.getName() %>">
-                                <div class="topic-content-box">
-                                    <div class="topic-content">
-                                            <h3><a href="#"><%= topic.getName() %></a></h3>
+                    <c:choose>
+                        <c:when test="${not empty topics}">
+                            <c:forEach var="topic" items="${topics}" varStatus="status">
+                                <c:if test="${status.index < 8}">
+                                    <div class="col-lg-3 col-md-4 col-sm-6">
+                                        <div class="single-topic text-center mb-30">
+                                            <div class="topic-img">
+                                                <img src="${not empty topic.thumbnail_url ? topic.thumbnail_url : 'assets/img/gallery/topic' += (status.index + 1) += '.png'}" alt="${topic.name}">
+                                                <div class="topic-content-box">
+                                                    <div class="topic-content">
+                                                        <h3><a href="#">${topic.name}</a></h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </c:if>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Fallback content -->
+                            <div class="col-12 text-center">
+                                <p>No topics available.</p>
                             </div>
-                        </div>
-                    </div>
-                        <% } %>
-                    <% } else { %>
-                        <!-- Fallback content -->
-                        <div class="col-12 text-center">
-                            <p>No topics available.</p>
-                                    </div>
-                    <% } %>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-xl-12">
@@ -970,114 +1021,192 @@
 <script src="./assets/js/plugins.js"></script>
 <script src="./assets/js/main.js"></script>
     
-    <!-- Custom JavaScript for Dynamic Slider -->
+    <!-- Custom JavaScript for Slider -->
     <script>
-        // Dynamic Slider functionality
-        let currentSlide = 0;
-        let slideInterval;
-        const slideDuration = 3000; // 3 seconds
+        // Professional Product Slider functionality
+        let currentProductSlide = 0;
+        let productSlideInterval;
+        const productSlideDuration = 4000; // 4 seconds for better user experience
         
         // Get all slides and indicators
-        const slides = document.querySelectorAll('.dynamic-slider-slide');
-        const indicators = document.querySelectorAll('.dynamic-indicator');
-        const totalSlides = slides.length;
+        const productSlides = document.querySelectorAll('.product-slider-slide');
+        const productIndicators = document.querySelectorAll('.product-indicator');
+        const totalProductSlides = productSlides.length;
         
-        // Initialize slider
-        function initSlider() {
-            if (totalSlides > 0) {
-                showSlide(currentSlide);
-                startAutoSlide();
+        // Initialize product slider
+        function initProductSlider() {
+            if (totalProductSlides > 0) {
+                showProductSlide(currentProductSlide);
+                startProductAutoSlide();
             }
         }
         
-        // Show specific slide
-        function showSlide(index) {
+        // Show specific product slide
+        function showProductSlide(index) {
             // Hide all slides
-            slides.forEach(slide => {
+            productSlides.forEach(slide => {
                 slide.classList.remove('active');
             });
             
             // Remove active class from all indicators
-            indicators.forEach(indicator => {
+            productIndicators.forEach(indicator => {
                 indicator.classList.remove('active');
             });
             
             // Show current slide
-            if (slides[index]) {
-                slides[index].classList.add('active');
+            if (productSlides[index]) {
+                productSlides[index].classList.add('active');
             }
             
             // Activate current indicator
-            if (indicators[index]) {
-                indicators[index].classList.add('active');
+            if (productIndicators[index]) {
+                productIndicators[index].classList.add('active');
             }
             
-            currentSlide = index;
+            currentProductSlide = index;
         }
         
-        // Change slide (next/previous)
-        function changeSlide(direction) {
-            let newIndex = currentSlide + direction;
+        // Change product slide (next/previous)
+        function changeProductSlide(direction) {
+            let newIndex = currentProductSlide + direction;
             
-            if (newIndex >= totalSlides) {
+            if (newIndex >= totalProductSlides) {
                 newIndex = 0;
             } else if (newIndex < 0) {
-                newIndex = totalSlides - 1;
+                newIndex = totalProductSlides - 1;
             }
             
-            showSlide(newIndex);
-            resetAutoSlide();
+            showProductSlide(newIndex);
+            resetProductAutoSlide();
         }
         
-        // Go to specific slide
-        function goToSlide(index) {
-            showSlide(index);
-            resetAutoSlide();
+        // Go to specific product slide
+        function goToProductSlide(index) {
+            showProductSlide(index);
+            resetProductAutoSlide();
         }
         
         // Start auto-sliding
-        function startAutoSlide() {
-            slideInterval = setInterval(() => {
-                changeSlide(1);
-            }, slideDuration);
+        function startProductAutoSlide() {
+            productSlideInterval = setInterval(() => {
+                changeProductSlide(1);
+            }, productSlideDuration);
         }
         
         // Reset auto-slide timer
-        function resetAutoSlide() {
-            clearInterval(slideInterval);
-            startAutoSlide();
+        function resetProductAutoSlide() {
+            clearInterval(productSlideInterval);
+            startProductAutoSlide();
         }
         
         // Pause auto-slide on hover
-        function pauseAutoSlide() {
-            clearInterval(slideInterval);
+        function pauseProductAutoSlide() {
+            clearInterval(productSlideInterval);
         }
         
         // Resume auto-slide when mouse leaves
-        function resumeAutoSlide() {
-            startAutoSlide();
+        function resumeProductAutoSlide() {
+            startProductAutoSlide();
         }
         
-        // Initialize slider when DOM is loaded
+        // Initialize product slider when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            initSlider();
+            initProductSlider();
             
             // Add hover events to pause/resume auto-slide
-            const sliderContainer = document.querySelector('.dynamic-slider-container');
-            if (sliderContainer) {
-                sliderContainer.addEventListener('mouseenter', pauseAutoSlide);
-                sliderContainer.addEventListener('mouseleave', resumeAutoSlide);
+            const productSliderContainer = document.querySelector('.product-slider-container');
+            if (productSliderContainer) {
+                productSliderContainer.addEventListener('mouseenter', pauseProductAutoSlide);
+                productSliderContainer.addEventListener('mouseleave', resumeProductAutoSlide);
+            }
+            
+            // Add touch/swipe support for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            productSliderContainer.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            productSliderContainer.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - next slide
+                        changeProductSlide(1);
+                    } else {
+                        // Swipe right - previous slide
+                        changeProductSlide(-1);
+                    }
+                }
             }
         });
         
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft') {
-                changeSlide(-1);
+                changeProductSlide(-1);
             } else if (e.key === 'ArrowRight') {
-                changeSlide(1);
+                changeProductSlide(1);
             }
         });
+        
+        // Add smooth animations for better UX
+        function addSlideAnimations() {
+            const activeSlide = document.querySelector('.product-slider-slide.active');
+            if (activeSlide) {
+                const title = activeSlide.querySelector('.product-slider-title');
+                const subtitle = activeSlide.querySelector('.product-slider-subtitle');
+                const button = activeSlide.querySelector('.product-slider-btn');
+                
+                // Reset animations
+                [title, subtitle, button].forEach(element => {
+                    if (element) {
+                        element.style.opacity = '0';
+                        element.style.transform = 'translateY(30px)';
+                    }
+                });
+                
+                // Animate elements in sequence
+                setTimeout(() => {
+                    if (title) {
+                        title.style.transition = 'all 0.8s ease';
+                        title.style.opacity = '1';
+                        title.style.transform = 'translateY(0)';
+                    }
+                }, 200);
+                
+                setTimeout(() => {
+                    if (subtitle) {
+                        subtitle.style.transition = 'all 0.8s ease';
+                        subtitle.style.opacity = '1';
+                        subtitle.style.transform = 'translateY(0)';
+                    }
+                }, 400);
+                
+                setTimeout(() => {
+                    if (button) {
+                        button.style.transition = 'all 0.8s ease';
+                        button.style.opacity = '1';
+                        button.style.transform = 'translateY(0)';
+                    }
+                }, 600);
+            }
+        }
+        
+        // Call animation function when slide changes
+        const originalShowProductSlide = showProductSlide;
+        showProductSlide = function(index) {
+            originalShowProductSlide(index);
+            setTimeout(addSlideAnimations, 100);
+        };
     </script>
 
 </body>
