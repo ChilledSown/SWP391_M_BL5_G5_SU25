@@ -269,7 +269,8 @@
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
+                <h1>Welcome, <c:out value="${sessionScope.user.firstName} 
+                ${sessionScope.user.middleName != null ? sessionScope.user.middleName : ''} ${sessionScope.user.lastName}" />!</h1>
             </header>
             <c:if test="${not empty message}">
                 <div class="success-message">${message}</div>
@@ -304,8 +305,7 @@
                                     <td><c:out value="${topic.thumbnail_url}" /></td>
                                     <td><c:out value="${topic.description != null ? topic.description : 'N/A'}" /></td>
                                     <td>
-                                        <form action="managetopic" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="view">
+                                        <form action="managecourse" method="get" style="display:inline;">
                                             <input type="hidden" name="topicId" value="${topic.topic_id}">
                                             <button type="submit" class="view-btn">View</button>
                                         </form>
