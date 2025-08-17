@@ -82,7 +82,7 @@ public class ManageTopicServlet extends HttpServlet {
                     List<Course> courses = cdao.getCoursesByTopicId(tId);
                     request.setAttribute("courses", courses);
                 }
-                request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
+                request.getRequestDispatcher("managecourse.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Invalid topic ID");
                 request.getRequestDispatcher("managetopic.jsp").forward(request, response);
