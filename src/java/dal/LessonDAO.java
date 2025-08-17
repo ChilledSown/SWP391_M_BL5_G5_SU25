@@ -17,7 +17,7 @@ public class LessonDAO extends DBContext {
 
     public List<Lesson> getLessonsByCourseId(long courseId) {
         List<Lesson> lessons = new ArrayList<>();
-        String sql = "SELECT * FROM Lesson WHERE Course_Id = ?";
+        String sql = "SELECT * FROM Lesson WHERE Course_Id = ? ORDER BY Created_At ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, courseId);
             ResultSet rs = ps.executeQuery();
@@ -38,28 +38,28 @@ public class LessonDAO extends DBContext {
         }
         return lessons;
     }
-    public Lesson getLessonById(long lessonId) {
-    Lesson lesson = null;
-    String sql = "SELECT * FROM Lesson WHERE Lesson_Id = ?";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setLong(1, lessonId);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            lesson = new Lesson();
-            lesson.setLessonId(rs.getLong("Lesson_Id"));
-            lesson.setTitle(rs.getString("Title"));
-            lesson.setVideoUrl(rs.getString("Video_Url"));
-            lesson.setContent(rs.getString("Content"));
-            lesson.setCreatedAt(rs.getTimestamp("Created_At"));
-            lesson.setUpdatedAt(rs.getTimestamp("Updated_At"));
-            lesson.setCourseId(rs.getLong("Course_Id"));
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return lesson;
-}
 
+    public Lesson getLessonById(long lessonId) {
+        Lesson lesson = null;
+        String sql = "SELECT * FROM Lesson WHERE Lesson_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, lessonId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                lesson = new Lesson();
+                lesson.setLessonId(rs.getLong("Lesson_Id"));
+                lesson.setTitle(rs.getString("Title"));
+                lesson.setVideoUrl(rs.getString("Video_Url"));
+                lesson.setContent(rs.getString("Content"));
+                lesson.setCreatedAt(rs.getTimestamp("Created_At"));
+                lesson.setUpdatedAt(rs.getTimestamp("Updated_At"));
+                lesson.setCourseId(rs.getLong("Course_Id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lesson;
+    }
 
     public void insertLesson(Lesson lesson) {
         String sql = "INSERT INTO Lesson (Title, Video_Url, Content, Created_At, Course_Id) "
@@ -75,27 +75,17 @@ public class LessonDAO extends DBContext {
         }
     }
 
-    public List<Lesson> getLessonsByCourse(long courseId) {
-        List<Lesson> lessons = new ArrayList<>();
-        String sql = "SELECT * FROM Lesson WHERE Course_Id = ?";
+    public void updateLesson(Lesson lesson) {
+        String sql = "UPDATE Lesson SET Title = ?, Video_Url = ?, Content = ?, Updated_At = GETDATE() WHERE Lesson_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setLong(1, courseId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Lesson lesson = new Lesson();
-                lesson.setLessonId(rs.getLong("Lesson_Id"));
-                lesson.setTitle(rs.getString("Title"));
-                lesson.setVideoUrl(rs.getString("Video_Url"));
-                lesson.setContent(rs.getString("Content"));
-                lesson.setCreatedAt(rs.getTimestamp("Created_At"));
-                lesson.setUpdatedAt(rs.getTimestamp("Updated_At"));
-                lesson.setCourseId(rs.getLong("Course_Id"));
-                lessons.add(lesson);
-            }
+            ps.setString(1, lesson.getTitle());
+            ps.setString(2, lesson.getVideoUrl());
+            ps.setString(3, lesson.getContent());
+            ps.setLong(4, lesson.getLessonId());
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return lessons;
     }
 
     public void deleteLesson(long lessonId) {
@@ -107,22 +97,93 @@ public class LessonDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    
 
-    public static void main(String[] args) {
-        LessonDAO lession = new LessonDAO();
-        long testCourseId = 1;
-        List<Lesson> lessions = lession.getLessonsByCourseId(testCourseId);
+    public List<Lesson> getFilteredLessonsByCoursePaged(long courseId, String title, String createdDate, int offset, int limit) {
+        List<Lesson> lessons = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM Lesson WHERE Course_Id = ? ");
 
-        for (Lesson lesson : lessions) {
-            System.out.println("Lesson ID: " + lesson.getLessonId());
-            System.out.println("Title: " + lesson.getTitle());
-            System.out.println("Video URL: " + lesson.getVideoUrl());
-            System.out.println("Content: " + lesson.getContent());
-            System.out.println("Created At: " + lesson.getCreatedAt());
-            System.out.println("Updated At: " + lesson.getUpdatedAt());
-            System.out.println("Course Id: " + lesson.getCourseId());
-            System.out.println("-----------------------------");
+        List<Object> params = new ArrayList<>();
+        params.add(courseId);
+
+        // Filter title (dạng LIKE nhiều từ)
+        if (title != null && !title.trim().isEmpty()) {
+            String[] words = title.trim().split("\\s+");
+            for (String word : words) {
+                sql.append("AND Title LIKE ? ");
+                params.add("%" + word + "%");
+            }
         }
+
+        // Filter created date
+        if (createdDate != null && !createdDate.trim().isEmpty()) {
+            sql.append("AND CAST(Created_At AS DATE) = ? ");
+            params.add(createdDate);
+        }
+
+        sql.append("ORDER BY Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            for (Object param : params) {
+                stmt.setObject(index++, param);
+            }
+            stmt.setInt(index++, offset);
+            stmt.setInt(index, limit);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Lesson lesson = new Lesson();
+                lesson.setLessonId(rs.getLong("Lesson_Id"));
+                lesson.setCourseId(rs.getLong("Course_Id"));
+                lesson.setTitle(rs.getString("Title"));
+                lesson.setContent(rs.getString("Content"));
+                lesson.setVideoUrl(rs.getString("Video_Url"));
+                lesson.setCreatedAt(rs.getTimestamp("Created_At"));
+                lesson.setUpdatedAt(rs.getTimestamp("Updated_At"));
+                lessons.add(lesson);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lessons;
     }
+
+    public int countFilteredLessonsByCourse(long courseId, String title, String createdDate) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) AS Total FROM Lesson WHERE Course_Id = ? ");
+
+        List<Object> params = new ArrayList<>();
+        params.add(courseId);
+
+        // Filter title
+        if (title != null && !title.trim().isEmpty()) {
+            String[] words = title.trim().split("\\s+");
+            for (String word : words) {
+                sql.append("AND Title LIKE ? ");
+                params.add("%" + word + "%");
+            }
+        }
+
+        // Filter created date
+        if (createdDate != null && !createdDate.trim().isEmpty()) {
+            sql.append("AND CAST(Created_At AS DATE) = ? ");
+            params.add(createdDate);
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            for (Object param : params) {
+                stmt.setObject(index++, param);
+            }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }
