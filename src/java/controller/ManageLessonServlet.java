@@ -93,13 +93,12 @@ public class ManageLessonServlet extends HttpServlet {
 
         // Tạo baseUrl để phân trang giữ lại filter
         StringBuilder baseUrl = new StringBuilder("manageLesson?courseId=" + courseId);
-        if (title != null) {
-            baseUrl.append("&title=").append(title);
+        if (title != null && !title.isEmpty()) {
+            baseUrl.append("&title=").append(java.net.URLEncoder.encode(title, java.nio.charset.StandardCharsets.UTF_8));
         }
-        if (createdDate != null) {
+        if (createdDate != null && !createdDate.isEmpty()) {
             baseUrl.append("&createdDate=").append(createdDate);
         }
-        baseUrl.append("&page"); // giữ chỗ cho ?page=X
         request.setAttribute("baseUrl", baseUrl.toString());
 
         request.getRequestDispatcher("manageLesson.jsp").forward(request, response);
