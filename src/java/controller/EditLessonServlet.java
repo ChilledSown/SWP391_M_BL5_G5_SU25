@@ -1,12 +1,11 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ * Click nbfs://nbproject/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
 
 import dal.LessonDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,34 +21,7 @@ import model.Lesson;
 public class EditLessonServlet extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet EditLessonServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet EditLessonServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
+     * Handles the HTTP <code>GET</code> method to load lesson data for editing.
      *
      * @param request servlet request
      * @param response servlet response
@@ -59,11 +31,40 @@ public class EditLessonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            // Lấy tham số lessonId và courseId từ URL
+            String lessonIdStr = request.getParameter("lessonId");
+            String courseId = request.getParameter("courseId");
+
+            // Nếu có lessonId, lấy dữ liệu bài học từ cơ sở dữ liệu
+            if (lessonIdStr != null && !lessonIdStr.isEmpty()) {
+                try {
+                    Long lessonId = Long.parseLong(lessonIdStr);
+                    LessonDAO dao = new LessonDAO();
+                    Lesson lesson = dao.getLessonById(lessonId);
+                    if (lesson != null) {
+                        request.setAttribute("lesson", lesson);
+                    } else {
+                        request.setAttribute("error", "Lesson not found for ID: " + lessonId);
+                    }
+                } catch (NumberFormatException e) {
+                    request.setAttribute("error", "Invalid lesson ID format.");
+                }
+            }
+
+            // Đặt courseId vào request để sử dụng trong form
+            request.setAttribute("courseId", courseId);
+
+            // Chuyển tiếp đến lesson_form.jsp
+            request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while loading the lesson form.");
+        }
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method to update lesson data.
      *
      * @param request servlet request
      * @param response servlet response
@@ -73,14 +74,33 @@ public class EditLessonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int lessonId = Integer.parseInt(request.getParameter("lessonId"));
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
-        String title = request.getParameter("title");
-        String videoUrl = request.getParameter("videoUrl");
-        String content = request.getParameter("content");
+        try {
+            // Lấy tham số từ form
+            Long lessonId = Long.parseLong(request.getParameter("lessonId"));
+            Long courseId = Long.parseLong(request.getParameter("courseId"));
+            String title = request.getParameter("title");
+            String videoUrl = request.getParameter("videoUrl");
+            String content = request.getParameter("content");
 
-        LessonDAO dao = new LessonDAO();
-       // dao.updateLesson(new Lesson(lessonId, title, videoUrl, content));
+            // Tạo đối tượng Lesson và thiết lập giá trị bằng setter
+            Lesson lesson = new Lesson();
+            lesson.setLessonId(lessonId);
+            lesson.setCourseId(courseId);
+            lesson.setTitle(title);
+            lesson.setVideoUrl(videoUrl);
+            lesson.setContent(content);
+
+            // Cập nhật bài học trong cơ sở dữ liệu
+            LessonDAO dao = new LessonDAO();
+            dao.updateLesson(lesson);
+
+            // Không chuyển hướng vì iframe trong lesson_form.jsp xử lý việc tải lại trang mẹ
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid lesson ID or course ID format.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while updating the lesson.");
+        }
     }
 
     /**
@@ -90,7 +110,6 @@ public class EditLessonServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet for editing lessons and loading lesson form";
+    }
 }
