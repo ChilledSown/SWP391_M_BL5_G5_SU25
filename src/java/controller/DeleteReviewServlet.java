@@ -25,17 +25,24 @@ public class DeleteReviewServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
         try {
             String reviewIdStr = request.getParameter("reviewId");
+            String courseIdStr = request.getParameter("courseId");
 
+            if (reviewIdStr == null || courseIdStr == null) {
+                response.sendRedirect("courses");
+                return;
+            }
+            
             long reviewId = Long.parseLong(reviewIdStr);
+            long courseId = Long.parseLong(courseIdStr);
             
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-
+            if (user == null) {
+                response.sendRedirect("login");
+                return;
+            }
             
             long userId = user.getUser_id();
             
@@ -44,11 +51,21 @@ public class DeleteReviewServlet extends HttpServlet {
             
             // Get review to check ownership
             Review review = reviewDAO.getReviewById(reviewId);
+            if (review == null || review.getUser_id() != userId) {
+                response.sendRedirect("customer-course-detail?id=" + courseId);
+                return;
+            }
             
             // Delete review
             reviewDAO.deleteReview(reviewId);
+            
+            // Redirect back to course detail page
+            response.sendRedirect("customer-course-detail?id=" + courseId);
+            
         } catch (Exception e) {
             e.printStackTrace();
+            // If error occurs, redirect back to courses page
+            response.sendRedirect("courses");
         }
     }
 

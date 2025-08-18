@@ -501,7 +501,7 @@
             color: #f39c12;
         }
         
-        /* Star rating selected state - khi chọn sao thứ N, tất cả sao từ 1 đến N sẽ sáng */
+        /* Star rating selected state - khi ch?n sao th? N, t?t c? sao t? 1 ??n N s? s�ng */
         .star-rating-input .star-input:checked + .star-label,
         .star-rating-input .star-input:checked ~ .star-label {
             color: #f39c12;
