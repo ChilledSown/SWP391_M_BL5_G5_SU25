@@ -347,6 +347,36 @@
         
         .properties__caption > p:first-child {
             color: #667eea;
+        }
+        
+        /* No results styling */
+        .no-results {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .no-results h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .no-results p {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .no-results a {
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .no-results a:hover {
+            text-decoration: underline;
+        }
+        
+        .course-topic .badge {
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
@@ -481,10 +511,9 @@
                                             <li><a href="about.jsp">About</a></li>
                                             <li><a href="blog">Blog</a></li>
                                             <li><a href="cart">Cart</a></li>
-                                            <li><a href="contact.jsp">Contact</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
                                             <!-- Button -->
                                             <li class="button-header margin-left "><a href="profile" class="btn">Profile</a></li>
-                                            <li class="button-header"><a href="login" class="btn btn3">Logout</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -560,9 +589,6 @@
                             <!-- Search Bar -->
                             <div class="search-box">
                                 <input type="text" name="search" value="${searchTerm}" class="form-control" placeholder="What would you like to learn today?" aria-label="Search courses">
-                                <button type="submit" class="search-btn">
-                                    <i class="fas fa-search"></i>
-                                </button>
                                 </div>
                                 
                             <!-- Filters Section -->
@@ -732,7 +758,19 @@
                     </c:if>
                     <c:if test="${empty allCourses}">
                         <div class="col-12 text-center">
-                            <p>Cannot found other courses.</p>
+                            <c:choose>
+                                <c:when test="${not empty searchTerm or not empty priceFilter or not empty ratingFilter or not empty topicFilter}">
+                                    <div class="no-results">
+                                        <i class="fas fa-search" style="font-size: 48px; color: #95a5a6; margin-bottom: 20px;"></i>
+                                        <h4>No courses found</h4>
+                                        <p>No courses match your current filters.</p>
+                                        <p>Try adjusting your search criteria or <a href="courses" class="text-primary">clear all filters</a>.</p>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <p>Cannot found other courses.</p>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </c:if>
                 </div>
@@ -941,7 +979,23 @@
                      }
                  });
              }
+             
+             // Add filter change logging
+             const filterSelects = document.querySelectorAll('select[name="price"], select[name="rating"], select[name="sort"], select[name="topic"]');
+             filterSelects.forEach(select => {
+                 select.addEventListener('change', function() {
+                     this.form.submit();
+                 });
+             });
          });
+         
+         // Function to manually submit filter form
+         function submitFilterForm() {
+             const form = document.querySelector('.search-filter-container form');
+             if (form) {
+                 form.submit();
+             }
+         }
      </script>
     
     <!-- Load more pagination -->
