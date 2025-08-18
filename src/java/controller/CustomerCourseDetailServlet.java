@@ -9,8 +9,11 @@ import dal.CourseDAO;
 import dal.LessonDAO;
 import dal.ReviewDAO;
 import dal.TopicDAO;
+import dal.UserDAO;
 import java.io.IOException;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -66,6 +69,17 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             
             // Get reviews for this course
             List<Review> reviews = reviewDAO.getReviewsByCourseId(courseId);
+            // Map user info for each review
+            UserDAO userDAO = new UserDAO();
+            Map<Long, User> reviewUsersMap = new HashMap<>(); // key = user_id
+            for (Review r : reviews) {
+                if (r != null && r.getReview_id() != null) {
+                    User reviewUser = userDAO.getUserByReview(r.getReview_id());
+                    if (reviewUser != null) {
+                        reviewUsersMap.put(r.getUser_id(), reviewUser);
+                    }
+                }
+            }
             
             // Get average rating and review count
             double averageRating = reviewDAO.getAverageRatingByCourseId(courseId);
@@ -91,6 +105,7 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             request.setAttribute("topic", topic);
             request.setAttribute("lessons", lessons);
             request.setAttribute("reviews", reviews);
+            request.setAttribute("reviewUsersMap", reviewUsersMap);
             request.setAttribute("averageRating", averageRating);
             request.setAttribute("reviewCount", reviewCount);
             request.setAttribute("userReview", userReview);
