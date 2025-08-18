@@ -199,7 +199,7 @@
                             <a href="manageuser">Manage Users</a>
                         </li>               
                         <li data-section="settings">
-                            <a href="login">Logout</a>
+                            <a href="${pageContext.request.contextPath}/logout">Logout</a>
                         </li>
                     </ul>
                 </nav>  
