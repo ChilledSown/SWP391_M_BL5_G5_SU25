@@ -172,6 +172,7 @@ public class TopicDAO extends DBContext {
             return false;
         }
     }
+<<<<<<< Updated upstream
 
     public boolean deleteTopic(long topicId) {
         Connection conn = null;
@@ -261,4 +262,6 @@ public class TopicDAO extends DBContext {
             System.out.println(topic1);
         }
     }
+=======
+>>>>>>> Stashed changes
 }
