@@ -79,8 +79,6 @@ public class ManageTopicServlet extends HttpServlet {
                     }
                 } else {
                     CourseDAO cdao = new CourseDAO();
-                 //   List<Course> courses = cdao.getCoursesByTopicId(tId);
-                  //  request.setAttribute("courses", courses);
 
 
                 }
