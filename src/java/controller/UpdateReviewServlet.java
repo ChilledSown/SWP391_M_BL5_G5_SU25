@@ -33,48 +33,21 @@ public class UpdateReviewServlet extends HttpServlet {
             String reviewIdStr = request.getParameter("reviewId");
             String ratingStr = request.getParameter("rating");
             String comment = request.getParameter("comment");
-            
-            if (reviewIdStr == null || ratingStr == null || comment == null || 
-                reviewIdStr.trim().isEmpty() || ratingStr.trim().isEmpty() || comment.trim().isEmpty()) {
-                out.print("{\"success\": false, \"message\": \"All fields are required\"}");
-                return;
-            }
-            
             long reviewId = Long.parseLong(reviewIdStr);
             int rating = Integer.parseInt(ratingStr);
             
             // Validate rating
             if (rating < 1 || rating > 5) {
-                out.print("{\"success\": false, \"message\": \"Rating must be between 1 and 5\"}");
                 return;
             }
-            
-            // For testing, use a fixed user ID
-            // Get user from session
             HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
-            if (user == null) {
-                out.print("{\"success\": false, \"message\": \"Please login first\"}");
-                return;
-            }
-            
+            User user = (User) session.getAttribute("user");  
             long userId = user.getUser_id();
-            
-            // Get DAO
             ReviewDAO reviewDAO = new ReviewDAO();
             
             // Get review to check ownership
             Review review = reviewDAO.getReviewById(reviewId);
             if (review == null) {
-                out.print("{\"success\": false, \"message\": \"Review not found\"}");
-                return;
-            }
-            
-            // Check if user owns this review
-            if (!review.getUser_id().equals(userId)) {
-                out.print("{\"success\": false, \"message\": \"You can only update your own reviews\"}");
                 return;
             }
             
@@ -82,14 +55,8 @@ public class UpdateReviewServlet extends HttpServlet {
             review.setRating(rating);
             review.setComment(comment);
             reviewDAO.updateReview(review);
-            
-            out.print("{\"success\": true, \"message\": \"Review updated successfully\"}");
-            
-        } catch (NumberFormatException e) {
-            out.print("{\"success\": false, \"message\": \"Invalid review ID or rating\"}");
         } catch (Exception e) {
             e.printStackTrace();
-            out.print("{\"success\": false, \"message\": \"Error updating review\"}");
         }
     }
 
