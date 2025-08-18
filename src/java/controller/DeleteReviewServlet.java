@@ -29,25 +29,13 @@ public class DeleteReviewServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
-            // Get review ID from request
             String reviewIdStr = request.getParameter("reviewId");
-            if (reviewIdStr == null || reviewIdStr.trim().isEmpty()) {
-                out.print("{\"success\": false, \"message\": \"Review ID is required\"}");
-                return;
-            }
-            
+
             long reviewId = Long.parseLong(reviewIdStr);
             
-            // For testing, use a fixed user ID
-            // Get user from session
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
-            if (user == null) {
-                out.print("{\"success\": false, \"message\": \"Please login first\"}");
-                return;
-            }
+
             
             long userId = user.getUser_id();
             
@@ -56,27 +44,11 @@ public class DeleteReviewServlet extends HttpServlet {
             
             // Get review to check ownership
             Review review = reviewDAO.getReviewById(reviewId);
-            if (review == null) {
-                out.print("{\"success\": false, \"message\": \"Review not found\"}");
-                return;
-            }
-            
-            // Check if user owns this review (for testing, allow deletion)
-            if (!review.getUser_id().equals(userId)) {
-                out.print("{\"success\": false, \"message\": \"You can only delete your own reviews\"}");
-                return;
-            }
             
             // Delete review
             reviewDAO.deleteReview(reviewId);
-            
-            out.print("{\"success\": true, \"message\": \"Review deleted successfully\"}");
-            
-        } catch (NumberFormatException e) {
-            out.print("{\"success\": false, \"message\": \"Invalid review ID\"}");
         } catch (Exception e) {
             e.printStackTrace();
-            out.print("{\"success\": false, \"message\": \"Error deleting review\"}");
         }
     }
 
