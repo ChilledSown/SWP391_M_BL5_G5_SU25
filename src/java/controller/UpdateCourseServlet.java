@@ -1,98 +1,88 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dal.CourseDAO;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.file.Paths;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
-/**
- *
- * @author Admin
- */
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 2 * 1024 * 1024,   // 2MB
+    maxRequestSize = 5 * 1024 * 1024 // 5MB
+)
 @WebServlet(name = "UpdateCourseServlet", urlPatterns = {"/updateCourse"})
 public class UpdateCourseServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UpdateCourseServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UpdateCourseServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        long id = Long.parseLong(request.getParameter("courseId"));
+
+        request.setCharacterEncoding("UTF-8");
+
+        // 🆔 courseId từ hidden input
+        String rawId = request.getParameter("courseId");
+        if (rawId == null || rawId.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing courseId");
+            return;
+        }
+        long courseId = Long.parseLong(rawId);
+
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         int price = Integer.parseInt(request.getParameter("price"));
-        String thumbnailUrl = request.getParameter("thumbnail_url");
         long topicId = Long.parseLong(request.getParameter("topic_id"));
 
+        // 🔽 Nếu người dùng không chọn ảnh mới thì giữ nguyên ảnh cũ
+        String thumbnailUrl = request.getParameter("thumbnail_url");
+
+        Part filePart = request.getPart("thumbnail");
+        if (filePart != null && filePart.getSize() > 0) {
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String contentType = filePart.getContentType();
+            long fileSize = filePart.getSize();
+
+            // ✅ Validate ảnh
+            if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
+                request.getSession().setAttribute("error", "Chỉ cho phép JPG, PNG, GIF.");
+                response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
+                return;
+            }
+            if (fileSize > 2 * 1024 * 1024) {
+                request.getSession().setAttribute("error", "Ảnh quá lớn, giới hạn là 2MB.");
+                response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
+                return;
+            }
+
+            // ✅ Lưu file vào thư mục uploads
+            String uploadPath = getServletContext().getRealPath("/") + "assets/img/uploads";
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            String filePath = uploadPath + File.separator + fileName;
+            filePart.write(filePath);
+
+            // ✅ Gán lại đường dẫn mới
+            thumbnailUrl = "assets/img/uploads/" + fileName;
+        }
+
+        // ✅ Cập nhật DB
         CourseDAO dao = new CourseDAO();
-        dao.updateCourse(id, title, description, price, thumbnailUrl, topicId);
+        dao.updateCourse(courseId, title, description, price, thumbnailUrl, topicId);
 
         response.sendRedirect("listCousera");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Handles update course logic including thumbnail upload";
+    }
 }
