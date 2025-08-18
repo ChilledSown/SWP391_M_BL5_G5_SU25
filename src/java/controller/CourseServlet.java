@@ -49,12 +49,12 @@ public class CourseServlet extends HttpServlet {
             List<Course> courses;
             int totalCount;
             if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
-                // Take all filtered courses with paginaation
-                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, 0, page * size);
-                totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, ratingFilter, topicFilter);
+                // Khi có filter, lấy tất cả courses đã filter (không áp dụng pagination)
+                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, 0, Integer.MAX_VALUE);
+                totalCount = courses.size(); // Số courses đã filter
             } else {
                 // If no filter, take all courses with pagination
-                courses = courseDAO.getAllCoursePaged(0, page * size);
+                courses = courseDAO.getAllCoursePaged(offset, size);
                 totalCount = courseDAO.countAllCourses();
             }
             
