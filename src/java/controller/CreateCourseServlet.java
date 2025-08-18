@@ -53,12 +53,12 @@ public class CreateCourseServlet extends HttpServlet {
 
         // ✅ Validate ảnh
         if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
-            session.setAttribute("error", "❌ Chỉ cho phép JPG, PNG, GIF.");
+            session.setAttribute("error", "Chỉ cho phép JPG, PNG, GIF.");
             response.sendRedirect("blog_course_form.jsp");
             return;
         }
         if (fileSize > 2 * 1024 * 1024) {
-            session.setAttribute("error", "❌ Ảnh quá lớn, giới hạn là 2MB.");
+            session.setAttribute("error", "Ảnh quá lớn, giới hạn là 2MB.");
             response.sendRedirect("blog_course_form.jsp");
             return;
         }

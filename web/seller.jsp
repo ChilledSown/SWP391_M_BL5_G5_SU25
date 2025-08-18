@@ -189,7 +189,7 @@
                                         <tr>
                                             <th>Title</th>
                                             <th>Price</th>
-
+                                            <th>Create_At</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -197,7 +197,8 @@
                                         <c:forEach var="course" items="${courses}">
                                             <tr>
                                                 <td>${course.title}</td>
-                                                <td>$${course.price}</td>
+                                                <td>${course.price}</td>
+                                                <td>${course.created_at}</td>
 
                                                 <td>
                                                     <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}"
