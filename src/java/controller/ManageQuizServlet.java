@@ -1,19 +1,28 @@
 package controller;
 
+import dal.QuizDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import dal.QuizDAO;
-import model.Quiz;
 import java.util.List;
+import model.Quiz;
 
-@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/managequiz"})
+@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuiz"})
 public class ManageQuizServlet extends HttpServlet {
+
     private final int PAGE_SIZE = 8;
 
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -23,7 +32,37 @@ public class ManageQuizServlet extends HttpServlet {
         String lessonId = request.getParameter("lessonId");
         String topicId = request.getParameter("topicId");
         String courseId = request.getParameter("courseId");
+        String searchQuery = request.getParameter("query");
 
+        // Handle the "details" action
+        if ("details".equals(action)) {
+            try {
+                long quizId = Long.parseLong(request.getParameter("quizId"));
+                Quiz quiz = qdao.getQuizById(quizId);
+                if (quiz == null) {
+                    request.setAttribute("error", "Quiz not found");
+                    request.setAttribute("topicId", topicId);
+                    request.setAttribute("courseId", courseId);
+                    request.setAttribute("lessonId", lessonId);
+                    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
+                    return;
+                }
+                request.setAttribute("quiz", quiz);
+                request.setAttribute("topicId", topicId);
+                request.setAttribute("courseId", courseId);
+                request.setAttribute("lessonId", lessonId);
+                request.getRequestDispatcher("quizDetails.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid quiz ID");
+                request.setAttribute("topicId", topicId);
+                request.setAttribute("courseId", courseId);
+                request.setAttribute("lessonId", lessonId);
+                request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        // Handle the "edit" action
         if ("edit".equals(action)) {
             try {
                 long quizId = Long.parseLong(request.getParameter("quizId"));
@@ -33,7 +72,7 @@ public class ManageQuizServlet extends HttpServlet {
                     request.setAttribute("topicId", topicId);
                     request.setAttribute("courseId", courseId);
                     request.setAttribute("lessonId", lessonId);
-                    request.getRequestDispatcher("managequiz.jsp").forward(request, response);
+                    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
                     return;
                 }
                 request.setAttribute("quiz", quiz);
@@ -46,35 +85,44 @@ public class ManageQuizServlet extends HttpServlet {
                 request.setAttribute("topicId", topicId);
                 request.setAttribute("courseId", courseId);
                 request.setAttribute("lessonId", lessonId);
-                request.getRequestDispatcher("managequiz.jsp").forward(request, response);
+                request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
             }
             return;
         }
 
+        // Handle pagination and search
         int page = 1;
         try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) { }
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.trim().isEmpty()) {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            }
+        } catch (NumberFormatException e) {
+            // Default to page 1 if invalid
+        }
 
-        String searchQuery = request.getParameter("query");
         List<Quiz> quizzes;
-        int totalQuizzes;
+        int totalQuizzes = 0;
         if (lessonId != null && !lessonId.trim().isEmpty()) {
             try {
                 long lessonIdLong = Long.parseLong(lessonId);
-                quizzes = qdao.getQuizzesByLessonId(lessonIdLong);
-                totalQuizzes = quizzes.size();
-                int totalPages = (int) Math.ceil((double) totalQuizzes / PAGE_SIZE);
-                int start = (page - 1) * PAGE_SIZE;
-                int end = Math.min(start + PAGE_SIZE, quizzes.size());
-                if (start < quizzes.size()) {
-                    quizzes = quizzes.subList(start, end);
+                // Use pagination and search if query is present
+                if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                    quizzes = qdao.getQuizzesWithPagination(searchQuery, lessonIdLong, page, PAGE_SIZE);
+                    totalQuizzes = qdao.getTotalQuizzes(searchQuery, lessonIdLong);
                 } else {
-                    quizzes = List.of();
-                    if (totalQuizzes > 0 && page > 1) {
-                        request.setAttribute("error", "Page out of range for lesson ID: " + lessonId);
-                        page = 1;
-                        quizzes = qdao.getQuizzesByLessonId(lessonIdLong).subList(0, Math.min(PAGE_SIZE, totalQuizzes));
+                    quizzes = qdao.getQuizzesByLessonId(lessonIdLong);
+                    totalQuizzes = quizzes.size();
+                }
+                int totalPages = (int) Math.ceil((double) totalQuizzes / PAGE_SIZE);
+                if (totalPages == 0) totalPages = 1; // Ensure at least one page
+                if (page > totalPages) {
+                    page = totalPages;
+                    if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+                        quizzes = qdao.getQuizzesWithPagination(searchQuery, lessonIdLong, page, PAGE_SIZE);
+                    } else {
+                        quizzes = qdao.getQuizzesByLessonId(lessonIdLong);
                     }
                 }
                 request.setAttribute("currentPage", page);
@@ -84,19 +132,16 @@ public class ManageQuizServlet extends HttpServlet {
                 request.setAttribute("topicId", topicId);
                 request.setAttribute("courseId", courseId);
                 request.setAttribute("lessonId", lessonId);
-                request.getRequestDispatcher("managequiz.jsp").forward(request, response);
+                request.setAttribute("quizzes", List.of());
+                request.setAttribute("currentPage", 1);
+                request.setAttribute("totalPages", 1);
+                request.setAttribute("searchQuery", searchQuery);
+                request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
                 return;
             }
-        } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            quizzes = qdao.getQuizzesWithPagination(searchQuery, page, PAGE_SIZE);
-            totalQuizzes = qdao.getTotalQuizzes(searchQuery);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", (int) Math.ceil((double) totalQuizzes / PAGE_SIZE));
         } else {
-            quizzes = qdao.getQuizzesWithPagination(null, page, PAGE_SIZE);
-            totalQuizzes = qdao.getTotalQuizzes(null);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", (int) Math.ceil((double) totalQuizzes / PAGE_SIZE));
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing lessonId parameter.");
+            return;
         }
 
         request.setAttribute("quizzes", quizzes);
@@ -110,9 +155,17 @@ public class ManageQuizServlet extends HttpServlet {
             request.setAttribute("message", message);
             request.getSession().removeAttribute("message");
         }
-        request.getRequestDispatcher("managequiz.jsp").forward(request, response);
+        request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -122,6 +175,7 @@ public class ManageQuizServlet extends HttpServlet {
         String courseId = request.getParameter("courseId");
         String lessonId = request.getParameter("lessonId");
 
+        // Handle "update" action
         if ("update".equals(action)) {
             String quizIdStr = request.getParameter("quizId");
             String question = request.getParameter("question");
@@ -168,14 +222,25 @@ public class ManageQuizServlet extends HttpServlet {
                 request.setAttribute("topicId", topicId);
                 request.setAttribute("courseId", courseId);
                 request.setAttribute("lessonId", lessonId);
-                request.getRequestDispatcher("managequiz.jsp").forward(request, response);
+                request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
                 return;
             }
         }
-        String redirectUrl = "managequiz";
+
+        String redirectUrl = "manageQuiz";
         if (topicId != null && courseId != null && lessonId != null) {
             redirectUrl += "?topicId=" + topicId + "&courseId=" + courseId + "&lessonId=" + lessonId;
         }
         response.sendRedirect(redirectUrl);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Manages quiz-related operations for the admin dashboard";
     }
 }

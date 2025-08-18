@@ -8,12 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import dal.TopicDAO;
 import dal.CourseDAO;
-import dal.LessonDAO;
-import dal.QuizDAO;
 import model.Topic;
 import model.Course;
-import model.Lesson;
-import model.Quiz;
 import java.util.List;
 
 @WebServlet(name="ManageTopicServlet", urlPatterns={"/managetopic"})
@@ -27,7 +23,9 @@ public class ManageTopicServlet extends HttpServlet {
         TopicDAO tdao = new TopicDAO();
 
         String action = request.getParameter("action");
-        if ("edit".equals(action)) {
+
+        // Handle the "details" action
+        if ("details".equals(action)) {
             try {
                 long topicId = Long.parseLong(request.getParameter("topicId"));
                 Topic topic = tdao.getTopicById(topicId);
@@ -37,51 +35,29 @@ public class ManageTopicServlet extends HttpServlet {
                     return;
                 }
                 request.setAttribute("topic", topic);
-                request.getRequestDispatcher("updatetopic.jsp").forward(request, response);
+                request.getRequestDispatcher("topicDetails.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Invalid topic ID");
                 request.getRequestDispatcher("managetopic.jsp").forward(request, response);
             }
             return;
-        } else if ("view".equals(action)) {
+        }
+
+        // Handle the "view" action (for courses)
+        if ("view".equals(action)) {
             try {
-                long tId = Long.parseLong(request.getParameter("topicId"));
-                Topic top = tdao.getTopicById(tId);
-                if (top == null) {
+                long topicId = Long.parseLong(request.getParameter("topicId"));
+                Topic topic = tdao.getTopicById(topicId);
+                if (topic == null) {
                     request.setAttribute("error", "Topic not found");
                     request.getRequestDispatcher("managetopic.jsp").forward(request, response);
                     return;
                 }
-                request.setAttribute("topic", top);
-                String courseIdStr = request.getParameter("courseId");
-                String lessonIdStr = request.getParameter("lessonId");
-                if (lessonIdStr != null) {
-                    try {
-                        long lessonId = Long.parseLong(lessonIdStr);
-                        QuizDAO qdao = new QuizDAO();
-                        List<Quiz> quizzes = qdao.getQuizzesByLessonId(lessonId);
-                        request.setAttribute("quizzes", quizzes);
-                    } catch (NumberFormatException e) {
-                        request.setAttribute("error", "Invalid lesson ID");
-                        request.getRequestDispatcher("managetopic.jsp").forward(request, response);
-                        return;
-                    }
-                } else if (courseIdStr != null) {
-                    try {
-                        long courseId = Long.parseLong(courseIdStr);
-                        LessonDAO ldao = new LessonDAO();
-                        List<Lesson> lessons = ldao.getLessonsByCourseId(courseId);
-                        request.setAttribute("lessons", lessons);
-                    } catch (NumberFormatException e) {
-                        request.setAttribute("error", "Invalid course ID");
-                        request.getRequestDispatcher("managetopic.jsp").forward(request, response);
-                        return;
-                    }
-                } else {
-                    CourseDAO cdao = new CourseDAO();
-                    List<Course> courses = cdao.getCoursesByTopicId(tId);
-                    request.setAttribute("courses", courses);
-                }
+                request.setAttribute("topic", topic);
+                CourseDAO cdao = new CourseDAO();
+                List<Course> courses = cdao.getCoursesByTopicId(topicId);
+                request.setAttribute("courses", courses);
+                request.setAttribute("topicId", topicId);
                 request.getRequestDispatcher("managecourse.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 request.setAttribute("error", "Invalid topic ID");
@@ -90,12 +66,15 @@ public class ManageTopicServlet extends HttpServlet {
             return;
         }
 
+        // Handle topic listing with pagination and search
         int page = 1;
         String pageStr = request.getParameter("page");
-        if (pageStr != null) {
+        if (pageStr != null && !pageStr.trim().isEmpty()) {
             try {
                 page = Integer.parseInt(pageStr);
+                if (page < 1) page = 1;
             } catch (NumberFormatException e) {
+                // Default to page 1 if invalid
             }
         }
 
@@ -110,6 +89,11 @@ public class ManageTopicServlet extends HttpServlet {
             totalTopics = tdao.getTotalTopics(null);
         }
         int totalPages = (int) Math.ceil((double) totalTopics / PAGE_SIZE);
+        if (totalPages == 0) totalPages = 1;
+        if (page > totalPages) {
+            page = totalPages;
+            topics = tdao.getTopicsWithPagination(searchQuery, page, PAGE_SIZE);
+        }
 
         request.setAttribute("topics", topics);
         request.setAttribute("currentPage", page);
@@ -127,71 +111,11 @@ public class ManageTopicServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        TopicDAO tdao = new TopicDAO();
-        String action = request.getParameter("action");
+        doGet(request, response);
+    }
 
-        if ("delete".equals(action)) {
-            try {
-                long topicId = Long.parseLong(request.getParameter("topicId"));
-                Topic topic = tdao.getTopicById(topicId);
-                if (topic == null) {
-                    request.setAttribute("error", "Topic not found");
-                } else {
-                    boolean success = tdao.deleteTopic(topicId);
-                    if (success) {
-                        request.getSession().setAttribute("message", "Topic deleted successfully");
-                    } else {
-                        request.setAttribute("error", "Failed to delete topic due to database error");
-                    }
-                }
-            } catch (NumberFormatException e) {
-                request.setAttribute("error", "Invalid topic ID");
-            }
-            doGet(request, response);
-        } else if ("update".equals(action)) {
-            String topicIdStr = request.getParameter("topicId");
-            String name = request.getParameter("name");
-            String thumbnailUrl = request.getParameter("thumbnailUrl");
-            String description = request.getParameter("description");
-
-            String error = null;
-            try {
-                long topicId = Long.parseLong(topicIdStr);
-                if (name == null || name.trim().isEmpty()) {
-                    error = "Topic name is required.";
-                } else {
-                    Topic existingTopic = tdao.getTopicByName(name);
-                    if (existingTopic != null && existingTopic.getTopic_id() != topicId) {
-                        error = "Topic name already exists.";
-                    }
-                }
-
-                if (error != null) {
-                    Topic topic = new Topic();
-                    topic.setTopic_id(topicId);
-                    topic.setName(name);
-                    topic.setThumbnail_url(thumbnailUrl);
-                    topic.setDescription(description);
-                    request.setAttribute("topic", topic);
-                    request.setAttribute("error", error);
-                    request.getRequestDispatcher("updatetopic.jsp").forward(request, response);
-                    return;
-                }
-
-                Topic topic = new Topic();
-                topic.setTopic_id(topicId);
-                topic.setName(name);
-                topic.setThumbnail_url(thumbnailUrl);
-                topic.setDescription(description);
-
-                boolean success = tdao.updateTopic(topic);
-                request.getSession().setAttribute("message", success ? "Topic updated successfully" : "Failed to update topic");
-            } catch (NumberFormatException e) {
-                request.setAttribute("error", "Invalid topic ID");
-                request.getRequestDispatcher("managetopic.jsp").forward(request, response);
-                return;
-            }
-            response.sendRedirect("managetopic");
-        }
+    @Override
+    public String getServletInfo() {
+        return "Manages topic-related operations for the admin dashboard";
     }
 }

@@ -142,14 +142,15 @@ public class QuizDAO extends DBContext {
         return false;
     }
 
-    // Get quizzes with pagination (for search or all quizzes)
-    public List<Quiz> getQuizzesWithPagination(String query, int page, int pageSize) {
+    // Get quizzes with pagination and search by lesson ID
+    public List<Quiz> getQuizzesWithPagination(String query, long lessonId, int page, int pageSize) {
         List<Quiz> list = new ArrayList<>();
-        String sql = "SELECT * FROM Quiz WHERE Question LIKE ? ORDER BY Quiz_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT * FROM Quiz WHERE Lesson_Id = ? AND Question LIKE ? ORDER BY Quiz_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, "%" + (query == null ? "" : query) + "%");
-            ps.setInt(2, (page - 1) * pageSize);
-            ps.setInt(3, pageSize);
+            ps.setLong(1, lessonId);
+            ps.setString(2, "%" + (query == null ? "" : query) + "%");
+            ps.setInt(3, (page - 1) * pageSize);
+            ps.setInt(4, pageSize);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Quiz q = new Quiz();
@@ -157,26 +158,30 @@ public class QuizDAO extends DBContext {
                     q.setQuestion(rs.getString("Question"));
                     q.setAnswer_options(rs.getString("Answer_Options"));
                     q.setCorrect_answer(rs.getString("Correct_Answer"));
+                    q.setCreated_at(rs.getDate("Created_At"));
+                    q.setUpdated_at(rs.getDate("Updated_At"));
                     q.setLesson_id(rs.getLong("Lesson_Id"));
                     list.add(q);
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error getting quizzes with pagination: " + e.getMessage());
+            System.out.println("Error getting quizzes with pagination and search: " + e.getMessage());
             e.printStackTrace();
         }
         return list;
     }
 
-    public int getTotalQuizzes(String query) {
-        String sql = "SELECT COUNT(*) FROM Quiz WHERE Question LIKE ?";
+    // Get total number of quizzes for a lesson with search
+    public int getTotalQuizzes(String query, long lessonId) {
+        String sql = "SELECT COUNT(*) FROM Quiz WHERE Lesson_Id = ? AND Question LIKE ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, "%" + (query == null ? "" : query) + "%");
+            ps.setLong(1, lessonId);
+            ps.setString(2, "%" + (query == null ? "" : query) + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.out.println("Error counting total quizzes: " + e.getMessage());
+            System.out.println("Error counting total quizzes with search: " + e.getMessage());
             e.printStackTrace();
         }
         return 0;
