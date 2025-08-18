@@ -5,6 +5,10 @@
 <%@ page import="dal.TopicDAO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.Topic" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="model.Course" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!doctype html>
 <html class="no-js" lang="zxx">
     <head>
@@ -101,7 +105,7 @@
                                             <nav>
                                                 <ul id="navigation">
                                                     <li><a href="index.jsp">Home</a></li>
-                                                    <li><a href="seller.jsp">Dashboard</a></li>
+                                                    <li><a href="listCousera">Dashboard</a></li>
                                                     <li><a href="logout.jsp">Logout</a></li>
                                                 </ul>
                                             </nav>
@@ -127,7 +131,9 @@
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="#courses" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="#blogs" class="nav-link">Blogs</a></li>
+
+                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
+
                                 <li class="nav-item"><a href="#communication" class="nav-link">Communication</a></li>
                                 <li class="nav-item"><a href="#performance" class="nav-link">Performance</a></li>
                                 <li class="nav-item"><a href="#tools" class="nav-link">Tools</a></li>
@@ -146,43 +152,55 @@
                                 List<Topic> topics = topicDAO.getAllTopics(); // hoặc topicDAO.getTopicsByCreator nếu cần theo seller
                             %>
 
-                            <form action="listCousera" method="get" class="form-inline mb-4">
-                                <input type="hidden" name="page" value="1" />
 
-                                <!-- Search by title -->
-                                <div class="form-group mr-3">
-                                    <label for="title" class="mr-2">Search Courses</label>
-                                    <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
-                                </div>
+                            <%
+                                Map<Long, String> topicMap = new HashMap<>();
+                                for (Topic t : topics) {
+                                    topicMap.put(t.getTopic_id(), t.getName());
+                                }
+                                request.setAttribute("topicMap", topicMap);
+                            %>
 
-                                <!-- Search by created date -->
-                                <div class="form-group mr-3">
-                                    <label for="createdDate" class="mr-2">Date:</label>
-                                    <input type="date" class="form-control" name="createdDate" id="createdDate" value="${param.createdDate}">
-                                </div>
 
-                                <!-- Filter by topic -->
-                                <div class="form-group mr-3">
-                                    <label for="topicId" class="mr-2">Topic:</label>
-                                    <select name="topicId" id="topicId" class="form-control">
-                                        <option value="">All Topics</option>
-                                        <% for (Topic t : topics) {%>
-                                        <option value="<%= t.getTopic_id()%>" <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : ""%>>
-                                            <%= t.getName()%>
-                                        </option>
-                                        <% }%>
-                                    </select>
-                                </div>
-
-                                <!-- Submit -->
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                </div>
-                            </form>
 
                             <!-- Blog Management Section -->
                             <div id="courses" class="management-section container mt-4">
                                 <h3>Course Management</h3>
+                                <form action="listCousera" method="get" class="form-inline mb-4">
+                                    <input type="hidden" name="page" value="1" />
+
+                                    <!-- Search by title -->
+                                    <div class="form-group mr-3">
+                                        <label for="title" class="mr-2">Search Courses</label>
+                                        <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
+                                    </div>
+
+                                    <!-- Search by created date -->
+                                    <div class="form-group mr-3">
+                                        <label for="createdDate" class="mr-2">Date:</label>
+                                        <input type="date" class="form-control" name="createdDate" id="createdDate" value="${param.createdDate}">
+                                    </div>
+
+
+                                    <!-- Filter by topic -->
+                                    <div class="form-group mr-3">
+                                        <label for="topicId" class="mr-2">Topic:</label>
+                                        <select name="topicId" id="topicId" class="form-control">
+                                            <option value="">All Topics</option>
+                                            <% for (Topic t : topics) {%>
+                                            <option value="<%= t.getTopic_id()%>" <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : ""%>>
+                                                <%= t.getName()%>
+                                            </option>
+                                            <% }%>
+                                        </select>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </div>
+                                </form>
+
                                 <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-3">Create New Course</a>
                                 <table class="table table-striped">
                                     <thead>
@@ -190,6 +208,7 @@
                                             <th>Title</th>
                                             <th>Price</th>
                                             <th>Create_At</th>
+                                            <th>Topic</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -198,25 +217,23 @@
                                             <tr>
                                                 <td>${course.title}</td>
                                                 <td>${course.price}</td>
-                                                <td>${course.created_at}</td>
-
+                                                <td><fmt:formatDate value="${course.created_at}" pattern="yyyy-MM-dd" /></td>
+                                                <td>${topicMap[course.topic_id]}</td> <!-- ✅ Đây là phần quan trọng -->
                                                 <td>
-                                                    <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}"
-                                                       class="btn btn-sm btn-warning">Update</a>
-                                                    <a href="deleteCourse?courseId=${course.course_id}" 
-                                                       class="btn btn-sm btn-danger" 
-                                                       onclick="return confirm('Are you sure you want to delete this course??');">
-                                                        Delete
+                                                    <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}" class="btn btn-sm btn-warning" title="Update">
+                                                        <i class="fas fa-edit"></i>
                                                     </a>
-
-                                                    <a href="courseDetail?courseId=${course.course_id}" class="btn btn-sm btn-info">Detail</a>
-
-
-                                                </td
-
+                                                    <a href="deleteCourse?courseId=${course.course_id}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this course??');" title="Delete">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                    <a href="courseDetail?courseId=${course.course_id}" class="btn btn-sm btn-info" title="Detail">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
+
                                 </table>
                                 <jsp:include page="pagination.jsp" />
                             </div>
@@ -369,38 +386,52 @@
                                                 const navLinks = document.querySelectorAll('#sidebarNav .nav-link');
                                                 const sections = document.querySelectorAll('.management-section');
 
-                                                // Hide all sections by default
+                                                // Ẩn tất cả các section lúc đầu
                                                 sections.forEach(section => section.style.display = 'none');
 
                                                 navLinks.forEach(link => {
                                                     link.addEventListener('click', function (e) {
-                                                        e.preventDefault();
-                                                        const targetId = this.getAttribute('href').substring(1);
+                                                        const href = this.getAttribute('href');
 
-                                                        // Remove active class from all links
+                                                        // Nếu là liên kết ngoài (tới trang JSP), thì KHÔNG xử lý gì nữa, để trình duyệt chuyển trang như mặc định
+                                                        if (!href.startsWith('#'))
+                                                            return;
+
+                                                        e.preventDefault(); // Ngăn hành vi mặc định nếu là tab nội bộ
+
+                                                        // Lấy id của section (bỏ dấu #)
+                                                        const targetId = href.substring(1);
+
+                                                        // Cập nhật trạng thái active của sidebar
                                                         navLinks.forEach(l => l.classList.remove('active'));
-                                                        // Add active class to clicked link
                                                         this.classList.add('active');
 
-                                                        // Hide all sections
+                                                        // Ẩn tất cả sections
                                                         sections.forEach(section => section.style.display = 'none');
-                                                        // Show the target section
-                                                        document.getElementById(targetId).style.display = 'block';
+
+                                                        // Hiện section được chọn
+                                                        const section = document.getElementById(targetId);
+                                                        if (section) {
+                                                            section.style.display = 'block';
+                                                        }
                                                     });
                                                 });
 
-                                                // Set initial active section to #courses by default
-                                                const initialSection = window.location.hash || '';
-                                                if (initialSection) {
-                                                    document.querySelector(`#sidebarNav a[href="${initialSection}"]`).classList.add('active');
-                                                    document.getElementById(initialSection.substring(1)).style.display = 'block';
+                                                // Mặc định hiển thị section đầu tiên hoặc theo URL hash
+                                                const initialSection = window.location.hash;
+                                                if (initialSection && document.querySelector(initialSection)) {
+                                                    const link = document.querySelector(`#sidebarNav a[href="${initialSection}"]`);
+                                                    const section = document.querySelector(initialSection);
+                                                    if (link && section) {
+                                                        link.classList.add('active');
+                                                        section.style.display = 'block';
+                                                    }
                                                 } else {
-                                                    // Mặc định hiển thị section courses nếu không có hash
+                                                    // Hiện #courses mặc định
                                                     document.querySelector('#sidebarNav a[href="#courses"]').classList.add('active');
                                                     document.getElementById('courses').style.display = 'block';
                                                 }
                                             });
-
         </script>
 
 

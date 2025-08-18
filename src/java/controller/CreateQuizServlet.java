@@ -1,35 +1,26 @@
+package controller;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
-
-import dal.LessonDAO;
+import dal.QuizDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.Date;
-import model.Lesson;
+import model.Quiz;
 
 /**
  *
  * @author Admin
  */
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 500L * 1024 * 1024, // 500MB
-        maxRequestSize = 600L * 1024 * 1024 // Tổng request
-)
-@WebServlet(name = "AddLessonServlet", urlPatterns = {"/addLesson"})
-public class AddLessonServlet extends HttpServlet {
+@WebServlet(name = "CreateQuizServlet", urlPatterns = {"/createQuiz"})
+public class CreateQuizServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -48,10 +39,10 @@ public class AddLessonServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddLessonServlet</title>");
+            out.println("<title>Servlet CreateQuizServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddLessonServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CreateQuizServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -83,54 +74,33 @@ public class AddLessonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            String question = request.getParameter("question");
+            String answerOptionsRaw = request.getParameter("answerOptions");
+            String correctAnswer = request.getParameter("correctAnswer");
+            String explanation = request.getParameter("explanation");
+            Long lessonId = Long.parseLong(request.getParameter("lessonId"));
 
-        request.setCharacterEncoding("UTF-8");
+            // Gộp các dòng thành một chuỗi duy nhất phân cách bằng ;
+            String answerOptions = answerOptionsRaw.trim().replaceAll("\r\n", "; ").replaceAll("\n", "; ");
 
-        String title = request.getParameter("title");
-        String videoUrl = request.getParameter("videoUrl");
-        String content = request.getParameter("content");
-        long courseId = Long.parseLong(request.getParameter("courseId"));
+            Quiz quiz = new Quiz();
+            quiz.setQuestion(question);
+            quiz.setAnswerOptions(answerOptions);
+            quiz.setCorrectAnswer(correctAnswer);
+            quiz.setExplanation(explanation);
+            quiz.setLessonId(lessonId);
+            quiz.setCreatedAt(new Date());
+            quiz.setUpdatedAt(new Date());
 
-        Part videoFilePart = request.getPart("videoFile");
-        String finalVideoUrl = null;
+            QuizDAO dao = new QuizDAO();
+            dao.createQuiz(quiz);
 
-        if (videoUrl != null && !videoUrl.trim().isEmpty()) {
-            finalVideoUrl = videoUrl.trim(); // Ưu tiên dùng URL nếu có
-
-        } else if (videoFilePart != null && videoFilePart.getSize() > 0) {
-            String submittedFileName = Paths.get(videoFilePart.getSubmittedFileName()).getFileName().toString();
-            String contentType = videoFilePart.getContentType();
-
-            if (!contentType.equals("video/mp4")) {
-                response.getWriter().write("Invalid format. Only .mp4 allowed");
-                return;
-            }
-            if (videoFilePart.getSize() > 500L * 1024 * 1024) {
-                response.getWriter().write("Video too large. Max 500MB allowed");
-                return;
-            }
-
-            String uploadPath = getServletContext().getRealPath("/") + "assets/video/course";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String savedFileName = System.currentTimeMillis() + "_" + submittedFileName;
-            videoFilePart.write(uploadPath + File.separator + savedFileName);
-
-            finalVideoUrl = "assets/video/course/" + savedFileName;
+            response.sendRedirect("manageQuiz?lessonId=" + lessonId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(500, "Error creating quiz.");
         }
-
-        Lesson lesson = new Lesson();
-        lesson.setTitle(title);
-        lesson.setVideoUrl(finalVideoUrl);
-        lesson.setContent(content);
-        lesson.setCourseId(courseId);
-        lesson.setCreatedAt(new Date());
-
-        new LessonDAO().insertLesson(lesson);
-        response.getWriter().write("success");
     }
 
     /**
