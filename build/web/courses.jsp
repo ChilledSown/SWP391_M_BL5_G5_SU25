@@ -589,9 +589,6 @@
                             <!-- Search Bar -->
                             <div class="search-box">
                                 <input type="text" name="search" value="${searchTerm}" class="form-control" placeholder="What would you like to learn today?" aria-label="Search courses">
-                                <button type="submit" class="search-btn">
-                                    <i class="fas fa-search"></i>
-                                </button>
                                 </div>
                                 
                             <!-- Filters Section -->
