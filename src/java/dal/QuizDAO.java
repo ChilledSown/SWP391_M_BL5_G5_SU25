@@ -44,28 +44,5 @@ public class QuizDAO extends DBContext {
         return quizzes;
     }
 
-    public static void main(String[] args) {
-        QuizDAO quizDAO = new QuizDAO();
-
-        // Ví dụ: lấy quiz theo Lesson_Id = 1
-        long lessonId = 1;
-
-        List<Quiz> quizzes = quizDAO.getQuizzesByLessonId(lessonId);
-
-        // In ra kết quả
-        if (quizzes.isEmpty()) {
-            System.out.println("Không có quiz nào cho lessonId = " + lessonId);
-        } else {
-            for (Quiz quiz : quizzes) {
-                System.out.println("Quiz_Id: " + quiz.getQuizId());
-                System.out.println("Question: " + quiz.getQuestion());
-                System.out.println("Answer Options: " + quiz.getAnswerOptions());
-                System.out.println("Correct Answer: " + quiz.getCorrectAnswer());
-                System.out.println("Created At: " + quiz.getCreatedAt());
-                System.out.println("Updated At: " + quiz.getUpdatedAt());
-                System.out.println("Lesson_Id: " + quiz.getLessonId());
-                System.out.println("-------------------------------");
-            }
-        }
-    }
+   
 }
