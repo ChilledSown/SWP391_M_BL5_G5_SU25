@@ -54,6 +54,18 @@ public class Review {
         return user_id;
     }
 
+    public String getReviewerFirstName() {
+        return reviewerFirstName;
+    }
+
+    public String getReviewerLastName() {
+        return reviewerLastName;
+    }
+
+    public String getReviewerAvatarUrl() {
+        return reviewerAvatarUrl;
+    }
+
     public void setReview_id(Long review_id) {
         this.review_id = review_id;
     }
@@ -76,6 +88,18 @@ public class Review {
 
     public void setUser_id(Long user_id) {
         this.user_id = user_id;
+    }
+
+    public void setReviewerFirstName(String reviewerFirstName) {
+        this.reviewerFirstName = reviewerFirstName;
+    }
+
+    public void setReviewerLastName(String reviewerLastName) {
+        this.reviewerLastName = reviewerLastName;
+    }
+
+    public void setReviewerAvatarUrl(String reviewerAvatarUrl) {
+        this.reviewerAvatarUrl = reviewerAvatarUrl;
     }
     
 }

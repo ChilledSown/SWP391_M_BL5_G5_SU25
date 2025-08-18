@@ -314,6 +314,35 @@ public class UserDAO extends DBContext {
         return 0;
     }
 
+    public User getUserByReview(long reviewId) {
+        String sql = "SELECT u.* FROM Users u JOIN Review r ON u.UserID = r.User_Id WHERE r.Review_Id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, reviewId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new User(
+                    rs.getLong("UserID"),
+                    rs.getString("FirstName"),
+                    rs.getString("MiddleName"),
+                    rs.getString("LastName"),
+                    rs.getString("Avata_Url"),
+                    rs.getString("Phone"),
+                    rs.getString("Address"),
+                    rs.getString("Email"),
+                    rs.getString("PasswordHash"),
+                    rs.getString("Role"),
+                    rs.getDate("Created_At"),
+                    rs.getDate("Updated_At"),
+                    rs.getString("Account_Status")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean updateUser(User user) {
         String sql = "UPDATE Users SET FirstName = ?, MiddleName = ?, LastName = ?, Avata_Url = ?, Phone = ?, Address = ?, Email = ?, PasswordHash = ?, Role = ?, Updated_At = GETDATE(), Account_Status = ? WHERE UserID = ?";
         try {
