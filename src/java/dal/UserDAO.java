@@ -390,4 +390,23 @@ public class UserDAO extends DBContext {
             return false;
         }
     }
+    
+    public List<User> getAllSellers() {
+        List<User> sellers = new ArrayList<>();
+        String sql = "SELECT User_id, FirstName, MiddleName, LastName FROM [User] WHERE Role = 'seller' AND AccountStatus = 'active'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setUser_id(rs.getLong("User_id"));
+                user.setFirstName(rs.getString("FirstName"));
+                user.setMiddleName(rs.getString("MiddleName"));
+                user.setLastName(rs.getString("LastName"));
+                sellers.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sellers;
+    }
 }
