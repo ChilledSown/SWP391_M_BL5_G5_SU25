@@ -47,4 +47,6 @@
         <a href="manageLesson?courseId=${param.courseId}" class="btn btn-secondary">Back to Lessons</a>
 
     </body>
+
 </html>
+
