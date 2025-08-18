@@ -25,27 +25,22 @@ public class DeleteReviewServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
         try {
-            // Get review ID from request
             String reviewIdStr = request.getParameter("reviewId");
-            if (reviewIdStr == null || reviewIdStr.trim().isEmpty()) {
-                out.print("{\"success\": false, \"message\": \"Review ID is required\"}");
+            String courseIdStr = request.getParameter("courseId");
+
+            if (reviewIdStr == null || courseIdStr == null) {
+                response.sendRedirect("courses");
                 return;
             }
             
             long reviewId = Long.parseLong(reviewIdStr);
+            long courseId = Long.parseLong(courseIdStr);
             
-            // For testing, use a fixed user ID
-            // Get user from session
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
             if (user == null) {
-                out.print("{\"success\": false, \"message\": \"Please login first\"}");
+                response.sendRedirect("login");
                 return;
             }
             
@@ -56,27 +51,21 @@ public class DeleteReviewServlet extends HttpServlet {
             
             // Get review to check ownership
             Review review = reviewDAO.getReviewById(reviewId);
-            if (review == null) {
-                out.print("{\"success\": false, \"message\": \"Review not found\"}");
-                return;
-            }
-            
-            // Check if user owns this review (for testing, allow deletion)
-            if (!review.getUser_id().equals(userId)) {
-                out.print("{\"success\": false, \"message\": \"You can only delete your own reviews\"}");
+            if (review == null || review.getUser_id() != userId) {
+                response.sendRedirect("customer-course-detail?id=" + courseId);
                 return;
             }
             
             // Delete review
             reviewDAO.deleteReview(reviewId);
             
-            out.print("{\"success\": true, \"message\": \"Review deleted successfully\"}");
+            // Redirect back to course detail page
+            response.sendRedirect("customer-course-detail?id=" + courseId);
             
-        } catch (NumberFormatException e) {
-            out.print("{\"success\": false, \"message\": \"Invalid review ID\"}");
         } catch (Exception e) {
             e.printStackTrace();
-            out.print("{\"success\": false, \"message\": \"Error deleting review\"}");
+            // If error occurs, redirect back to courses page
+            response.sendRedirect("courses");
         }
     }
 
