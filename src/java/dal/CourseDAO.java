@@ -266,9 +266,9 @@ public class CourseDAO extends DBContext {
     public List<Course> getFilteredCoursesPaged(String searchTerm, String priceFilter, String ratingFilter, String sortBy, String topicFilter, int offset, int limit) {
         List<Course> courses = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT c.*, AVG(r.Rating) AS AverageRating\n");
+        sql.append("SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n");
         sql.append("FROM Course c\n");
-        sql.append("LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n");
+        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
 
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
@@ -317,10 +317,9 @@ public class CourseDAO extends DBContext {
             sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
         }
 
-        sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n");
-
+        // Không cần GROUP BY nữa vì đã dùng subquery
         if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            sql.append("HAVING AVG(r.Rating) >= ?\n");
+            sql.append("HAVING ISNULL(ar.AverageRating, 0) >= ?\n");
             parameters.add(Double.parseDouble(ratingFilter));
         }
 
@@ -336,21 +335,26 @@ public class CourseDAO extends DBContext {
                 sql.append("c.Price DESC\n");
                 break;
             case "rating":
-                sql.append("AverageRating DESC\n");
+                sql.append("ISNULL(ar.AverageRating, 0) DESC\n");
                 break;
             default:
                 sql.append("c.Created_At DESC\n");
                 break;
         }
-        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
+        
+        if (limit != Integer.MAX_VALUE) {
+            sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
+        }
 
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             for (Object param : parameters) {
                 statement.setObject(paramIndex++, param);
             }
-            statement.setInt(paramIndex++, offset);
-            statement.setInt(paramIndex, limit);
+            if (limit != Integer.MAX_VALUE) {
+                statement.setInt(paramIndex++, offset);
+                statement.setInt(paramIndex, limit);
+            }
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -366,6 +370,7 @@ public class CourseDAO extends DBContext {
                 course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
                 courses.add(course);
             }
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -519,6 +524,30 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public List<Course> getCoursesByTopicId(long topicId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT * FROM Course WHERE Topic_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourse_id(rs.getLong("Course_Id"));
+                c.setTitle(rs.getString("Title"));
+                c.setDescription(rs.getString("Description"));
+                c.setPrice(rs.getInt("Price"));
+                c.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                c.setCreated_at(rs.getDate("Created_At"));
+                c.setUpdated_at(rs.getDate("Updated_At"));
+                c.setTopic_id(rs.getLong("Topic_Id"));
+                courses.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
     }
 
     // lay phan trang theo ID chu khong phai All tren kia 
