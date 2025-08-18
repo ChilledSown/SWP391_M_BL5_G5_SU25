@@ -56,8 +56,10 @@
         }
         
         .cart-item {
-            display: flex;
+            display: grid;
+            grid-template-columns: 120px 1fr 120px auto;
             align-items: center;
+            gap: 20px;
             padding: 25px 30px;
             border-bottom: 1px solid #ecf0f1;
             transition: all 0.3s ease;
@@ -76,8 +78,6 @@
             height: 80px;
             border-radius: 10px;
             overflow: hidden;
-            margin-right: 25px;
-            flex-shrink: 0;
         }
         
         .course-image img {
@@ -87,7 +87,7 @@
         }
         
         .course-info {
-            flex: 1;
+            min-width: 0;
         }
         
         .course-title {
@@ -107,7 +107,8 @@
             font-size: 1.3rem;
             font-weight: 600;
             color: #e74c3c;
-            margin-left: 25px;
+            text-align: right;
+            white-space: nowrap;
         }
         
         .remove-btn {
@@ -169,8 +170,44 @@
         
         .cart-actions {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 16px;
             margin-top: 25px;
+        }
+
+        /* PayPal button container */
+        #paypal-button-container {
+            min-width: 280px;
+        }
+
+        @media (max-width: 992px) {
+            .cart-item {
+                grid-template-columns: 100px 1fr 100px auto;
+                gap: 16px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+            .course-image {
+                width: 100%;
+                height: 160px;
+            }
+            .course-price {
+                text-align: left;
+            }
+            .cart-actions {
+                justify-content: center;
+            }
+            #paypal-button-container {
+                width: 100%;
+            }
         }
         
         .btn-continue {
@@ -342,7 +379,7 @@
                                         <p class="course-description">${cartItem.courseDescription}</p>
                                     </div>
                                     <div class="course-price">$${cartItem.price}</div>
-                                    <button class="remove-btn" onclick="removeFromCart(${cartItem.cart_item_id})">
+                                    <button class="remove-btn" onclick="removeFromCart(<c:out value='${cartItem.cart_item_id}'/>)">
                                         <i class="fas fa-trash"></i> Remove
                                     </button>
                                 </div>
@@ -357,8 +394,9 @@
                                 
                                 <div class="cart-actions">
                                     <a href="courses" class="btn-continue">Continue Shopping</a>
-                                    <a href="#" class="btn-checkout">Proceed to Checkout</a>
+                                    
                                 </div>
+                                <div id="paypal-button-container" style="margin-left: auto;"></div>
                             </div>
                         </c:otherwise>
                     </c:choose>
@@ -511,6 +549,41 @@
             });
         }
     }
+</script>
+
+<!-- PayPal JS SDK (Sandbox). Replace client-id with your Sandbox Client ID -->
+<script src="https://www.paypal.com/sdk/js?client-id=ATdH4OWCF17eQ5EJcvqaswbwhnxjceeobCVEzGY4qMrECabo_aAHhmGIbja5Cmy3ppxGUfRDRKc9z4xw&currency=USD"></script>
+<script>
+    (function renderPaypalButton() {
+        var container = document.getElementById('paypal-button-container');
+        if (!container) return;
+        var total = '${cartTotal}';
+        if (!total || total === '0' || total === '0.00') return;
+
+        if (typeof paypal === 'undefined') {
+            console.error('PayPal SDK not loaded');
+            return;
+        }
+
+        paypal.Buttons({
+            style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'paypal' },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{ amount: { value: String(total) } }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Payment completed: ' + details.id);
+                    window.location.href = 'cart?payment=success&orderId=' + encodeURIComponent(details.id);
+                });
+            },
+            onError: function (err) {
+                console.error(err);
+                alert('Payment failed. Please try again.');
+            }
+        }).render('#paypal-button-container');
+    })();
 </script>
 
 </body>
