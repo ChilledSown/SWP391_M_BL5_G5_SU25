@@ -235,6 +235,7 @@
         
         .review-actions {
             position: relative;
+            display: inline-block;
         }
         
         .review-settings {
@@ -251,16 +252,23 @@
             top: 100%;
             right: 0;
             background: white;
+            border: 1px solid #e1e8ed;
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             padding: 10px 0;
             min-width: 120px;
-            display: none;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
             z-index: 1000;
+            margin-top: 5px;
         }
         
         .review-dropdown.show {
-            display: block;
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .dropdown-item {
@@ -269,6 +277,8 @@
             text-decoration: none;
             display: block;
             transition: background 0.3s ease;
+            white-space: nowrap;
+            font-size: 14px;
         }
         
         .dropdown-item:hover {
@@ -279,6 +289,18 @@
         
         .dropdown-item.delete {
             color: #e74c3c;
+        }
+        
+        /* Style for delete button in form */
+        .dropdown-item.delete[type="submit"] {
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
         }
         
         .review-content {
@@ -479,7 +501,7 @@
             color: #f39c12;
         }
         
-        /* Star rating selected state - khi chọn sao thứ N, tất cả sao từ 1 đến N sẽ sáng */
+        /* Star rating selected state - khi ch?n sao th? N, t?t c? sao t? 1 ??n N s? s�ng */
         .star-rating-input .star-input:checked + .star-label,
         .star-rating-input .star-input:checked ~ .star-label {
             color: #f39c12;
@@ -705,14 +727,30 @@
                                 <div class="user-avatar">
                                     <c:choose>
                                         <c:when test="${review.user_id == user.user_id}">Me</c:when>
-                                        <c:otherwise>Username</c:otherwise>
+                                        <c:otherwise>
+                                            <c:set var="rvUser" value="${reviewUsersMap[review.user_id]}" />
+                                            <c:choose>
+                                                <c:when test="${not empty rvUser}">
+                                                    ${rvUser.firstName} ${rvUser.lastName}
+                                                </c:when>
+                                                <c:otherwise>Username</c:otherwise>
+                                            </c:choose>
+                                        </c:otherwise>
                                     </c:choose>
                                 </div>
                                 <div>
                                     <div class="user-name">
                                         <c:choose>
                                             <c:when test="${review.user_id == user.user_id}">Me</c:when>
-                                            <c:otherwise>Username</c:otherwise>
+                                            <c:otherwise>
+                                                <c:set var="rvUser" value="${reviewUsersMap[review.user_id]}" />
+                                                <c:choose>
+                                                    <c:when test="${not empty rvUser}">
+                                                        ${rvUser.firstName} ${rvUser.lastName}
+                                                    </c:when>
+                                                    <c:otherwise>Username</c:otherwise>
+                                                </c:choose>
+                                            </c:otherwise>
                                         </c:choose>
                                     </div>
                                     <div class="rating-stars">
@@ -727,12 +765,16 @@
                             
                             <c:if test="${review.user_id == user.user_id}">
                                 <div class="review-actions">
-                                    <button class="review-settings" onclick="toggleReviewDropdown(${review.review_id})">
+                                    <button class="review-settings" data-review-id="${review.review_id}">
                                         <i class="fas fa-ellipsis-v"></i>
                                     </button>
                                     <div class="review-dropdown" id="dropdown-${review.review_id}">
-                                        <a href="#" class="dropdown-item" onclick="openUpdateModal(${review.review_id}, ${review.rating}, '${review.comment}')">Update</a>
-                                        <a href="#" class="dropdown-item delete" onclick="deleteReview(${review.review_id})">Delete</a>
+                                        <a class="dropdown-item update-review" data-review-id="${review.review_id}" data-rating="${review.rating}" data-comment="${review.comment}">Update</a>
+                                        <form action="delete-review" method="POST" style="display: inline;">
+                                            <input type="hidden" name="reviewId" value="${review.review_id}">
+                                            <input type="hidden" name="courseId" value="${course.course_id}">
+                                            <button type="submit" class="dropdown-item delete" onclick="return confirm('Are you sure you want to delete this review?')">Delete</button>
+                                        </form>
                                     </div>
                                 </div>
                             </c:if>
@@ -801,8 +843,9 @@
                 <h3 class="modal-title">Update Review</h3>
                 <span class="close" onclick="closeUpdateModal()">&times;</span>
             </div>
-            <form onsubmit="updateReview(event)">
+            <form action="update-review" method="POST">
                 <input type="hidden" id="updateReviewId" name="reviewId">
+                <input type="hidden" name="courseId" value="${course.course_id}">
                 <div class="star-rating">
                     <c:forEach begin="1" end="5" var="i">
                         <input type="radio" name="rating" value="${i}" id="star${i}" class="star-input">
@@ -925,10 +968,165 @@
 <script>    
     
     
-    // Close dropdowns when clicking outside
+    // Toggle review dropdown function - simplified and more reliable
+    function toggleReviewDropdown(reviewId) {
+        console.log('Toggle dropdown for review:', reviewId);
+        
+        // Try multiple methods to find the dropdown
+        let dropdown = null;
+        
+        // Method 1: Try to find by ID
+        dropdown = document.getElementById(`dropdown-${reviewId}`);
+        if (dropdown) {
+            console.log('Found dropdown by ID');
+        } else {
+            // Method 2: Try to find by data attribute
+            const button = document.querySelector(`.review-settings[data-review-id="${reviewId}"]`);
+            if (button) {
+                const reviewActions = button.closest('.review-actions');
+                if (reviewActions) {
+                    dropdown = reviewActions.querySelector('.review-dropdown');
+                    console.log('Found dropdown by DOM traversal');
+                }
+            }
+        }
+        
+        // Method 3: If still not found, try to find all and match by partial ID
+        if (!dropdown) {
+            const allDropdowns = document.querySelectorAll('.review-dropdown');
+            console.log('Total dropdowns found:', allDropdowns.length);
+            
+            // Try to find by partial ID match
+            dropdown = Array.from(allDropdowns).find(dd => {
+                const ddId = dd.id;
+                console.log('Checking dropdown ID:', ddId);
+                return ddId && ddId.includes(reviewId.toString());
+            });
+            
+            if (dropdown) {
+                console.log('Found dropdown by partial ID match');
+            }
+        }
+        
+        if (!dropdown) {
+            console.error('All methods failed to find dropdown for review ID:', reviewId);
+            console.log('Available dropdowns:');
+            document.querySelectorAll('.review-dropdown').forEach((dd, index) => {
+                console.log(`Dropdown ${index}:`, dd.id, dd);
+            });
+            return;
+        }
+        
+        console.log('Successfully found dropdown:', dropdown);
+        
+        // Close all other dropdowns first
+        const allDropdowns = document.querySelectorAll('.review-dropdown');
+        allDropdowns.forEach(dd => {
+            if (dd !== dropdown) {
+                dd.classList.remove('show');
+            }
+        });
+        
+        // Toggle current dropdown
+        const isVisible = dropdown.classList.contains('show');
+        console.log('Current dropdown state:', isVisible);
+        
+        if (isVisible) {
+            dropdown.classList.remove('show');
+        } else {
+            dropdown.classList.add('show');
+        }
+    }
+    
+    // Direct toggle function for onclick - more reliable
+    function toggleReviewDropdownDirect(reviewId, buttonElement) {
+        console.log('Direct toggle for review:', reviewId, 'Button:', buttonElement);
+        
+        // Find dropdown within the same review-actions container
+        const reviewActions = buttonElement.closest('.review-actions');
+        if (!reviewActions) {
+            console.error('Review actions container not found');
+            return;
+        }
+        
+        const dropdown = reviewActions.querySelector('.review-dropdown');
+        if (!dropdown) {
+            console.error('Dropdown not found in review actions');
+            return;
+        }
+        
+        console.log('Found dropdown directly:', dropdown);
+        
+        // Close all other dropdowns first
+        const allDropdowns = document.querySelectorAll('.review-dropdown');
+        allDropdowns.forEach(dd => {
+            if (dd !== dropdown) {
+                dd.classList.remove('show');
+            }
+        });
+        
+        // Toggle current dropdown
+        const isVisible = dropdown.classList.contains('show');
+        console.log('Current dropdown state:', isVisible);
+        
+        if (isVisible) {
+            dropdown.classList.remove('show');
+        } else {
+            dropdown.classList.add('show');
+        }
+    }
+    
+
+    
+    
     document.addEventListener('click', function(event) {
+        // Handle review settings button clicks
+        if (event.target.closest('.review-settings')) {
+            const button = event.target.closest('.review-settings');
+            const reviewId = button.getAttribute('data-review-id');
+            console.log('Button clicked, data-review-id:', reviewId);
+            console.log('Button element:', button);
+            
+            if (reviewId) {
+                // Use direct method with button element
+                toggleReviewDropdownDirect(reviewId, button);
+            } else {
+                console.error('No data-review-id found on button');
+                console.log('All review-settings buttons:');
+                document.querySelectorAll('.review-settings').forEach((btn, index) => {
+                    console.log(`Button ${index}:`, btn.getAttribute('data-review-id'), btn);
+                });
+            }
+            return; // Exit early to avoid closing dropdown immediately
+        }
+        
+        // Handle update review clicks
+        if (event.target.closest('.update-review')) {
+            const updateLink = event.target.closest('.update-review');
+            const reviewId = updateLink.getAttribute('data-review-id');
+            const rating = updateLink.getAttribute('data-rating');
+            const comment = updateLink.getAttribute('data-comment');
+            
+            console.log('Update review clicked:', { reviewId, rating, comment });
+            openUpdateModal(reviewId, rating, comment);
+            return;
+        }
+        
+        // Handle clicks outside to close dropdowns
         if (!event.target.closest('.review-actions')) {
             document.querySelectorAll('.review-dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+    });
+    
+    // Keyboard support for accessibility
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (!dropdownElements) {
+                dropdownElements = document.querySelectorAll('.review-dropdown');
+            }
+            dropdownElements.forEach(dropdown => {
                 dropdown.classList.remove('show');
             });
         }
