@@ -525,6 +525,30 @@ public class CourseDAO extends DBContext {
         }
         return null;
     }
+    
+    public List<Course> getCoursesByTopicId(long topicId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT * FROM Course WHERE Topic_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourse_id(rs.getLong("Course_Id"));
+                c.setTitle(rs.getString("Title"));
+                c.setDescription(rs.getString("Description"));
+                c.setPrice(rs.getInt("Price"));
+                c.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                c.setCreated_at(rs.getDate("Created_At"));
+                c.setUpdated_at(rs.getDate("Updated_At"));
+                c.setTopic_id(rs.getLong("Topic_Id"));
+                courses.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
 
     // lay phan trang theo ID chu khong phai All tren kia 
     public List<Course> getCoursesByCreatorPaged(int creatorId, int offset, int limit) {
