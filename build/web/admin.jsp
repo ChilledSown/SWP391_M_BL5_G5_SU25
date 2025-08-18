@@ -193,7 +193,7 @@
                             <a href="overview">Overview</a>
                         </li>
                         <li data-section="courses">
-                            <a href="managecourse.jsp">Manage Courses</a>
+                            <a href="managetopic">Manage Topic</a>
                         </li>
                         <li data-section="users">
                             <a href="manageuser">Manage Users</a>
@@ -207,11 +207,9 @@
 
             <main class="main-content">
                 <header class="main-header">
-                    <h1>Welcome, <c:out value="${sessionScope.user.fullName}" />!</h1>
+                     <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
                 </header>
-                <div style="color:green">${message}</div>
-                
-                
+                <div style="color:green">${message}</div>                         
                 
             </main>
         </div>     
