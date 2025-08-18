@@ -727,14 +727,30 @@
                                 <div class="user-avatar">
                                     <c:choose>
                                         <c:when test="${review.user_id == user.user_id}">Me</c:when>
-                                        <c:otherwise>Username</c:otherwise>
+                                        <c:otherwise>
+                                            <c:set var="rvUser" value="${reviewUsersMap[review.user_id]}" />
+                                            <c:choose>
+                                                <c:when test="${not empty rvUser}">
+                                                    ${rvUser.firstName} ${rvUser.lastName}
+                                                </c:when>
+                                                <c:otherwise>Username</c:otherwise>
+                                            </c:choose>
+                                        </c:otherwise>
                                     </c:choose>
                                 </div>
                                 <div>
                                     <div class="user-name">
                                         <c:choose>
                                             <c:when test="${review.user_id == user.user_id}">Me</c:when>
-                                            <c:otherwise>Username</c:otherwise>
+                                            <c:otherwise>
+                                                <c:set var="rvUser" value="${reviewUsersMap[review.user_id]}" />
+                                                <c:choose>
+                                                    <c:when test="${not empty rvUser}">
+                                                        ${rvUser.firstName} ${rvUser.lastName}
+                                                    </c:when>
+                                                    <c:otherwise>Username</c:otherwise>
+                                                </c:choose>
+                                            </c:otherwise>
                                         </c:choose>
                                     </div>
                                     <div class="rating-stars">
