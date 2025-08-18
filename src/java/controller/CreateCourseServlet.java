@@ -1,104 +1,85 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dal.CourseDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Date;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.Date;
+import jakarta.servlet.http.Part;
 import model.Course;
 import model.User;
 
-/**
- *
- * @author Admin
- */
 @WebServlet(name = "CreateCourseServlet", urlPatterns = {"/createCourse"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 2 * 1024 * 1024,   // 2MB
+    maxRequestSize = 5 * 1024 * 1024 // 5MB
+)
 public class CreateCourseServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CreateCourseServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CreateCourseServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-
-        String title = request.getParameter("title");
-        String description = request.getParameter("description");
-        int price = Integer.parseInt(request.getParameter("price"));
-        String thumbnailUrl = request.getParameter("thumbnail_url");
-        Long topicId = Long.parseLong(request.getParameter("topic_id"));
-
         HttpSession session = request.getSession();
-        User currentUser = (User) session.getAttribute("user");
 
+        // ✅ Lấy user đăng nhập
+        User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        CourseDAO dao = new CourseDAO();
+        // ✅ Lấy thông tin form
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        int price = Integer.parseInt(request.getParameter("price"));
+        long topicId = Long.parseLong(request.getParameter("topic_id"));
 
-        // 🔍 Kiểm tra trùng title
+        // ✅ Xử lý ảnh thumbnail upload
+        Part filePart = request.getPart("thumbnail");
+        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String contentType = filePart.getContentType();
+        long fileSize = filePart.getSize();
+
+        // ✅ Validate ảnh
+        if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
+            session.setAttribute("error", "❌ Chỉ cho phép JPG, PNG, GIF.");
+            response.sendRedirect("blog_course_form.jsp");
+            return;
+        }
+        if (fileSize > 2 * 1024 * 1024) {
+            session.setAttribute("error", "❌ Ảnh quá lớn, giới hạn là 2MB.");
+            response.sendRedirect("blog_course_form.jsp");
+            return;
+        }
+
+        // ✅ Lưu file vào thư mục assets/img/uploads
+        String uploadPath = getServletContext().getRealPath("/") + "assets/img/uploads";
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdirs();
+
+        // ✅ Đảm bảo không ghi đè file trùng tên (tự động đổi tên)
+        String savedFileName = System.currentTimeMillis() + "_" + fileName;
+        filePart.write(uploadPath + File.separator + savedFileName);
+
+        // ✅ Đường dẫn lưu vào DB
+        String thumbnailUrl = "assets/img/uploads/" + savedFileName;
+
+        // ✅ Kiểm tra trùng tiêu đề
+        CourseDAO dao = new CourseDAO();
         boolean isDuplicate = dao.isTitleExists(title);
 
-        // ✅ Tiếp tục thêm vào CSDL
+        // ✅ Thêm vào DB
         Course course = new Course();
         course.setTitle(title);
         course.setDescription(description);
@@ -109,22 +90,11 @@ public class CreateCourseServlet extends HttpServlet {
 
         dao.insertCourse(course, currentUser.getUser_id());
 
-        // ✅ Gửi thông báo nếu có trùng
+        // ✅ Nếu tiêu đề trùng, gửi cảnh báo
         if (isDuplicate) {
-            request.getSession().setAttribute("duplicateMessage", "⚠️ Course title already exists. You may want to use a different title.");
+            session.setAttribute("duplicateMessage", "⚠️ Course title already exists. You may want to use a different title.");
         }
 
         response.sendRedirect("listCousera");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
