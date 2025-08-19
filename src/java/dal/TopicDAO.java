@@ -253,6 +253,26 @@ public class TopicDAO extends DBContext {
             }
         }
     }
+    // insert Topic for Courses for Linh
+    public long insertTopic(Topic topic) {
+    String sql = "INSERT INTO Topic (Name, Description, Thumbnail_Url) VALUES (?, ?, ?)";
+    try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        ps.setString(1, topic.getName());
+        ps.setString(2, topic.getDescription());
+        ps.setString(3, topic.getThumbnail_url());
+        ps.executeUpdate();
+
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (rs.next()) {
+                return rs.getLong(1); // return topic_id
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return -1;
+}
+
 
     public static void main(String[] args) {
         TopicDAO topic = new TopicDAO();

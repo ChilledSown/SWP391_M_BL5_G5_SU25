@@ -7,10 +7,14 @@ package controller;
 import dal.LessonDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
 import model.Lesson;
 
 /**
@@ -18,6 +22,11 @@ import model.Lesson;
  * @author Admin
  */
 @WebServlet(name = "EditLessonServlet", urlPatterns = {"/editLesson"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024,     // 1MB
+    maxFileSize = 500 * 1024 * 1024,     // 500MB
+    maxRequestSize = 550 * 1024 * 1024   // 550MB tổng request
+)
 public class EditLessonServlet extends HttpServlet {
 
     /**
@@ -71,38 +80,74 @@ public class EditLessonServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+   @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
-            // Lấy tham số từ form
+            request.setCharacterEncoding("UTF-8");
+
             Long lessonId = Long.parseLong(request.getParameter("lessonId"));
             Long courseId = Long.parseLong(request.getParameter("courseId"));
             String title = request.getParameter("title");
             String videoUrl = request.getParameter("videoUrl");
             String content = request.getParameter("content");
 
-            // Tạo đối tượng Lesson và thiết lập giá trị bằng setter
+            // Nếu người dùng xóa video (dấu ❌), trường này sẽ có giá trị "true"
+            boolean removeVideo = "true".equals(request.getParameter("removeVideo"));
+
+            Part filePart = request.getPart("videoFile");
+
+            String finalVideoUrl = null;
+
+            if (!removeVideo) {
+                if (videoUrl != null && !videoUrl.trim().isEmpty()) {
+                    finalVideoUrl = videoUrl.trim();
+                } else if (filePart != null && filePart.getSize() > 0) {
+                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                    String contentType = filePart.getContentType();
+                    long fileSize = filePart.getSize();
+
+                    if (!contentType.equals("video/mp4")) {
+                        response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Chỉ cho phép video .mp4");
+                        return;
+                    }
+
+                    if (fileSize > 500 * 1024 * 1024) {
+                        response.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Video vượt quá 500MB");
+                        return;
+                    }
+
+                    String uploadPath = getServletContext().getRealPath("/") + "assets/video/course";
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+
+                    String filePath = uploadPath + File.separator + fileName;
+                    filePart.write(filePath);
+
+                    finalVideoUrl = "assets/video/course/" + fileName;
+                }
+            }
+
             Lesson lesson = new Lesson();
             lesson.setLessonId(lessonId);
             lesson.setCourseId(courseId);
             lesson.setTitle(title);
-            lesson.setVideoUrl(videoUrl);
+            lesson.setVideoUrl(finalVideoUrl);
             lesson.setContent(content);
 
-            // Cập nhật bài học trong cơ sở dữ liệu
             LessonDAO dao = new LessonDAO();
             dao.updateLesson(lesson);
 
-            // Không chuyển hướng vì iframe trong lesson_form.jsp xử lý việc tải lại trang mẹ
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid lesson ID or course ID format.");
+            // Không cần redirect, vì đang dùng iframe (tránh reload toàn trang)
+
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while updating the lesson.");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi cập nhật bài học");
         }
     }
-
     /**
      * Returns a short description of the servlet.
      *
