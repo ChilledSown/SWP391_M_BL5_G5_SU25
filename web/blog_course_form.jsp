@@ -59,6 +59,29 @@
                 color: #007bff;
                 margin-bottom: 20px;
             }
+            #thumbPreviewWrap {
+                position: relative;
+                display: inline-block;
+            }
+            .remove-thumb {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background: rgba(0,0,0,0.6);
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                text-align: center;
+                line-height: 22px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .remove-thumb:hover {
+                background: rgba(255,0,0,0.8);
+            }
+
         </style>
     </head>
     <body>
@@ -153,30 +176,33 @@
                             </div>
                             <div class="form-group">
                                 <label for="thumbnail_url">Thumbnail</label>
-                                <div class="input-group">
-                                    <input type="file" class="form-control" id="thumbnailInput" name="thumbnail" accept=".jpg,.jpeg,.png,.gif" <%= course != null ? "" : "required"%> >
-                                    <!-- Thêm dòng này: -->
-                                    <input type="hidden" name="thumbnail_url" value="<%= thumbnailUrlValue%>">
-                                </div>
 
-                                <small class="form-text text-muted">Bạn có thể dán URL hoặc chọn một ảnh từ máy.</small>
+                                <!-- Nhập URL -->
+                                <input type="url" class="form-control mb-2" id="thumbnailUrlInput" placeholder="Paste image URL here" value="<%= thumbnailUrlValue%>">
 
+                                <!-- Hoặc chọn file -->
+                                <input type="file" class="form-control mb-2" id="thumbnailInput" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
+
+                                <!-- Preview -->
                                 <div id="thumbPreviewWrap" style="margin-top:12px; display:<%= (thumbnailUrlValue != null && !thumbnailUrlValue.isEmpty()) ? "block" : "none"%>;">
+                                    <button type="button" class="remove-thumb" id="btnRemoveThumb">&times;</button>
                                     <img id="thumbPreview" src="<%= thumbnailUrlValue%>" 
                                          alt="Thumbnail preview" style="max-width: 100%; border:1px solid #e9ecef; border-radius:6px;">
                                 </div>
 
-                                <!-- Nếu user upload file, mình tạm để base64 vào hidden này để backend xử lý sau -->
-                                <input type="hidden" id="thumbnail_base64" name="thumbnail_base64" value="">
+                                <!-- hidden để gửi về server -->
+                                <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="<%= thumbnailUrlValue%>">
+
                             </div>
+
 
 
                             <div class="form-group">
                                 <label for="topic_id" class="d-flex justify-content-between align-items-center">
                                     <span>Topic</span>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTopicModal">
-                                        + Add new
-                                    </button>
+                                    <!--                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTopicModal">
+                                                                            + Add new
+                                                                        </button>-->
                                 </label>
 
                                 <select class="form-control" id="topic_id" name="topic_id" required>
@@ -266,23 +292,55 @@
         </footer>
         <script src="./assets/js/main.js"></script>
         <script>
-                                        document.getElementById('thumbnailInput').addEventListener('change', function (event) {
-                                            const file = event.target.files[0];
-                                            if (!file)
-                                                return;
+                                         const urlInput = document.getElementById('thumbnailUrlInput');
+                                         const fileInput = document.getElementById('thumbnailInput');
+                                         const hiddenInput = document.getElementById('thumbnail_url');
+                                         const previewImg = document.getElementById('thumbPreview');
+                                         const previewWrap = document.getElementById('thumbPreviewWrap');
+                                         const removeBtn = document.getElementById('btnRemoveThumb');
 
-                                            const reader = new FileReader();
-                                            reader.onload = function (e) {
-                                                const preview = document.getElementById('thumbPreview');
-                                                const previewWrap = document.getElementById('thumbPreviewWrap');
+                                         // Nhập URL thì ưu tiên URL
+                                         urlInput.addEventListener('input', function () {
+                                             const url = urlInput.value.trim();
+                                             if (url !== "") {
+                                                 previewImg.src = url;
+                                                 previewWrap.style.display = "block";
+                                                 hiddenInput.value = url;
 
-                                                preview.src = e.target.result;
-                                                preview.style.display = 'block';
-                                                previewWrap.style.display = 'block';
-                                            };
-                                            reader.readAsDataURL(file);
-                                        });
+                                                 // Nếu nhập URL → reset file input
+                                                 fileInput.value = "";
+                                             }
+                                         });
+
+                                         // Chọn file từ máy
+                                         fileInput.addEventListener('change', function (event) {
+                                             const file = event.target.files[0];
+                                             if (!file)
+                                                 return;
+
+                                             const reader = new FileReader();
+                                             reader.onload = function (e) {
+                                                 previewImg.src = e.target.result;
+                                                 previewWrap.style.display = "block";
+
+                                                 // Nếu dùng ảnh file → xoá URL
+                                                 urlInput.value = "";
+                                                 hiddenInput.value = "file"; // để Servlet hiểu là dùng file upload
+                                             };
+                                             reader.readAsDataURL(file);
+                                         });
+
+                                         // Nút xoá ❌
+                                         removeBtn?.addEventListener('click', function () {
+                                             previewImg.src = "";
+                                             previewWrap.style.display = "none";
+                                             urlInput.value = "";
+                                             fileInput.value = "";
+                                             hiddenInput.value = "null"; // để backend xóa ảnh
+                                         });
         </script>
+
+
 
     </body>
 

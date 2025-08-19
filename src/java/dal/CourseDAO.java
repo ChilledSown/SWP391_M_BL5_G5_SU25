@@ -717,7 +717,7 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    // Tách từ khoá và build SQL LIKE nhiều phần validate seacj
+    // Tách từ khoá và build SQL LIKE nhiều phần validate seach
     private String buildFuzzySqlCondition(String input, List<Object> params) {
         StringBuilder condition = new StringBuilder();
         if (input != null && !input.trim().isEmpty()) {
