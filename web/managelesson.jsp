@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Topic Management</title>
+    <title>Admin Dashboard - Lesson Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -147,38 +147,6 @@
         .view-btn:hover {
             background-color: #2980b9;
         }
-        .search-bar {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .search-bar input[type="text"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 300px;
-        }
-        .search-bar button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-        }
-        .search-bar button[type="submit"] {
-            background-color: #3498db;
-        }
-        .search-bar button[type="submit"]:hover {
-            background-color: #2980b9;
-        }
-        .search-bar button[type="button"] {
-            background-color: #7f8c8d;
-        }
-        .search-bar button[type="button"]:hover {
-            background-color: #6c7a89;
-        }
         .topic-table {
             width: 100%;
             border-collapse: collapse;
@@ -239,6 +207,37 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .back-btn {
+            background-color: #7f8c8d;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background-color: #6c7a89;
+        }
+        .add-btn {
+            background-color: #3498db;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            margin-left: 10px;
+        }
+        .add-btn:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -249,28 +248,19 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h3>Admin Dashboard</h3>
-            </div> 
+            </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li data-section="overview">
-                        <a href="overview">Overview</a>
-                    </li>
-                    <li class="active" data-section="courses">
-                        <a href="managetopic">Manage Topic</a>
-                    </li>
-                    <li data-section="users">
-                        <a href="manageuser">Manage Users</a>
-                    </li>               
-                    <li data-section="settings">
-                        <a href="login">Logout</a>
-                    </li>
+                    <li data-section="overview"><a href="overview">Overview</a></li>
+                    <li class="active" data-section="topics"><a href="managetopic">Manage Topics</a></li>
+                    <li data-section="users"><a href="manageuser">Manage Users</a></li>
+                    <li data-section="settings"><a href="login">Logout</a></li>
                 </ul>
-            </nav>  
+            </nav>
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Welcome, <c:out value="${sessionScope.user.firstName} 
-                ${sessionScope.user.middleName != null ? sessionScope.user.middleName : ''} ${sessionScope.user.lastName}" />!</h1>
+                <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.lastName}" />!</h1>
             </header>
             <c:if test="${not empty message}">
                 <div class="success-message">${message}</div>
@@ -278,46 +268,38 @@
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
             </c:if>
-            <div class="search-bar">
-                <form action="managetopic" method="get">
-                    <input type="text" name="query" placeholder="Search topics by name..." value="${searchQuery}">
-                    <button type="submit">Search</button>
-                </form>
-                <a href="managetopic"><button type="button">Reset</button></a>
-            </div>
+            <a href="managecourse?topicId=${param.topicId}" class="back-btn">Back to Courses</a>
             <table class="topic-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Thumbnail URL</th>
-                        <th>Description</th>
+                        <th>Title</th>
+                        <th>Video URL</th>
+                        <th>Content</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Course ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <c:choose>
-                        <c:when test="${not empty topics}">
-                            <c:forEach var="topic" items="${topics}">
+                        <c:when test="${not empty lessons}">
+                            <c:forEach var="lesson" items="${lessons}">
                                 <tr>
-                                    <td><c:out value="${topic.topic_id}" /></td>
-                                    <td><c:out value="${topic.name}" /></td>
-                                    <td><c:out value="${topic.thumbnail_url}" /></td>
-                                    <td><c:out value="${topic.description != null ? topic.description : 'N/A'}" /></td>
+                                    <td><c:out value="${lesson.lessonId}" /></td>
+                                    <td><c:out value="${lesson.title}" /></td>
+                                    <td><c:out value="${lesson.videoUrl != null ? lesson.videoUrl : 'N/A'}" /></td>
+                                    <td><c:out value="${lesson.content != null ? lesson.content : 'N/A'}" /></td>
+                                    <td><fmt:formatDate value="${lesson.createdAt}" pattern="dd-MM-yyyy" /></td>
+                                    <td><c:out value="${lesson.updatedAt != null ? lesson.updatedAt : 'N/A'}" /></td>
+                                    <td><c:out value="${lesson.courseId}" /></td>
                                     <td>
-                                        <form action="managecourse" method="get" style="display:inline;">
-                                            <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="view-btn">View</button>
-                                        </form>
-                                        <form action="managetopic" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="edit">
-                                            <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="edit-btn">Edit</button>
-                                        </form>
-                                        <form action="managetopic" method="post" style="display:inline;">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this topic?')">Delete</button>
+                                        <form action="managequiz" method="get" style="display:inline;">
+                                            <input type="hidden" name="topicId" value="${param.topicId}">
+                                            <input type="hidden" name="courseId" value="${param.courseId}">
+                                            <input type="hidden" name="lessonId" value="${lesson.lessonId}">
+                                            <button type="submit" class="view-btn">View Quizzes</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -325,7 +307,7 @@
                         </c:when>
                         <c:otherwise>
                             <tr>
-                                <td colspan="5" class="no-data">No topics found</td>
+                                <td colspan="8" class="no-data">No lessons found for this course</td>
                             </tr>
                         </c:otherwise>
                     </c:choose>
@@ -333,22 +315,23 @@
             </table>
             <div class="pagination">
                 <c:if test="${currentPage > 1}">
-                    <a href="managetopic?page=${currentPage - 1}&query=${searchQuery}">Previous</a>
+                    <a href="managelesson?page=${currentPage - 1}&topicId=${param.topicId}&courseId=${param.courseId}">Previous</a>
                 </c:if>
                 <c:if test="${currentPage <= 1}">
                     <a class="disabled">Previous</a>
                 </c:if>
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="managetopic?page=${i}&query=${searchQuery}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
+                    <a href="managelesson?page=${i}&topicId=${param.topicId}&courseId=${param.courseId}" 
+                       <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
                 </c:forEach>
                 <c:if test="${currentPage < totalPages}">
-                    <a href="managetopic?page=${currentPage + 1}&query=${searchQuery}">Next</a>
+                    <a href="managelesson?page=${currentPage + 1}&topicId=${param.topicId}&courseId=${param.courseId}">Next</a>
                 </c:if>
                 <c:if test="${currentPage >= totalPages}">
                     <a class="disabled">Next</a>
                 </c:if>
             </div>
         </main>
-    </div>     
+    </div>
 </body>
 </html>
