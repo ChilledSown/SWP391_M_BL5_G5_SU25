@@ -508,7 +508,7 @@
                                         <ul id="navigation">                                                                                          
                                             <li class="active" ><a href="home">Home</a></li>
                                             <li><a href="courses">Courses</a></li>
-                                            <li><a href="about.jsp">About</a></li>
+                                            <li><a href="purchased-courses">Purchased courses</a></li>
                                             <li><a href="blog">Blog</a></li>
                                             <li><a href="cart">Cart</a></li>
                                             <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>

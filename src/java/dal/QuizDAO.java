@@ -14,6 +14,7 @@ import java.util.ArrayList;
  * @author sondo
  */
 public class QuizDAO extends DBContext {
+
     public List<Quiz> getQuizzesByLessonId(long lessonId) {
         List<Quiz> quizzes = new ArrayList<>();
         String sql = "SELECT q.*, l.Title AS LessonTitle "
@@ -23,6 +24,7 @@ public class QuizDAO extends DBContext {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, lessonId);
             ResultSet rs = stmt.executeQuery();
+      
             while (rs.next()) {
                 Quiz quiz = new Quiz();
                 quiz.setQuizId(rs.getLong("Quiz_Id"));

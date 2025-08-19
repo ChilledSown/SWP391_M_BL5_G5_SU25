@@ -72,12 +72,12 @@ public class PaymentSuccessServlet extends HttpServlet {
         PaymentDAO paymentDAO = new PaymentDAO();
 
         long orderId = orderDAO.insertOrder(user.getUser_id(), amount, "paid");
+        
         for (CartItem item : cartItems) {
-            orderDetailDAO.insertOrderDetail(orderId, item.getCourse_id(), item.getPrice());
+            boolean orderDetailInserted = orderDetailDAO.insertOrderDetail(orderId, item.getCourse_id(), item.getPrice());
         }
 
-        paymentDAO.insertPayment(orderId, amount, currency != null ? currency : "USD", method, orderIdFromPg != null ? orderIdFromPg : "", "captured");
-
+        long paymentId = paymentDAO.insertPayment(orderId, amount, method, "completed");
         // Clear cart
         if (userCart != null) {
             for (CartItem item : cartItems) {
@@ -118,7 +118,7 @@ public class PaymentSuccessServlet extends HttpServlet {
 
                    .append("<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='margin-bottom:12px;'>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;width:40%'>Customer</td><td style='font-weight:600;color:#2c3e50;'>")
-                   .append(user.getFirstName()).append(" ").append(user.getLastName()).append(" (" ).append(user.getEmail()).append(")</td></tr>")
+                   .append(user.getFirstName()).append(" ").append(user.getMiddleName()).append(" ").append(user.getLastName()).append(" (" ).append(user.getEmail()).append(")</td></tr>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;'>Order ID</td><td style='font-weight:600;color:#2c3e50;'>#").append(orderId).append("</td></tr>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;'>Order Date</td><td style='font-weight:600;color:#2c3e50;'>").append(orderDate).append("</td></tr>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;'>Payment Method</td><td style='font-weight:600;color:#2c3e50;'>").append(method).append("</td></tr>")
