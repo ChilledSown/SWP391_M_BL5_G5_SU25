@@ -20,7 +20,7 @@ import model.Lesson;
  *
  * @author Admin
  */
-@WebServlet(name = "ManageLessonServlet", urlPatterns = {"/manageLesson"})
+@WebServlet(name = "ManageLessonServlet", urlPatterns = {"/manageLessonSeller"})
 public class ManageLessonServlet extends HttpServlet {
 
     /**
@@ -92,7 +92,7 @@ public class ManageLessonServlet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
 
         // Tạo baseUrl để phân trang giữ lại filter
-        StringBuilder baseUrl = new StringBuilder("manageLesson?courseId=" + courseId);
+        StringBuilder baseUrl = new StringBuilder("manageLessonSeller?courseId=" + courseId);
         if (title != null && !title.isEmpty()) {
             baseUrl.append("&title=").append(java.net.URLEncoder.encode(title, java.nio.charset.StandardCharsets.UTF_8));
         }
@@ -101,7 +101,7 @@ public class ManageLessonServlet extends HttpServlet {
         }
         request.setAttribute("baseUrl", baseUrl.toString());
 
-        request.getRequestDispatcher("manageLesson.jsp").forward(request, response);
+        request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
     }
 
     /**
