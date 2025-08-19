@@ -94,6 +94,9 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             // Get user's review for this course
             userReview = reviewDAO.getReviewByUserAndCourse(userId, courseId);
             
+            // Check purchased status
+            boolean hasPurchased = courseDAO.hasUserPurchasedCourse(userId, courseId);
+
             // Get user's cart
             userCart = cartDAO.getCartByUserId(userId);
             if (userCart != null) {
@@ -111,6 +114,7 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             request.setAttribute("userReview", userReview);
             request.setAttribute("userCart", userCart);
             request.setAttribute("isCourseInCart", isCourseInCart);
+            request.setAttribute("hasPurchased", hasPurchased);
             
             // Forward to JSP
             request.getRequestDispatcher("customer-course-detail.jsp").forward(request, response);
