@@ -1,6 +1,7 @@
 package controller;
 
 import dal.CourseDAO;
+import dal.TopicDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,7 +9,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import model.Course;
+import model.Topic;
 
 @WebServlet(name="CourseServlet", urlPatterns={"/courses"})
 public class CourseServlet extends HttpServlet {
@@ -22,41 +26,68 @@ public class CourseServlet extends HttpServlet {
 
         try {
             CourseDAO courseDAO = new CourseDAO();
+            TopicDAO topicDAO = new TopicDAO();
             
-            // Lấy các tham số filter từ request
             String searchTerm = request.getParameter("search");
             String priceFilter = request.getParameter("price");
             String ratingFilter = request.getParameter("rating");
             String sortBy = request.getParameter("sort");
             String topicFilter = request.getParameter("topic");
             
+            // Pagination params
+            int page = 1;
+            int size = 6;
+            try {
+                if (request.getParameter("page") != null) {
+                    page = Integer.parseInt(request.getParameter("page"));
+                }
+            } catch (NumberFormatException ignored) {}
+            if (page < 1) page = 1;
+            // Load More: luôn trả về danh sách tích lũy theo trang (6, 12, 18, ...)
+            int offset = 0;
+            int limit = page * size;
+
+            // List of pagination courses
             List<Course> courses;
-            
-            // Kiểm tra xem có filter nào được áp dụng không
+            int totalCount;
             if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
-                // Sử dụng phương thức filter
-                courses = courseDAO.getFilteredCourses(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter);
+                // Khi có filter: áp dụng phân trang kiểu Load More (cộng dồn)
+                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, offset, limit);
+                totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, ratingFilter, topicFilter);
             } else {
-                // Lấy tất cả khóa học nếu không có filter
-                courses = courseDAO.getAllCourse();
+                // Không filter: áp dụng phân trang kiểu Load More (cộng dồn)
+                courses = courseDAO.getAllCoursePaged(offset, limit);
+                totalCount = courseDAO.countAllCourses();
             }
             
-            // Đặt danh sách khóa học vào request attribute
-            request.setAttribute("allCourses", courses);
+            List<Topic> allTopics = topicDAO.getAllTopics();
             
-            // Đặt lại các tham số filter để giữ nguyên trạng thái UI
+            // Take topic for all specific course
+            Map<Long, Topic> courseTopicsMap = new HashMap<>();
+            for (Course course : courses) {
+                Topic courseTopic = topicDAO.getTopicByCourseId(course.getCourse_id());
+                courseTopicsMap.put(course.getCourse_id(), courseTopic);
+            }
+            
+            request.setAttribute("allCourses", courses);
+            request.setAttribute("topics", allTopics);
+            request.setAttribute("courseTopicsMap", courseTopicsMap);
+            request.setAttribute("totalResults", totalCount);
+            request.setAttribute("page", page);
+            request.setAttribute("size", size);
+            request.setAttribute("hasMore", totalCount > (page * size));
+            
+            // Reset filter parameters
             request.setAttribute("searchTerm", searchTerm);
             request.setAttribute("priceFilter", priceFilter);
             request.setAttribute("ratingFilter", ratingFilter);
             request.setAttribute("sortBy", sortBy != null ? sortBy : "newest");
             request.setAttribute("topicFilter", topicFilter);
             
-            // Forward đến trang courses.jsp
             request.getRequestDispatcher("courses.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
-            // Xử lý lỗi nếu có
             request.setAttribute("error", "Có lỗi xảy ra khi tải danh sách khóa học");
             request.getRequestDispatcher("courses.jsp").forward(request, response);
         }

@@ -25,56 +25,37 @@ public class UpdateReviewServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
         try {
             // Get parameters from request
             String reviewIdStr = request.getParameter("reviewId");
             String ratingStr = request.getParameter("rating");
             String comment = request.getParameter("comment");
+            String courseIdStr = request.getParameter("courseId");
             
-            if (reviewIdStr == null || ratingStr == null || comment == null || 
-                reviewIdStr.trim().isEmpty() || ratingStr.trim().isEmpty() || comment.trim().isEmpty()) {
-                out.print("{\"success\": false, \"message\": \"All fields are required\"}");
+            if (reviewIdStr == null || ratingStr == null || comment == null || courseIdStr == null) {
+                response.sendRedirect("courses");
                 return;
             }
             
             long reviewId = Long.parseLong(reviewIdStr);
             int rating = Integer.parseInt(ratingStr);
+            long courseId = Long.parseLong(courseIdStr);
             
             // Validate rating
             if (rating < 1 || rating > 5) {
-                out.print("{\"success\": false, \"message\": \"Rating must be between 1 and 5\"}");
+                response.sendRedirect("customer-course-detail?id=" + courseId);
                 return;
             }
             
-            // For testing, use a fixed user ID
-            // Get user from session
             HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
-            if (user == null) {
-                out.print("{\"success\": false, \"message\": \"Please login first\"}");
-                return;
-            }
-            
+            User user = (User) session.getAttribute("user");  
             long userId = user.getUser_id();
-            
-            // Get DAO
             ReviewDAO reviewDAO = new ReviewDAO();
             
             // Get review to check ownership
             Review review = reviewDAO.getReviewById(reviewId);
-            if (review == null) {
-                out.print("{\"success\": false, \"message\": \"Review not found\"}");
-                return;
-            }
-            
-            // Check if user owns this review
-            if (!review.getUser_id().equals(userId)) {
-                out.print("{\"success\": false, \"message\": \"You can only update your own reviews\"}");
+            if (review == null || review.getUser_id() != userId) {
+                response.sendRedirect("customer-course-detail?id=" + courseId);
                 return;
             }
             
@@ -83,13 +64,13 @@ public class UpdateReviewServlet extends HttpServlet {
             review.setComment(comment);
             reviewDAO.updateReview(review);
             
-            out.print("{\"success\": true, \"message\": \"Review updated successfully\"}");
+            // Redirect back to course detail page
+            response.sendRedirect("customer-course-detail?id=" + courseId);
             
-        } catch (NumberFormatException e) {
-            out.print("{\"success\": false, \"message\": \"Invalid review ID or rating\"}");
         } catch (Exception e) {
             e.printStackTrace();
-            out.print("{\"success\": false, \"message\": \"Error updating review\"}");
+            // If error occurs, redirect back to courses page
+            response.sendRedirect("courses");
         }
     }
 

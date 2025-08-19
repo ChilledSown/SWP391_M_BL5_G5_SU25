@@ -758,8 +758,8 @@ public class CourseDAO extends DBContext {
         }
         return condition.toString();
     }
-    
-    public List<Course> getCoursesByTopicIdWithSearch(String query, long topicId, int offset, int limit) {
+
+     public List<Course> getCoursesByTopicIdWithSearch(String query, long topicId, int offset, int limit) {
         List<Course> courses = new ArrayList<>();
         String search = (query == null ? "" : query.trim());
         String like = "%" + search + "%";
