@@ -98,7 +98,7 @@ public class ListCouseraSeller extends HttpServlet {
             }
         }
 
-        // ... giữ nguyên phần trêns
+        // ... giữ nguyên phần trên
         CourseDAO dao = new CourseDAO();
         int totalItems = dao.countFilteredCoursesByCreator(userId, title, createdDate, topicId);
         int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
