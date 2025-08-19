@@ -3,26 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ManageUserServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/VerifyOtpServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/register.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/assets/css/fontawesome-all.min.css</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ForgotPasswordServlet.java</file>
             <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/manageuser.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/AdminServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/assets/css/animated-headline.css</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/reset_password.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/LoginServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/model/User.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/adduser.jsp</file>
             <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/updateuser.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/adduser.jsp</file>
             <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/admin.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/assets/css/magnific-popup.css</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/RegisterServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ManageCourseServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ResetPasswordServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ManageUserServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/WEB-INF/web.xml</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/profile.jsp</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ProfileServlet.java</file>
+            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/login.jsp</file>
         </group>
     </open-files>
 </project-private>

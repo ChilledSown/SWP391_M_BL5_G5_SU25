@@ -112,9 +112,16 @@
                 <div class="sidebar-header">
                     <h3>Admin Dashboard</h3>
                 </div>
+                <div class="profile-section">
+                    <img src="${empty sessionScope.user.avataUrl ? 'assets/img/default-avatar.png' : sessionScope.user.avataUrl}" alt="Avatar" class="profile-avatar">
+                    <div class="profile-name">
+                        <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}"/>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/profile"><button class="edit-profile-btn" title="Edit Profile"><i class="fas fa-edit"></i></button></a>
+                </div>
                 <nav class="sidebar-nav">
                     <ul>
-                        <li data-section="overview"><a href="overview">Overview</a></li>
+                        <li data-section="overview"><a href="admin">Overview</a></li>
                         <li data-section="courses"><a href="managecourse">Manage Courses</a></li>
                         <li data-section="users" class="active"><a href="manageuser">Manage Users</a></li>
                         <li data-section="settings"><a href="login">Logout</a></li>
