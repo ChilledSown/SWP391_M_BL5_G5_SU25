@@ -77,7 +77,7 @@ public class AddLessonServlet extends HttpServlet {
         String title = request.getParameter("title");
         String videoUrl = request.getParameter("videoUrl");
         String content = request.getParameter("content");
-        long courseId = Long.parseLong(request.getParameter("courseId"));
+        Long courseId = Long.parseLong(request.getParameter("courseId"));
 
         Lesson lesson = new Lesson();
         lesson.setTitle(title);

@@ -15,7 +15,7 @@
     <c:if test="${not empty errorMessage}">
         <div class="alert alert-danger">${errorMessage}</div>
     </c:if>
-    <form method="post" action="${quiz != null ? 'editQuiz' : 'createQuiz'}">
+    <form method="post" action="${quiz != null ? 'editQuizSeller' : 'createQuizSeller'}">
         <input type="hidden" name="lessonId" value="${param.lessonId}" />
         <c:if test="${quiz != null}">
             <input type="hidden" name="quizId" value="${quiz.quizId}" />
@@ -25,7 +25,7 @@
             <input type="text" class="form-control" name="question" value="${quiz != null ? quiz.question : ''}" required />
         </div>
         <div class="mb-3">
-            <label>Answer Options</label>
+            <label>Answer Options (at least two required)</label>
             <c:choose>
                 <c:when test="${quiz != null}">
                     <%
@@ -37,37 +37,37 @@
                     %>
                     <div class="input-group mb-2">
                         <span class="input-group-text">A</span>
-                        <input type="text" class="form-control" name="answerOptionA" value="<%= optionA %>" required />
+                        <input type="text" class="form-control" name="answerOptionA" value="<%= optionA %>" />
                     </div>
                     <div class="input-group mb-2">
                         <span class="input-group-text">B</span>
-                        <input type="text" class="form-control" name="answerOptionB" value="<%= optionB %>" required />
+                        <input type="text" class="form-control" name="answerOptionB" value="<%= optionB %>" />
                     </div>
                     <div class="input-group mb-2">
                         <span class="input-group-text">C</span>
-                        <input type="text" class="form-control" name="answerOptionC" value="<%= optionC %>"  />
+                        <input type="text" class="form-control" name="answerOptionC" value="<%= optionC %>" />
                     </div>
                     <div class="input-group mb-2">
                         <span class="input-group-text">D</span>
-                        <input type="text" class="form-control" name="answerOptionD" value="<%= optionD %>"  />
+                        <input type="text" class="form-control" name="answerOptionD" value="<%= optionD %>" />
                     </div>
                 </c:when>
                 <c:otherwise>
                     <div class="input-group mb-2">
                         <span class="input-group-text">A</span>
-                        <input type="text" class="form-control" name="answerOptionA" value="" required />
+                        <input type="text" class="form-control" name="answerOptionA" value="" />
                     </div>
                     <div class="input-group mb-2">
                         <span class="input-group-text">B</span>
-                        <input type="text" class="form-control" name="answerOptionB" value="" required />
+                        <input type="text" class="form-control" name="answerOptionB" value="" />
                     </div>
                     <div class="input-group mb-2">
                         <span class="input-group-text">C</span>
-                        <input type="text" class="form-control" name="answerOptionC" value=""  />
+                        <input type="text" class="form-control" name="answerOptionC" value="" />
                     </div>
                     <div class="input-group mb-2">
                         <span class="input-group-text">D</span>
-                        <input type="text" class="form-control" name="answerOptionD" value=""  />
+                        <input type="text" class="form-control" name="answerOptionD" value="" />
                     </div>
                 </c:otherwise>
             </c:choose>
@@ -77,11 +77,11 @@
             <input type="text" class="form-control" name="correctAnswer" value="${quiz != null ? quiz.correctAnswer : ''}" required />
         </div>
         <div class="mb-3">
-            <label>Explanation (optional)</label>
-            <textarea class="form-control" name="explanation" rows="3">${quiz != null ? quiz.explanation : ''}</textarea>
+            <label>Explanation</label>
+            <textarea class="form-control" name="explanation" rows="3" required>${quiz != null ? quiz.explanation : ''}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">${quiz != null ? "Update" : "Create"}</button>
-        <a href="manageQuiz?lessonId=${param.lessonId}" class="btn btn-secondary">Cancel</a>
+        <a href="manageQuizSeller?lessonId=${param.lessonId}" class="btn btn-secondary">Cancel</a>
     </form>
 </body>
 </html>

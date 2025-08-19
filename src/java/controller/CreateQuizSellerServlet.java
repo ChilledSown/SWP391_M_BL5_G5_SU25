@@ -7,11 +7,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import model.Quiz;
 
-@WebServlet(name = "CreateQuizServlet", urlPatterns = {"/createQuiz"})
-public class CreateQuizServlet extends HttpServlet {
+@WebServlet(name = "CreateQuizSellerServlet", urlPatterns = {"/createQuizSeller"})
+public class CreateQuizSellerServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,20 +40,48 @@ public class CreateQuizServlet extends HttpServlet {
             String lessonIdParam = request.getParameter("lessonId");
 
             // Validate inputs
-            if (question == null || question.trim().isEmpty() ||
-                answerOptionA == null || answerOptionA.trim().isEmpty() ||
-                answerOptionB == null || answerOptionB.trim().isEmpty() ||
-//                answerOptionC == null || answerOptionC.trim().isEmpty() ||
-//                answerOptionD == null || answerOptionD.trim().isEmpty() ||
-                correctAnswer == null || correctAnswer.trim().isEmpty() ||
-                explanation == null || explanation.trim().isEmpty() ||
-                lessonIdParam == null || lessonIdParam.trim().isEmpty()) {
-                request.setAttribute("errorMessage", "All fields are required.");
+            if (question == null || question.trim().isEmpty()
+                    || correctAnswer == null || correctAnswer.trim().isEmpty()
+                    || explanation == null || explanation.trim().isEmpty()
+                    || lessonIdParam == null || lessonIdParam.trim().isEmpty()) {
+                request.setAttribute("errorMessage", "Question, correct answer, explanation, and lesson ID are required.");
+                request.getRequestDispatcher("/quiz_form.jsp").forward(request, response);
+                return;
+            }
+
+            // Validate answer options (at least two non-empty options)
+            ArrayList<String> options = new ArrayList<>();
+            if (answerOptionA != null && !answerOptionA.trim().isEmpty()) {
+                options.add(answerOptionA.trim());
+            }
+            if (answerOptionB != null && !answerOptionB.trim().isEmpty()) {
+                options.add(answerOptionB.trim());
+            }
+            if (answerOptionC != null && !answerOptionC.trim().isEmpty()) {
+                options.add(answerOptionC.trim());
+            }
+            if (answerOptionD != null && !answerOptionD.trim().isEmpty()) {
+                options.add(answerOptionD.trim());
+            }
+            if (options.size() < 2) {
+                request.setAttribute("errorMessage", "At least two answer options are required.");
                 request.getRequestDispatcher("/quiz_form.jsp").forward(request, response);
                 return;
             }
 
             Long lessonId = Long.parseLong(lessonIdParam);
+
+            // Validate correct answer
+            String correctAnswerUpper = correctAnswer.trim().toUpperCase();
+            if (!correctAnswerUpper.matches("[A-D]")
+                    || (correctAnswerUpper.equals("A") && (answerOptionA == null || answerOptionA.trim().isEmpty()))
+                    || (correctAnswerUpper.equals("B") && (answerOptionB == null || answerOptionB.trim().isEmpty()))
+                    || (correctAnswerUpper.equals("C") && (answerOptionC == null || answerOptionC.trim().isEmpty()))
+                    || (correctAnswerUpper.equals("D") && (answerOptionD == null || answerOptionD.trim().isEmpty()))) {
+                request.setAttribute("errorMessage", "Correct answer must be A, B, C, or D and correspond to a non-empty option.");
+                request.getRequestDispatcher("/quiz_form.jsp").forward(request, response);
+                return;
+            }
 
             // Validate duplicate question
             QuizDAO dao = new QuizDAO();
@@ -62,24 +91,13 @@ public class CreateQuizServlet extends HttpServlet {
                 return;
             }
 
-            // Validate correct answer
-            if (!correctAnswer.matches("[A-D]")) {
-                request.setAttribute("errorMessage", "Correct answer must be A, B, C, or D.");
-                request.getRequestDispatcher("/quiz_form.jsp").forward(request, response);
-                return;
-            }
-
-            // Combine answer options into a semicolon-separated string
-            String answerOptions = String.join(";", 
-                answerOptionA.trim(), 
-                answerOptionB.trim(), 
-                answerOptionC.trim(), 
-                answerOptionD.trim());
+            // Combine answer options
+            String answerOptions = String.join(";", options);
 
             Quiz quiz = new Quiz();
             quiz.setQuestion(question.trim());
             quiz.setAnswerOptions(answerOptions);
-            quiz.setCorrectAnswer(correctAnswer.trim());
+            quiz.setCorrectAnswer(correctAnswerUpper);
             quiz.setExplanation(explanation.trim());
             quiz.setLessonId(lessonId);
             quiz.setCreatedAt(new Date());
