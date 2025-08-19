@@ -301,51 +301,7 @@
         </div>
     </div>
     <!-- Preloader Start -->
-    
-    <header>
-        <!-- Header Start -->
-        <div class="header-area header-transparent">
-            <div class="main-header ">
-                <div class="header-bottom  header-sticky">
-                    <div class="container-fluid">
-                        <div class="row align-items-center">
-                            <!-- Logo -->
-                            <div class="col-xl-2 col-lg-2">
-                                <div class="logo">
-                                    <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
-                                </div>
-                            </div>
-                            <div class="col-xl-10 col-lg-10">
-                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
-                                    <!-- Main-menu -->
-                                    <div class="main-menu d-none d-lg-block">
-                                        <nav>
-                                            <ul id="navigation">                                                                                          
-                                                <li><a href="home">Home</a></li>
-                                                <li><a href="courses">Course</a></li>
-                                                <li><a href="blog">Blog</a></li>
-                                                <li class="active"><a href="cart.jsp">Cart</a></li>
-                                                <li><a href="profile.jsp">Profile</a></li>
-                                                <li><a href="wishlist.jsp">Wishlist</a></li>
-                                                <li><a href="my-courses.jsp">My Courses</a></li>
-                                                <!-- Button -->
-                                                <li class="button-header margin-left "><a href="logout" class="btn">Logout</a></li>
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div> 
-                            <!-- Mobile Menu -->
-                            <div class="col-12">
-                                <div class="mobile_menu d-block d-lg-none"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Header End -->
-    </header>
+   
 
     <main>
         <!-- Cart Section -->
@@ -574,8 +530,9 @@
             },
             onApprove: function (data, actions) {
                 return actions.order.capture().then(function (details) {
-                    alert('Payment completed: ' + details.id);
-                    window.location.href = 'cart?payment=success&orderId=' + encodeURIComponent(details.id);
+                    var amount = String(total);
+                    var currency = 'USD';
+                    window.location.href = 'payment-success?orderId=' + encodeURIComponent(details.id) + '&amount=' + encodeURIComponent(amount) + '&currency=' + encodeURIComponent(currency);
                 });
             },
             onError: function (err) {
