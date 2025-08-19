@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Course;
 
 /**
@@ -425,6 +423,35 @@ public class CourseDAO extends DBContext {
                 course.setTopic_id(resultSet.getLong("Topic_Id"));
                 course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
                 courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
+
+    public List<Course> getPurchasedCoursesByUser(long userId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT DISTINCT c.* "
+                + "FROM Course c "
+                + "JOIN Order_Detail od ON od.Course_Id = c.Course_Id "
+                + "JOIN [Order] o ON o.Order_Id = od.Order_Id "
+                + "LEFT JOIN Payment p ON p.Order_Id = o.Order_Id "
+                + "WHERE o.User_Id = ? AND (o.Status = 'paid' OR p.Status IN ('captured','completed','succeeded','paid','success'))";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourse_id(rs.getLong("Course_Id"));
+                c.setTitle(rs.getString("Title"));
+                c.setDescription(rs.getString("Description"));
+                c.setPrice(rs.getInt("Price"));
+                c.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                c.setCreated_at(rs.getTimestamp("Created_At") == null ? null : new java.util.Date(rs.getTimestamp("Created_At").getTime()));
+                c.setUpdated_at(rs.getTimestamp("Updated_At") == null ? null : new java.util.Date(rs.getTimestamp("Updated_At").getTime()));
+                c.setTopic_id(rs.getLong("Topic_Id"));
+                courses.add(c);
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -19,7 +19,7 @@ import model.CartItem;
 public class CartDAO extends DBContext {
     
     public Cart getCartByUserId(long userId) {
-        String sql = "SELECT * FROM Cart WHERE User_Id = ? AND Status = 'active'";
+        String sql = "SELECT * FROM Cart WHERE User_Id = ? AND Status = 'pending'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -38,8 +38,17 @@ public class CartDAO extends DBContext {
         return null;
     }
     
+    public Cart findOrCreateActiveCart(long userId) {
+        Cart existing = getCartByUserId(userId);
+        if (existing != null) {
+            return existing;
+        }
+        createCart(userId);
+        return getCartByUserId(userId);
+    }
+
     public void createCart(long userId) {
-        String sql = "INSERT INTO Cart (User_Id, Status, Created_At, Updated_At) VALUES (?, 'active', GETDATE(), GETDATE())";
+        String sql = "INSERT INTO Cart (User_Id, Status, Created_At, Updated_At) VALUES (?, 'pending', GETDATE(), GETDATE())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ps.executeUpdate();
