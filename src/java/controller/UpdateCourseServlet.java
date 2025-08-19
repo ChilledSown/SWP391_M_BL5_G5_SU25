@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 2 * 1024 * 1024, // 2MB
-        maxRequestSize = 5 * 1024 * 1024 // 5MB
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 2 * 1024 * 1024,   // 2MB
+    maxRequestSize = 5 * 1024 * 1024 // 5MB
 )
 @WebServlet(name = "UpdateCourseServlet", urlPatterns = {"/updateCourse"})
 public class UpdateCourseServlet extends HttpServlet {
@@ -26,6 +26,7 @@ public class UpdateCourseServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
+        // 🆔 courseId từ hidden input
         String rawId = request.getParameter("courseId");
         if (rawId == null || rawId.isEmpty()) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing courseId");
@@ -38,53 +39,42 @@ public class UpdateCourseServlet extends HttpServlet {
         int price = Integer.parseInt(request.getParameter("price"));
         long topicId = Long.parseLong(request.getParameter("topic_id"));
 
-        //  Lấy thông tin thumbnail từ form
-        String thumbnailUrl = request.getParameter("thumbnail_url"); // "null", "file", hoặc URL
+        // 🔽 Nếu người dùng không chọn ảnh mới thì giữ nguyên ảnh cũ
+        String thumbnailUrl = request.getParameter("thumbnail_url");
+
         Part filePart = request.getPart("thumbnail");
-
-        if ("null".equals(thumbnailUrl)) {
-            // ❌ User xoá ảnh
-            thumbnailUrl = null;
-
-        } else if (thumbnailUrl != null && thumbnailUrl.startsWith("http")) {
-            // ✅ User nhập URL → dùng luôn, KHÔNG xử lý filePart nữa
-
-        } else if ("file".equals(thumbnailUrl) || (thumbnailUrl == null && filePart != null && filePart.getSize() > 0)) {
-            // ✅ Người dùng chọn file ảnh từ máy
-
+        if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String contentType = filePart.getContentType();
             long fileSize = filePart.getSize();
 
-            // Validate
+            // ✅ Validate ảnh
             if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
                 request.getSession().setAttribute("error", "Chỉ cho phép JPG, PNG, GIF.");
                 response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
                 return;
             }
-
             if (fileSize > 2 * 1024 * 1024) {
                 request.getSession().setAttribute("error", "Ảnh quá lớn, giới hạn là 2MB.");
                 response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
                 return;
             }
 
-            // Lưu ảnh
+            // ✅ Lưu file vào thư mục uploads
             String uploadPath = getServletContext().getRealPath("/") + "assets/img/uploads";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
 
-            String savedFileName = System.currentTimeMillis() + "_" + fileName;
-            filePart.write(uploadPath + File.separator + savedFileName);
-            thumbnailUrl = "assets/img/uploads/" + savedFileName;
-        } // Nếu thumbnailUrl vẫn không được gán → giữ nguyên ảnh cũ (nếu cần)
-        else {
-            // Nếu không nhập gì và không có file, giữ nguyên ảnh cũ (DAO sẽ xử lý nếu cần)
-            // Có thể để nguyên thumbnailUrl như ban đầu gửi về form
+            String filePath = uploadPath + File.separator + fileName;
+            filePart.write(filePath);
+
+            // ✅ Gán lại đường dẫn mới
+            thumbnailUrl = "assets/img/uploads/" + fileName;
         }
 
+        // ✅ Cập nhật DB
         CourseDAO dao = new CourseDAO();
         dao.updateCourse(courseId, title, description, price, thumbnailUrl, topicId);
 
@@ -93,6 +83,6 @@ public class UpdateCourseServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Handles course update including optional thumbnail update";
+        return "Handles update course logic including thumbnail upload";
     }
 }

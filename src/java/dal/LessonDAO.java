@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nb://SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
 
@@ -39,6 +39,29 @@ public class LessonDAO extends DBContext {
         return lessons;
     }
 
+    public List<Lesson> getLessonsByCourse(long courseId) {
+        List<Lesson> lessons = new ArrayList<>();
+        String sql = "SELECT * FROM Lesson WHERE Course_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, courseId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Lesson lesson = new Lesson();
+                lesson.setLessonId(rs.getLong("Lesson_Id"));
+                lesson.setTitle(rs.getString("Title"));
+                lesson.setVideoUrl(rs.getString("Video_Url"));
+                lesson.setContent(rs.getString("Content"));
+                lesson.setCreatedAt(rs.getTimestamp("Created_At"));
+                lesson.setUpdatedAt(rs.getTimestamp("Updated_At"));
+                lesson.setCourseId(rs.getLong("Course_Id"));
+                lessons.add(lesson);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lessons;
+    }
+
     public Lesson getLessonById(long lessonId) {
         Lesson lesson = null;
         String sql = "SELECT * FROM Lesson WHERE Lesson_Id = ?";
@@ -54,6 +77,29 @@ public class LessonDAO extends DBContext {
                 lesson.setCreatedAt(rs.getTimestamp("Created_At"));
                 lesson.setUpdatedAt(rs.getTimestamp("Updated_At"));
                 lesson.setCourseId(rs.getLong("Course_Id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lesson;
+    }
+
+    public Lesson getLessonByIdAlt(long lessonId) {
+        Lesson lesson = null;
+        String sql = "SELECT * FROM Lesson WHERE Lesson_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, lessonId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                lesson = new Lesson(
+                        rs.getLong("Lesson_Id"),
+                        rs.getString("Title"),
+                        rs.getString("Video_Url"),
+                        rs.getString("Content"),
+                        rs.getTimestamp("Created_At"),
+                        rs.getTimestamp("Updated_At"),
+                        rs.getLong("Course_Id")
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,5 +232,49 @@ public class LessonDAO extends DBContext {
         return 0;
     }
 
-}
+    public List<Lesson> getLessonsByCourseIdWithSearch(String query, long courseId, int offset, int limit) {
+        List<Lesson> lessons = new ArrayList<>();
+        String sql = "SELECT * FROM Lesson WHERE Course_Id = ? AND (Title LIKE ? OR Content LIKE ?) ORDER BY Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String like = "%" + (query == null ? "" : query) + "%";
+            ps.setLong(1, courseId);
+            ps.setString(2, like);
+            ps.setString(3, like);
+            ps.setInt(4, offset);
+            ps.setInt(5, limit);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Lesson lesson = new Lesson(
+                        rs.getLong("Lesson_Id"),
+                        rs.getString("Title"),
+                        rs.getString("Video_Url"),
+                        rs.getString("Content"),
+                        rs.getTimestamp("Created_At"),
+                        rs.getTimestamp("Updated_At"),
+                        rs.getLong("Course_Id")
+                );
+                lessons.add(lesson);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lessons;
+    }
 
+    public int getTotalLessonsByCourseIdWithSearch(String query, long courseId) {
+        String sql = "SELECT COUNT(*) FROM Lesson WHERE Course_Id = ? AND (Title LIKE ? OR Content LIKE ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String like = "%" + (query == null ? "" : query) + "%";
+            ps.setLong(1, courseId);
+            ps.setString(2, like);
+            ps.setString(3, like);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+}

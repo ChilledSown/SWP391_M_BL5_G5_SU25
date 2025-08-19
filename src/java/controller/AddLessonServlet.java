@@ -8,14 +8,10 @@ import dal.LessonDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.Date;
 import model.Lesson;
 
@@ -23,11 +19,6 @@ import model.Lesson;
  *
  * @author Admin
  */
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 500L * 1024 * 1024, // 500MB
-        maxRequestSize = 600L * 1024 * 1024 // Tổng request
-)
 @WebServlet(name = "AddLessonServlet", urlPatterns = {"/addLesson"})
 public class AddLessonServlet extends HttpServlet {
 
@@ -83,54 +74,24 @@ public class AddLessonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-
         String title = request.getParameter("title");
         String videoUrl = request.getParameter("videoUrl");
         String content = request.getParameter("content");
         long courseId = Long.parseLong(request.getParameter("courseId"));
 
-        Part videoFilePart = request.getPart("videoFile");
-        String finalVideoUrl = null;
-
-        if (videoUrl != null && !videoUrl.trim().isEmpty()) {
-            finalVideoUrl = videoUrl.trim(); // Ưu tiên dùng URL nếu có
-
-        } else if (videoFilePart != null && videoFilePart.getSize() > 0) {
-            String submittedFileName = Paths.get(videoFilePart.getSubmittedFileName()).getFileName().toString();
-            String contentType = videoFilePart.getContentType();
-
-            if (!contentType.equals("video/mp4")) {
-                response.getWriter().write("Invalid format. Only .mp4 allowed");
-                return;
-            }
-            if (videoFilePart.getSize() > 500L * 1024 * 1024) {
-                response.getWriter().write("Video too large. Max 500MB allowed");
-                return;
-            }
-
-            String uploadPath = getServletContext().getRealPath("/") + "assets/video/course";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            String savedFileName = System.currentTimeMillis() + "_" + submittedFileName;
-            videoFilePart.write(uploadPath + File.separator + savedFileName);
-
-            finalVideoUrl = "assets/video/course/" + savedFileName;
-        }
-
         Lesson lesson = new Lesson();
         lesson.setTitle(title);
-        lesson.setVideoUrl(finalVideoUrl);
+        lesson.setVideoUrl(videoUrl);
         lesson.setContent(content);
         lesson.setCourseId(courseId);
         lesson.setCreatedAt(new Date());
 
-        new LessonDAO().insertLesson(lesson);
+        LessonDAO dao = new LessonDAO();
+        dao.insertLesson(lesson);
+
+        response.setContentType("text/plain");
         response.getWriter().write("success");
+
     }
 
     /**
