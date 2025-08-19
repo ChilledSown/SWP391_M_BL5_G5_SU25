@@ -437,7 +437,7 @@ public class CourseDAO extends DBContext {
                 + "JOIN Order_Detail od ON od.Course_Id = c.Course_Id "
                 + "JOIN [Order] o ON o.Order_Id = od.Order_Id "
                 + "LEFT JOIN Payment p ON p.Order_Id = o.Order_Id "
-                + "WHERE o.User_Id = ? AND (o.Status = 'paid' OR p.Status IN ('captured','completed','succeeded','paid','success'))";
+                + "WHERE o.User_Id = ? AND o.Status = 'paid'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -744,7 +744,7 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    // Tách từ khoá và build SQL LIKE nhiều phần validate seacj
+    // Tách từ khoá và build SQL LIKE nhiều phần validate seach
     private String buildFuzzySqlCondition(String input, List<Object> params) {
         StringBuilder condition = new StringBuilder();
         if (input != null && !input.trim().isEmpty()) {
