@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class OrderDetailDAO extends DBContext {
 
     public boolean insertOrderDetail(long orderId, long courseId, double price) {
-        String sql = "INSERT INTO Order_Detail (Order_Id, Course_Id, Price, Created_At) VALUES (?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Order_Detail (Order_Id, Course_Id, Price) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, orderId);
             ps.setLong(2, courseId);

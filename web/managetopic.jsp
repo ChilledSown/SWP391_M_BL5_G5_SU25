@@ -339,7 +339,7 @@
                     <a class="disabled">Previous</a>
                 </c:if>
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="managetopic?page=${i}&query=${searchQuery}" <c:if test="${currentPage == i}" ></c:if> class="active">${i}</a>
+                    <a href="managetopic?page=${i}&query=${searchQuery}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
                 </c:forEach>
                 <c:if test="${currentPage < totalPages}">
                     <a href="managetopic?page=${currentPage + 1}&query=${searchQuery}">Next</a>

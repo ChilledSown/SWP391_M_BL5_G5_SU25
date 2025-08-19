@@ -9,10 +9,12 @@
     <head>
         <title>Manage Lessons</title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body class="container mt-5">
         <h2>Manage Lessons for Course ID: ${courseId}</h2>
         <a href="courseDetail?courseId=${courseId}" class="btn btn-secondary mb-3">Back to Course Detail</a>
+
         <form method="get" action="manageLesson" class="mb-3">
             <input type="hidden" name="courseId" value="${courseId}" />
             <div class="row g-2">
@@ -35,41 +37,45 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Title</th>
-                    <th>Video URL</th>
+                    <th>Video</th>
                     <th>Content</th>
                     <th>Created</th>
                     <th>Updated</th>
-                    <th>Action</th>
-                    <th>Edit</th>
-                    <th>Quiz</th>   <%-- Thêm cột Quiz --%>
+                    <th>Actions</th>
+                    <th>Quiz</th>
                 </tr>
             </thead>
             <tbody>
                 <c:forEach var="lesson" items="${lessons}">
                     <tr>
                         <td>${lesson.title}</td>
-                        <td><a href="${lesson.videoUrl}" target="_blank">Video</a></td>
+                        <td>
+                            <a href="${lesson.videoUrl}" target="_blank" class="btn btn-sm btn-danger" title="Watch on YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </td>
                         <td>${lesson.content}</td>
                         <td>${lesson.createdAt}</td>
                         <td>${lesson.updatedAt}</td>
                         <td>
-                            <form action="deleteLesson" method="post" 
+                            <button type="button" class="btn btn-sm btn-warning" title="Edit"
+                                    onclick="openEditLesson('${lesson.lessonId}', '${courseId}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <form action="deleteLesson" method="post" class="d-inline"
                                   onsubmit="return confirm('Are you sure you want to delete this lesson?');">
                                 <input type="hidden" name="lessonId" value="${lesson.lessonId}" />
                                 <input type="hidden" name="courseId" value="${courseId}" />
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </form>
                         </td>
                         <td>
-                            <button class="btn btn-warning btn-sm"
-                                    onclick="openEditLesson('${lesson.lessonId}', '${courseId}')">
-                                Edit
-                            </button>
-                        </td>
-                        <td>
                             <a href="manageQuiz?lessonId=${lesson.lessonId}" 
-                               class="btn btn-info btn-sm">
-                                Manage Quiz
+                               class="btn btn-sm btn-info" title="Manage Quiz">
+                                <i class="fas fa-question-circle"></i>
                             </a>
                         </td>
                     </tr>
@@ -83,11 +89,10 @@
             <jsp:param name="baseUrl" value="${baseUrl}" />
         </jsp:include>
 
-        <!-- Nút mở popup modal -->
         <button class="btn btn-success" onclick="openLessonForm('${param.courseId}')">
-            Add Lesson
+            <i class="fas fa-plus"></i> Add Lesson
         </button>
-        <!-- Modal hiển thị lesson_form.jsp trong iframe -->
+
         <div class="modal fade" id="lessonFormModal" tabindex="-1" aria-labelledby="lessonFormModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -101,7 +106,7 @@
                 </div>
             </div>
         </div>
-        <!-- Bootstrap 5 modal script -->
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             function openLessonForm(courseId) {
