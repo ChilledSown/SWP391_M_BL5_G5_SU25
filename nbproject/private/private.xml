@@ -1,16 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CourseDetailServletForSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CourseDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CartDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/TopicDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ListCouseraSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CreateCourseServlet.java</file>
-        </group>
-    </open-files>
+<editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+<open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<group>
+<file>file:/D:/Pull-SWP391/SWP391_M_BL5_G5_SU25/src/java/model/Course.java</file>
+<file>file:/D:/Pull-SWP391/SWP391_M_BL5_G5_SU25/src/java/dal/SliderDAO.java</file>
+<file>file:/D:/Pull-SWP391/SWP391_M_BL5_G5_SU25/web/admin.jsp</file>
+</group>
+</open-files>
 </project-private>

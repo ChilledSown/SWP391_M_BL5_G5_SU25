@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbproject://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
 
@@ -341,7 +341,7 @@ public class CourseDAO extends DBContext {
                 sql.append("c.Created_At DESC\n");
                 break;
         }
-        
+
         if (limit != Integer.MAX_VALUE) {
             sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
         }
@@ -370,7 +370,6 @@ public class CourseDAO extends DBContext {
                 course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
                 courses.add(course);
             }
-            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -432,6 +431,35 @@ public class CourseDAO extends DBContext {
         return courses;
     }
 
+    // lay theo ID for Seller ;
+//    public List<Course> getCoursesByCreator(int userId) {
+//        List<Course> courses = new ArrayList<>();
+//        String sql = "SELECT Course_Id, Title, Description, Price, Thumbnail_Url, Created_At, Updated_At, Topic_Id "
+//                + "FROM Course WHERE Created_By = ?";
+//
+//        try {
+//            PreparedStatement stm = connection.prepareStatement(sql);
+//            stm.setInt(1, userId);
+//            ResultSet rs = stm.executeQuery();
+//            while (rs.next()) {
+//                Course c = Course.builder()
+//                        .course_id(rs.getLong("Course_Id"))
+//                        .title(rs.getString("Title"))
+//                        .description(rs.getString("Description"))
+//                        .price(rs.getInt("Price"))
+//                        .thumbnail_url(rs.getString("Thumbnail_Url"))
+//                        .created_at(rs.getDate("Created_At"))
+//                        .updated_at(rs.getDate("Updated_At"))
+//                        .topic_id(rs.getLong("Topic_Id"))
+//                        .build();
+//                courses.add(c);
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(CourseDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return courses;
+//    }
+    //delete = cach chang status
     public void markCourseAsDeleted(long courseId) {
         String sql = "UPDATE Course SET Status = 'inactive' WHERE Course_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -464,7 +492,6 @@ public class CourseDAO extends DBContext {
                         null // averageRating nếu chưa có trong query
                 );
                 courses.add(c);
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -717,7 +744,7 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    // Tách từ khoá và build SQL LIKE nhiều phần validate seach
+    // Tách từ khoá và build SQL LIKE nhiều phần validate seacj
     private String buildFuzzySqlCondition(String input, List<Object> params) {
         StringBuilder condition = new StringBuilder();
         if (input != null && !input.trim().isEmpty()) {
@@ -732,4 +759,56 @@ public class CourseDAO extends DBContext {
         return condition.toString();
     }
 
+     public List<Course> getCoursesByTopicIdWithSearch(String query, long topicId, int offset, int limit) {
+        List<Course> courses = new ArrayList<>();
+        String search = (query == null ? "" : query.trim());
+        String like = "%" + search + "%";
+        String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n"
+                + "FROM Course c\n"
+                + "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n"
+                + "WHERE c.Topic_Id = ? AND (c.Title LIKE ? OR c.Description LIKE ?) AND c.Status = 'active'\n"
+                + "ORDER BY c.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ps.setString(2, like);
+            ps.setString(3, like);
+            ps.setInt(4, offset);
+            ps.setInt(5, limit);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
+
+    public int getTotalCoursesByTopicIdWithSearch(String query, long topicId) {
+        String search = (query == null ? "" : query.trim());
+        String like = "%" + search + "%";
+        String sql = "SELECT COUNT(*) FROM Course c WHERE c.Topic_Id = ? AND (c.Title LIKE ? OR c.Description LIKE ?) AND c.Status = 'active'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ps.setString(2, like);
+            ps.setString(3, like);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
