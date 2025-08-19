@@ -14,18 +14,15 @@ import java.util.ArrayList;
  * @author sondo
  */
 public class QuizDAO extends DBContext {
-
     public List<Quiz> getQuizzesByLessonId(long lessonId) {
         List<Quiz> quizzes = new ArrayList<>();
         String sql = "SELECT q.*, l.Title AS LessonTitle "
                 + "FROM Quiz q "
                 + "JOIN Lesson l ON q.Lesson_Id = l.Lesson_Id "
                 + "WHERE q.Lesson_Id = ?";
-
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, lessonId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
                 Quiz quiz = new Quiz();
                 quiz.setQuizId(rs.getLong("Quiz_Id"));
@@ -108,8 +105,35 @@ public class QuizDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    public static void main(String[] args) {
-        
+
+    public boolean isQuestionDuplicate(String question, Long lessonId) {
+        String sql = "SELECT COUNT(*) FROM Quiz WHERE LOWER(Question) = LOWER(?) AND Lesson_Id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, question.trim());
+            stmt.setLong(2, lessonId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
+    public boolean isQuestionDuplicateForUpdate(String question, Long lessonId, Long quizId) {
+        String sql = "SELECT COUNT(*) FROM Quiz WHERE LOWER(Question) = LOWER(?) AND Lesson_Id = ? AND Quiz_Id != ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, question.trim());
+            stmt.setLong(2, lessonId);
+            stmt.setLong(3, quizId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
