@@ -8,6 +8,7 @@
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller_blog.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Lesson.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CourseDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/managelesson.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/SliderDAO.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Course.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_form.jsp</file>
@@ -20,7 +21,6 @@
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ManageCourseServlet.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Slider.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteCourseServlet.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/manageLesson.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/course_detail.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ListCouseraSeller.java</file>
@@ -42,8 +42,8 @@
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ManageQuizServlet.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_course_form.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/index.html</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/managequiz.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CartDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/manageQuiz.jsp</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/TopicDAO.java</file>
         </group>
     </open-files>
