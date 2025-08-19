@@ -3,14 +3,48 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteQuizServlet.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CourseDetailServletForSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller_blog.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Lesson.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CourseDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CartDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/TopicDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ListCouseraSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/SliderDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Course.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_form.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/QuizDAO.java</file>
             <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CreateCourseServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ManageLessonServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/register.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/QuizDetailServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_detail.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ManageCourseServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Slider.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteCourseServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/manageLesson.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/course_detail.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ListCouseraSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteLessonServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/customer-course-detail.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/lesson_form.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/EditQuizServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Topic.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Quiz.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/AddLessonServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/BlogDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/reset_password.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_details.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/UpdateCourseServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/index.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/EditLessonServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CreateQuizServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ManageQuizServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_course_form.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/index.html</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/CartDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/manageQuiz.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/TopicDAO.java</file>
         </group>
     </open-files>
 </project-private>
