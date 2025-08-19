@@ -12,15 +12,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import model.Quiz;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuiz"})
-public class ManageQuizServlet extends HttpServlet {
+@WebServlet(name = "QuizDetailServlet", urlPatterns = {"/quizDetail"})
+public class QuizDetailServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +38,10 @@ public class ManageQuizServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageQuizServlet</title>");
+            out.println("<title>Servlet QuizDetailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageQuizServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet QuizDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,29 +56,25 @@ public class ManageQuizServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            long quizId = Long.parseLong(request.getParameter("quizId"));
+            long lessonId = Long.parseLong(request.getParameter("lessonId"));
 
-    String lessonIdRaw = request.getParameter("lessonId");
+            QuizDAO dao = new QuizDAO();
+            Quiz quiz = dao.getQuizById(quizId);
 
-    if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing lessonId parameter.");
-        return;
+            request.setAttribute("quiz", quiz);
+            request.setAttribute("lessonId", lessonId);
+            request.getRequestDispatcher("quiz_detail.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quiz ID");
+        }
     }
-
-    long lessonId = Long.parseLong(lessonIdRaw);
-
-    QuizDAO dao = new QuizDAO();
-    List<Quiz> quizzes = dao.getQuizzesByLessonId(lessonId);
-
-    // Gửi dữ liệu sang JSP
-    request.setAttribute("lessonId", lessonId);
-    request.setAttribute("quizzes", quizzes);
-
-    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
-}
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -106,4 +101,3 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     }// </editor-fold>
 
 }
-

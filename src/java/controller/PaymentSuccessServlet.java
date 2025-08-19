@@ -72,12 +72,12 @@ public class PaymentSuccessServlet extends HttpServlet {
         PaymentDAO paymentDAO = new PaymentDAO();
 
         long orderId = orderDAO.insertOrder(user.getUser_id(), amount, "paid");
+        
         for (CartItem item : cartItems) {
-            orderDetailDAO.insertOrderDetail(orderId, item.getCourse_id(), item.getPrice());
+            boolean orderDetailInserted = orderDetailDAO.insertOrderDetail(orderId, item.getCourse_id(), item.getPrice());
         }
 
-        paymentDAO.insertPayment(orderId, amount, currency != null ? currency : "USD", method, orderIdFromPg != null ? orderIdFromPg : "", "captured");
-
+        long paymentId = paymentDAO.insertPayment(orderId, amount, method, "completed");
         // Clear cart
         if (userCart != null) {
             for (CartItem item : cartItems) {

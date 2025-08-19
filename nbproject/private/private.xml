@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
@@ -12,6 +11,7 @@
             <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/src/java/dal/OrderDAO.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/src/java/controller/ManageTopicServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/web/customer-course-detail.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/src/java/controller/PaymentSuccessServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/src/java/controller/CreateCourseServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/src/java/model/CartItemWithCourse.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-LinhTranDang/SWP391_M_BL5_G5_SU25-LinhTranDang/src/java/controller/UpdateReviewServlet.java</file>
