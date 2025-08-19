@@ -1,9 +1,9 @@
+package controller;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
-
 import dal.QuizDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,15 +12,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.util.Date;
 import model.Quiz;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuiz"})
-public class ManageQuizServlet extends HttpServlet {
+@WebServlet(name = "CreateQuizServlet", urlPatterns = {"/createQuiz"})
+public class CreateQuizServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +39,10 @@ public class ManageQuizServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageQuizServlet</title>");
+            out.println("<title>Servlet CreateQuizServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageQuizServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CreateQuizServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,29 +57,11 @@ public class ManageQuizServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
-    String lessonIdRaw = request.getParameter("lessonId");
-
-    if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing lessonId parameter.");
-        return;
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
-
-    long lessonId = Long.parseLong(lessonIdRaw);
-
-    QuizDAO dao = new QuizDAO();
-    List<Quiz> quizzes = dao.getQuizzesByLessonId(lessonId);
-
-    // Gửi dữ liệu sang JSP
-    request.setAttribute("lessonId", lessonId);
-    request.setAttribute("quizzes", quizzes);
-
-    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
-}
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -92,7 +74,33 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            String question = request.getParameter("question");
+            String answerOptionsRaw = request.getParameter("answerOptions");
+            String correctAnswer = request.getParameter("correctAnswer");
+            String explanation = request.getParameter("explanation");
+            Long lessonId = Long.parseLong(request.getParameter("lessonId"));
+
+            // Gộp các dòng thành một chuỗi duy nhất phân cách bằng ;
+            String answerOptions = answerOptionsRaw.trim().replaceAll("\r\n", "; ").replaceAll("\n", "; ");
+
+            Quiz quiz = new Quiz();
+            quiz.setQuestion(question);
+            quiz.setAnswerOptions(answerOptions);
+            quiz.setCorrectAnswer(correctAnswer);
+            quiz.setExplanation(explanation);
+            quiz.setLessonId(lessonId);
+            quiz.setCreatedAt(new Date());
+            quiz.setUpdatedAt(new Date());
+
+            QuizDAO dao = new QuizDAO();
+            dao.createQuiz(quiz);
+
+            response.sendRedirect("manageQuiz?lessonId=" + lessonId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(500, "Error creating quiz.");
+        }
     }
 
     /**
@@ -106,4 +114,3 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     }// </editor-fold>
 
 }
-

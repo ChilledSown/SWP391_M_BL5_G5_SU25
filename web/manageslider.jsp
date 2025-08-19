@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Dashboard - Course Management</title>
+        <title>Admin Dashboard - Manage Slider</title>
         <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
         <style>
@@ -97,63 +97,33 @@
                 transform: translateY(0);
             }
 
-            /* Stat Cards (Overview) */
-            .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-            }
-
-            .stat-card {
+            /* Slider Table */
+            .slider-table {
+                width: 100%;
+                border-collapse: collapse;
                 background-color: white;
-                padding: 25px;
                 border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-                text-align: center;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            }
-
-            .stat-card h3 {
-                margin-top: 0;
-                font-size: 18px;
-                color: #7f8c8d;
-            }
-
-            .stat-card p {
-                font-size: 36px;
-                font-weight: bold;
-                color: #3498db;
-                margin: 0;
-            }
-
-            /* Course List (Manage Courses) */
-            .course-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: white;
-                padding: 15px 20px;
-                margin-bottom: 10px;
-                border-radius: 5px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                margin-top: 20px;
             }
 
-            .course-item:hover {
-                transform: translateX(5px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            .slider-table th, .slider-table td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
             }
 
-            .course-name {
+            .slider-table th {
+                background-color: #3498db;
+                color: white;
                 font-weight: 500;
             }
 
-            .course-actions button {
+            .slider-table tr:hover {
+                background-color: #f9f9f9;
+            }
+
+            .slider-actions button {
                 border: none;
                 padding: 8px 12px;
                 border-radius: 4px;
@@ -189,7 +159,7 @@
                 </div> 
                 <nav class="sidebar-nav">
                     <ul>
-                        <li class="active" data-section="overview">
+                        <li data-section="overview">
                             <a href="overview">Overview</a>
                         </li>
                         <li data-section="courses">
@@ -197,7 +167,10 @@
                         </li>
                         <li data-section="users">
                             <a href="manageuser">Manage Users</a>
-                        </li>               
+                        </li>
+                        <li data-section="slider" class="active">
+                            <a href="manageslider">Manage Slider</a>
+                        </li>
                         <li data-section="settings">
                             <a href="login">Logout</a>
                         </li>
@@ -207,10 +180,27 @@
 
             <main class="main-content">
                 <header class="main-header">
-                     <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
+                    <h1>Manage Slider</h1>
                 </header>
-                <div style="color:green">${message}</div>                         
-                
+                <div class="content-section active">
+                    <table class="slider-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Image</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Placeholder for dynamic slider data -->
+                            <tr>
+                                <td colspan="5">Slider data will be populated here.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </main>
         </div>     
     </body>
