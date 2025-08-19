@@ -108,5 +108,8 @@ public class QuizDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    public static void main(String[] args) {
+        
+    }
 
 }
