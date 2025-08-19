@@ -81,11 +81,11 @@
                     </div>
                     <div class="form-input">
                         <label for="name">Password</label>
-                        <input type="password" name="password" placeholder="******">
+                        <input type="password" name="password" placeholder="******" required>
                     </div>
                     <div class="form-input">
                         <label for="name">Confirm Password</label>
-                        <input type="password" name="confirmPassword" placeholder="******">
+                        <input type="password" name="confirmPassword" placeholder="******" required>
                     </div>
                     <div class="form-input pt-30">
                         <button type="submit">Update</button>

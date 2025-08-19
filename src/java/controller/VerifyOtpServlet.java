@@ -56,13 +56,15 @@ public class VerifyOtpServlet extends HttpServlet {
                     request.setAttribute("email", email);
                     request.getRequestDispatcher("reset_password.jsp").forward(request, response);
                 } else {
-                    request.setAttribute("message", "OTP không hợp lệ hoặc đã hết hạn.");
-                    request.getRequestDispatcher("verify_otp.jsp").forward(request, response);
+                    request.setAttribute("email", email); 
+                    request.setAttribute("message", "OTP is invalid or expired. Please try again!");                  
+                    request.getRequestDispatcher("verify_otp.jsp").forward(request, response);          
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            request.setAttribute("error", "errorr: " + e.getMessage());
+             request.setAttribute("email", email); 
             request.getRequestDispatcher("verify_otp.jsp").forward(request, response);
         }
 
