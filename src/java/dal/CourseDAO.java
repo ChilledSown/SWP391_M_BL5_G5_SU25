@@ -458,6 +458,23 @@ public class CourseDAO extends DBContext {
         return courses;
     }
 
+    public boolean hasUserPurchasedCourse(long userId, long courseId) {
+        String sql = "SELECT 1 "
+                + "FROM [Order] o "
+                + "JOIN Order_Detail od ON od.Order_Id = o.Order_Id "
+                + "LEFT JOIN Payment p ON p.Order_Id = o.Order_Id "
+                + "WHERE o.User_Id = ? AND od.Course_Id = ? AND (o.Status = 'paid' OR p.Payment_Status = 'completed')";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setLong(2, courseId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // lay theo ID for Seller ;
 //    public List<Course> getCoursesByCreator(int userId) {
 //        List<Course> courses = new ArrayList<>();

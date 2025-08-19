@@ -680,16 +680,23 @@
                             
                                                          <!-- Action Buttons -->
                              <div class="action-buttons">
-                                 <a href="#" class="btn-purchase">Purchase now</a>
                                  <c:choose>
-                                     <c:when test="${isCourseInCart}">
-                                         <button class="btn-cart in-cart" disabled>In Cart</button>
+                                     <c:when test="${hasPurchased}">
+                                         <a href="customer-course-detail?id=${course.course_id}#lessons" class="btn-purchase" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">Start Learning</a>
                                      </c:when>
                                      <c:otherwise>
-                                         <form action="add-to-cart" method="POST" style="display: inline;">
-                                             <input type="hidden" name="courseId" value="${course.course_id}">
-                                             <button type="submit" class="btn-cart">Add to cart</button>
-                                         </form>
+                                         <a href="checkout?courseId=${course.course_id}" class="btn-purchase">Purchase now</a>
+                                         <c:choose>
+                                             <c:when test="${isCourseInCart}">
+                                                 <button class="btn-cart in-cart" disabled>In Cart</button>
+                                             </c:when>
+                                             <c:otherwise>
+                                                 <form action="add-to-cart" method="POST" style="display: inline;">
+                                                     <input type="hidden" name="courseId" value="${course.course_id}">
+                                                     <button type="submit" class="btn-cart">Add to cart</button>
+                                                 </form>
+                                             </c:otherwise>
+                                         </c:choose>
                                      </c:otherwise>
                                  </c:choose>
                              </div>
@@ -789,7 +796,7 @@
                     </div>
                 </c:if>
                 <!-- Add Review Form -->
-                <c:if test="${user != null && userReview == null}">
+                <c:if test="${user != null && userReview == null && hasPurchased}">
                     <div class="add-review">
                         <form class="review-form" action="addReview" method="POST">
                             <div class="user-avatar">
@@ -826,6 +833,18 @@
                             
                             <button type="submit" class="btn-send-review">Send review</button>
                         </form>
+                    </div>
+                </c:if>
+                
+                <!-- Message for users who haven't purchased the course -->
+                <c:if test="${user != null && userReview == null && !hasPurchased}">
+                    <div class="add-review">
+                        <div style="text-align: center; padding: 30px;">
+                            <i class="fas fa-lock" style="font-size: 48px; color: #95a5a6; margin-bottom: 15px;"></i>
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">Purchase Required</h4>
+                            <p style="color: #7f8c8d; margin-bottom: 20px;">You need to purchase this course to leave a review.</p>
+                            <a href="checkout?courseId=${course.course_id}" class="btn-purchase" style="display: inline-block;">Purchase Course</a>
+                        </div>
                     </div>
                 </c:if>
                 
