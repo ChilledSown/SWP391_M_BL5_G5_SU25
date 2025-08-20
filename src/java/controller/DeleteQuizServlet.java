@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Admin
  */
-@WebServlet(name = "DeleteQuizServlet", urlPatterns = {"/deleteQuiz"})
+@WebServlet(name = "DeleteQuizServlet", urlPatterns = {"/deleteQuizSeller"})
 public class DeleteQuizServlet extends HttpServlet {
 
     /**
