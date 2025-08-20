@@ -6,7 +6,6 @@ import model.Blog;
 import java.sql.*;
 import java.time.LocalDate;
 
-
 public class BlogDAO extends DBContext {
 
     public List<Blog> getBlogsByCreatorId(int createdBy) {
@@ -28,11 +27,12 @@ public class BlogDAO extends DBContext {
                         rs.getString("Created_By")
                 ));
             }
-            System.out.println("Fetched " + blogs.size() + " blogs for creator: " + createdBy);
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            System.out.println("SQL Error: " + ex.getMessage());
         }
         return blogs;
     }
+
+  
+
 }
