@@ -682,7 +682,7 @@
                              <div class="action-buttons">
                                  <c:choose>
                                      <c:when test="${hasPurchased}">
-                                         <a href="customer-course-detail?id=${course.course_id}#lessons" class="btn-purchase" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">Start Learning</a>
+                                         <a href="customer-view-lesson?courseId=${course.course_id}" class="btn-purchase" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">Start Learning</a>
                                      </c:when>
                                      <c:otherwise>
                                          <a href="checkout?courseId=${course.course_id}" class="btn-purchase">Purchase now</a>
