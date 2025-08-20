@@ -1,3 +1,8 @@
+<%-- 
+    Document   : balance
+    Created on : Aug 20, 2025, 10:52:39 AM
+    Author     : Admin
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -6,7 +11,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Blogs | Seller Dashboard</title>
+    <title>Manage Balance | Seller Dashboard</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -127,6 +132,27 @@
         .btn-action i {
             font-size: 16px;
         }
+        .dashboard-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        .dashboard-card h4 {
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .dashboard-card p {
+            color: #343a40;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
         #navigation a {
             color: #343a40 !important;
             font-weight: 500;
@@ -187,6 +213,9 @@
                 width: 100%;
                 text-align: center;
             }
+            .dashboard-card {
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -243,67 +272,42 @@
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="seller.jsp" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link active">Blogs</a></li>
-                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance.jsp" class="nav-link active">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                               
                             </ul>
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Blog Management</h2>
-                            <p>Manage your blogs here.</p>
-                            <a href="createBlog.jsp" class="btn btn-primary mb-3">
-                                <i class="fas fa-plus"></i> Create New Blog
-                            </a>
-                            <!-- Search -->
-                            <form method="get" action="listBlogsSeller" class="mb-4">
-                                <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="date" name="createdDate" class="form-control" value="${param.createdDate}" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button type="submit" class="btn btn-primary w-100">Search</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <!-- Blog Table -->
+                            <h2>Balance Management</h2>
+                            <p>View your earnings and transaction history here.</p>
+                            <div class="dashboard-card">
+                                <h4>Current Balance</h4>
+                                <p>${balance != null ? balance : '0.00'} USD</p>
+                            </div>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Thumbnail</th>
-                                        <th>Title</th>
-                                        <th>Created At</th>
-                                        <th>Actions</th>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="blog" items="${blogs}">
+                                    <c:forEach var="transaction" items="${transactions}">
                                         <tr>
-                                            <td class="text-center">
-                                                <img src="${blog.thumbnailUrl}" alt="Thumbnail" style="width: 80px; border-radius: 8px;">
-                                            </td>
-                                            <td>${blog.title}</td>
-                                            <td><fmt:formatDate value="${blog.createdAt}" pattern="yyyy-MM-dd" /></td>
-                                            <td>
-                                                <a href="editBlog?blogId=${blog.blogId}" class="btn-action" title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                                <a href="blogDetail?blogId=${blog.blogId}" class="btn-action" title="Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
+                                            <td><fmt:formatDate value="${transaction.date}" pattern="yyyy-MM-dd" /></td>
+                                            <td>${transaction.description}</td>
+                                            <td>${transaction.amount} USD</td>
+                                            <td>${transaction.type}</td>
                                         </tr>
                                     </c:forEach>
-                                    <c:if test="${empty blogs}">
+                                    <c:if test="${empty transactions}">
                                         <tr>
-                                            <td colspan="4" class="text-center">No blogs found.</td>
+                                            <td colspan="4" class="text-center">No transactions found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>
