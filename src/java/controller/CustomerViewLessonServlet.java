@@ -23,17 +23,46 @@ public class CustomerViewLessonServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String courseIdRaw = request.getParameter("courseId");
-            if (courseIdRaw == null) {
+            String lessonIdRaw = request.getParameter("lessonId");
+
+            Long courseId = null;
+            Long lessonId = null;
+
+            // If courseId is present, parse it
+            if (courseIdRaw != null && !courseIdRaw.isEmpty()) {
+                courseId = Long.parseLong(courseIdRaw);
+            }
+            // If lessonId is present, parse it
+            if (lessonIdRaw != null && !lessonIdRaw.isEmpty()) {
+                lessonId = Long.parseLong(lessonIdRaw);
+            }
+
+            LessonDAO lessonDAO = new LessonDAO();
+
+            // Derive courseId from lessonId if needed
+            if (courseId == null && lessonId != null) {
+                Lesson lesson = lessonDAO.getLessonById(lessonId);
+                if (lesson != null) {
+                    courseId = lesson.getCourseId();
+                }
+            }
+
+            if (courseId == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing courseId");
                 return;
             }
 
-            long courseId = Long.parseLong(courseIdRaw);
+            System.out.println("CustomerViewLessonServlet: Loading lessons for courseId = " + courseId);
 
-            LessonDAO lessonDAO = new LessonDAO();
             List<Lesson> lessons = lessonDAO.getLessonsByCourseId(courseId);
+            System.out.println("CustomerViewLessonServlet: Found " + (lessons != null ? lessons.size() : 0) + " lessons");
+
+            // Determine active lesson
+            Lesson activeLesson = null;
 
             if (lessons == null || lessons.isEmpty()) {
+                // No lessons found for this course
+                request.setAttribute("courseId", courseId);
                 request.setAttribute("lessons", lessons);
                 request.setAttribute("activeLesson", null);
                 request.setAttribute("quizzes", null);
@@ -41,22 +70,17 @@ public class CustomerViewLessonServlet extends HttpServlet {
                 return;
             }
 
-            // Determine active lesson
-            Lesson activeLesson = null;
-            String lessonIdRaw = request.getParameter("lessonId");
-            if (lessonIdRaw != null && !lessonIdRaw.isEmpty()) {
-                try {
-                    long lessonId = Long.parseLong(lessonIdRaw);
-                    for (Lesson l : lessons) {
-                        if (l.getLessonId() == lessonId) {
-                            activeLesson = l;
-                            break;
-                        }
+            // Try to select by provided lessonId first
+            if (lessonId != null) {
+                for (Lesson l : lessons) {
+                    if (l.getLessonId().equals(lessonId)) {
+                        activeLesson = l;
+                        break;
                     }
-                } catch (NumberFormatException ignore) {
-                    // Fallback handled below: default to first lesson
                 }
             }
+
+            // If no specific lesson found, use the first one
             if (activeLesson == null) {
                 activeLesson = lessons.get(0);
             }
