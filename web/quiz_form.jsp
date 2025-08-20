@@ -81,7 +81,7 @@
             <textarea class="form-control" name="explanation" rows="3" required>${quiz != null ? quiz.explanation : ''}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">${quiz != null ? "Update" : "Create"}</button>
-        <a href="manageQuizSeller?lessonId=${param.lessonId}" class="btn btn-secondary">Cancel</a>
+        <a href="createQuizSeller?lessonId=${param.lessonId}" class="btn btn-secondary">Cancel</a>
     </form>
 </body>
 </html>

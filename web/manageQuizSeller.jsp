@@ -31,12 +31,12 @@
                         <td>${quiz.correctAnswer}</td>
                         <td>${quiz.createdAt}</td>
                         <td>
-                            <a href="editQuiz?quizId=${quiz.quizId}&lessonId=${lessonId}" 
+                            <a href="editQuizSeller?quizId=${quiz.quizId}&lessonId=${lessonId}" 
                                class="btn btn-sm btn-warning">Edit</a>
 
-                            <a href="deleteQuiz?quizId=${quiz.quizId}&lessonId=${lessonId}" 
+                            <a href="deleteQuizSeller?quizId=${quiz.quizId}&lessonId=${lessonId}" 
                                class="btn btn-sm btn-danger">Delete</a>
-                                 <a href="quizDetail?quizId=${quiz.quizId}&lessonId=${lessonId}" 
+                                 <a href="quizDetailSeller?quizId=${quiz.quizId}&lessonId=${lessonId}" 
                        class="btn btn-sm btn-info">Detail</a>
                         </td>
                     </tr>
