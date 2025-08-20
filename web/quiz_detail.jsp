@@ -44,6 +44,6 @@
             <td>${quiz.updatedAt}</td>
         </tr>
     </table>
-    <a href="manageQuiz?lessonId=${lessonId}" class="btn btn-secondary">Back</a>
+    <a href="manageQuizSeller?lessonId=${lessonId}" class="btn btn-secondary">Back</a>
 </body>
 </html>
