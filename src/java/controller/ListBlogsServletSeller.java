@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Blog;
+import model.User;
 
 /**
  *
@@ -58,39 +59,27 @@ public class ListBlogsServletSeller extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  
-        
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get logged-in seller's ID (assuming stored in session)
         HttpSession session = request.getSession();
-        Integer creatorId = (Integer) session.getAttribute("sellerId"); // Replace with actual session attribute
-        if (creatorId == null) {
-            response.sendRedirect("login.jsp"); // Redirect to login if not authenticated
+        User user = (User) session.getAttribute("user");
+        // Check if user is logged in and is a seller
+        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect("login.jsp");
             return;
         }
-
+        // Get creator ID
+        Long creatorId = user.getUser_id();
         // Get search parameters
         String title = request.getParameter("title");
         String createdDate = request.getParameter("createdDate");
-
         // Fetch blogs using BlogDAO
         BlogDAO blogDAO = new BlogDAO();
-        List<Blog> blogs = blogDAO.getBlogsByCreatorId(creatorId);
-
-        // Filter blogs by title and createdDate (if provided)
-        if (title != null && !title.isEmpty()) {
-            blogs.removeIf(blog -> !blog.getTitle().toLowerCase().contains(title.toLowerCase()));
-        }
-        if (createdDate != null && !createdDate.isEmpty()) {
-            blogs.removeIf(blog -> !blog.getCreatedAt().toString().equals(createdDate));
-        }
-
-        // Store blogs and search parameters
+        List<Blog> blogs = blogDAO.getBlogsByCreatorId(creatorId.intValue(), title, createdDate);
+        // Store data
         request.setAttribute("blogs", blogs);
         session.setAttribute("blogTitle", title);
         session.setAttribute("blogCreatedDate", createdDate);
-
         // Forward to seller_blog.jsp
         request.getRequestDispatcher("seller_blog.jsp").forward(request, response);
     }
