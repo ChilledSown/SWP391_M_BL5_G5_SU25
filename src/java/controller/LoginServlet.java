@@ -58,6 +58,19 @@ public class LoginServlet extends HttpServlet {
             User u = dao.login(email, hashedPassword);
 
             if (u != null) {
+                // Kiểm tra trạng thái tài khoản
+                if (!u.getAccountStatus().equalsIgnoreCase("active")) {
+                    String statusMessage = u.getAccountStatus().equalsIgnoreCase("inactive")
+                            ? "Your account is Inactive. Please contact the administrator.."
+                            : "Your account has been Suspended. Please contact the administrator..";
+                    request.setAttribute("message", statusMessage);
+                    request.setAttribute("email", email);
+                    request.setAttribute("password", password);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                }
+                
+                
                 HttpSession session = request.getSession();
                 session.setAttribute("user", u);
 
@@ -80,6 +93,10 @@ public class LoginServlet extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("message", "Erorr. Please try again!.");
+            request.setAttribute("email", email);
+            request.setAttribute("password", password);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 }
