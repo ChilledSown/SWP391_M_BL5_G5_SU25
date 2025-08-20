@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.PreparedStatement;
@@ -12,18 +8,17 @@ import java.util.List;
 import model.Slider;
 
 /**
- *
- * @author sondo
+ * Data Access Object for Slider-related database operations.
  */
-public class SliderDAO extends DBContext{
-    
+public class SliderDAO extends DBContext {
+
+    // Get all sliders
     public List<Slider> getAllSlider() {
         List<Slider> sliders = new ArrayList<>();
-        String sql = "SELECT * FROM slider ORDER BY created_at DESC";
-        
+        String sql = "SELECT * FROM Slider ORDER BY Slider_Id";
+
         try (PreparedStatement st = connection.prepareStatement(sql);
              ResultSet rs = st.executeQuery()) {
-            
             while (rs.next()) {
                 Slider slider = new Slider();
                 slider.setSlider_id(rs.getLong("Slider_Id"));
@@ -34,15 +29,223 @@ public class SliderDAO extends DBContext{
                 sliders.add(slider);
             }
         } catch (SQLException e) {
-            System.err.println("Error getting sliders: " + e.getMessage());
+            System.out.println("Error getting all sliders: " + e.getMessage());
         }
-        
+
+        return sliders;
+    }
+
+    // Get slider by ID
+    public Slider getSliderById(Long sliderId) {
+        String sql = "SELECT * FROM Slider WHERE Slider_Id = ?";
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setLong(1, sliderId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    Slider slider = new Slider();
+                    slider.setSlider_id(rs.getLong("Slider_Id"));
+                    slider.setTitle(rs.getString("Title"));
+                    slider.setImage_url(rs.getString("Image_Url"));
+                    slider.setCreated_at(rs.getDate("Created_At"));
+                    slider.setUpdated_at(rs.getDate("Updated_At"));
+                    return slider;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting slider by ID: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    // Get slider by title (for uniqueness validation)
+    public Slider getSliderByTitle(String title) {
+        String sql = "SELECT * FROM Slider WHERE Title = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, title);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Slider slider = new Slider();
+                    slider.setSlider_id(rs.getLong("Slider_Id"));
+                    slider.setTitle(rs.getString("Title"));
+                    slider.setImage_url(rs.getString("Image_Url"));
+                    slider.setCreated_at(rs.getDate("Created_At"));
+                    slider.setUpdated_at(rs.getDate("Updated_At"));
+                    return slider;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting slider by title: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Get sliders with pagination and search
+    public List<Slider> getSlidersWithPagination(String query, int page, int pageSize) {
+        List<Slider> sliders = new ArrayList<>();
+        String sql = "SELECT * FROM Slider WHERE Title LIKE ? ORDER BY Slider_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + (query == null ? "" : query) + "%");
+            ps.setInt(2, (page - 1) * pageSize);
+            ps.setInt(3, pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Slider slider = new Slider();
+                    slider.setSlider_id(rs.getLong("Slider_Id"));
+                    slider.setTitle(rs.getString("Title"));
+                    slider.setImage_url(rs.getString("Image_Url"));
+                    slider.setCreated_at(rs.getDate("Created_At"));
+                    slider.setUpdated_at(rs.getDate("Updated_At"));
+                    sliders.add(slider);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting sliders with pagination: " + e.getMessage());
+        }
+        return sliders;
+    }
+
+    // Get total number of sliders for pagination
+    public int getTotalSliders(String query) {
+        String sql = "SELECT COUNT(*) FROM Slider WHERE Title LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + (query == null ? "" : query) + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting total sliders: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public List<Slider> searchSlidersByTitle(String query, int page, int pageSize) {
+        List<Slider> sliders = new ArrayList<>();
+        String sql = "SELECT * FROM Slider WHERE Title LIKE ? ORDER BY Slider_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + (query == null ? "" : query) + "%");
+            ps.setInt(2, (page - 1) * pageSize);
+            ps.setInt(3, pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Slider slider = new Slider();
+                    slider.setSlider_id(rs.getLong("Slider_Id"));
+                    slider.setTitle(rs.getString("Title"));
+                    slider.setImage_url(rs.getString("Image_Url"));
+                    slider.setCreated_at(rs.getDate("Created_At"));
+                    slider.setUpdated_at(rs.getDate("Updated_At"));
+                    sliders.add(slider);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching sliders by title: " + e.getMessage());
+        }
+        return sliders;
+    }
+
+    // Get total number of sliders by title
+    public int getTotalSlidersByTitle(String query) {
+        String sql = "SELECT COUNT(*) FROM Slider WHERE Title LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + (query == null ? "" : query) + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting total sliders by title: " + e.getMessage());
+        }
+        return 0;
+    }
+    
+    // Get sliders by page
+    public List<Slider> getSlidersByPage(int page, int pageSize){
+        List<Slider> sliders = new ArrayList<>();
+        String sql = "SELECT * FROM Slider ORDER BY Slider_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, (page - 1) * pageSize);
+            ps.setInt(2, pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Slider slider = new Slider();
+                    slider.setSlider_id(rs.getLong("Slider_Id"));
+                    slider.setTitle(rs.getString("Title"));
+                    slider.setImage_url(rs.getString("Image_Url"));
+                    slider.setCreated_at(rs.getDate("Created_At"));
+                    slider.setUpdated_at(rs.getDate("Updated_At"));
+                    sliders.add(slider);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting sliders by page: " + e.getMessage());
+        }
         return sliders;
     }
     
+    // Get total number of sliders
+    public int getTotalSliders() {
+        String sql = "SELECT COUNT(*) FROM Slider";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting total sliders: " + e.getMessage());
+        }
+        return 0;
+    }
+    
+    // Update a slider
+    public boolean updateSlider(Slider slider) {
+        String sql = "UPDATE Slider SET Title = ?, Image_Url = ?, Updated_At = GETDATE() WHERE Slider_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, slider.getTitle());
+            ps.setString(2, slider.getImage_url());
+            ps.setLong(3, slider.getSlider_id());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error updating slider: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Insert a new slider
+    public boolean insertSlider(Slider slider) {
+        String sql = "INSERT INTO Slider (Title, Image_Url, Created_At, Updated_At) VALUES (?, ?, GETDATE(), GETDATE())";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, slider.getTitle());
+            ps.setString(2, slider.getImage_url());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error inserting slider: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Delete a slider
+    public boolean deleteSlider(long sliderId) {
+        String sql = "DELETE FROM Slider WHERE Slider_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, sliderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error deleting slider ID " + sliderId + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Main method for testing
     public static void main(String[] args) {
-        SliderDAO sdao = new SliderDAO();
-        List<Slider> slider = sdao.getAllSlider();
-        System.out.println(slider);
+        SliderDAO sliderDAO = new SliderDAO();
+        List<Slider> sliders = sliderDAO.getAllSlider();
+        for (Slider slider : sliders) {
+            System.out.println(slider);
+        }
     }
 }
