@@ -150,7 +150,7 @@ public class EditQuizSellerServlet extends HttpServlet {
             quiz.setUpdatedAt(new Date());
 
             dao.updateQuiz(quiz);
-            response.sendRedirect("manageQuiz?lessonId=" + lessonId);
+            response.sendRedirect("manageQuizSeller?lessonId=" + lessonId);
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quiz or lesson ID.");
         } catch (Exception e) {

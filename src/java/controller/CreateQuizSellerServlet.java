@@ -104,7 +104,7 @@ public class CreateQuizSellerServlet extends HttpServlet {
             quiz.setUpdatedAt(new Date());
 
             dao.createQuiz(quiz);
-            response.sendRedirect("manageQuiz?lessonId=" + lessonId);
+            response.sendRedirect("manageQuizSeller?lessonId=" + lessonId);
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "Invalid lesson ID format.");
             request.getRequestDispatcher("/quiz_form.jsp").forward(request, response);
