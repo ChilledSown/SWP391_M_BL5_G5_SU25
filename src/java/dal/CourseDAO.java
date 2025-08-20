@@ -475,35 +475,7 @@ public class CourseDAO extends DBContext {
         return false;
     }
 
-    // lay theo ID for Seller ;
-//    public List<Course> getCoursesByCreator(int userId) {
-//        List<Course> courses = new ArrayList<>();
-//        String sql = "SELECT Course_Id, Title, Description, Price, Thumbnail_Url, Created_At, Updated_At, Topic_Id "
-//                + "FROM Course WHERE Created_By = ?";
-//
-//        try {
-//            PreparedStatement stm = connection.prepareStatement(sql);
-//            stm.setInt(1, userId);
-//            ResultSet rs = stm.executeQuery();
-//            while (rs.next()) {
-//                Course c = Course.builder()
-//                        .course_id(rs.getLong("Course_Id"))
-//                        .title(rs.getString("Title"))
-//                        .description(rs.getString("Description"))
-//                        .price(rs.getInt("Price"))
-//                        .thumbnail_url(rs.getString("Thumbnail_Url"))
-//                        .created_at(rs.getDate("Created_At"))
-//                        .updated_at(rs.getDate("Updated_At"))
-//                        .topic_id(rs.getLong("Topic_Id"))
-//                        .build();
-//                courses.add(c);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(CourseDAO.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return courses;
-//    }
-    //delete = cach chang status
+
     public void markCourseAsDeleted(long courseId) {
         String sql = "UPDATE Course SET Status = 'inactive' WHERE Course_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

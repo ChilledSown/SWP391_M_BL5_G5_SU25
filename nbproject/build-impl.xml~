@@ -1037,6 +1037,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.sqljdbc42.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jakarta.activation-2.0.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jakarta.mail-2.0.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -1489,4 +1490,4 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,undeploy-clean,deps-clean,do-clean,check-clean,-post-clean" description="Clean build products." name="clean"/>
     <target depends="clean" description="Clean build products." name="clean-ear"/>
-</project>
+

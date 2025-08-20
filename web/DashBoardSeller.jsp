@@ -1,13 +1,5 @@
-<%@ page import="java.util.*" %>
-<%@ page import="model.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="dal.TopicDAO" %>
-<%@ page import="java.util.List" %>
-<%@ page import="model.Topic" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="model.Course" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
@@ -69,37 +61,35 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .table {
+        .management-section {
+            margin-bottom: 40px;
+            display: none;
+        }
+        .dashboard-card {
             background: #ffffff;
             border-radius: 8px;
-            overflow: hidden;
-        }
-        .table th {
-            background-color: #007bff;
-            color: #ffffff;
-            font-weight: 600;
-            padding: 15px;
-        }
-        .table td {
-            vertical-align: middle;
-            padding: 15px;
-            color: #343a40;
-        }
-        .table tbody tr:hover {
-            background-color: #f1f3f5;
-        }
-        .form-group {
+            padding: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        .form-control {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            padding: 10px;
-            transition: border-color 0.3s ease;
+        .dashboard-card:hover {
+            transform: translateY(-5px);
         }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        .dashboard-card h4 {
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .dashboard-card p {
+            color: #343a40;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .dashboard-card i {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 10px;
         }
         .btn-primary {
             background-color: #007bff;
@@ -112,27 +102,6 @@
             background-color: #0056b3;
             border-color: #0056b3;
             transform: translateY(-2px);
-        }
-        .btn-action {
-            background-color: #ff8243;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 6px 8px;
-            margin: 2px;
-            font-size: 14px;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s ease-in-out;
-        }
-        .btn-action:hover {
-            background-color: #e67030;
-        }
-        .btn-action i {
-            font-size: 16px;
         }
         #navigation a {
             color: #343a40 !important;
@@ -183,16 +152,8 @@
             }
         }
         @media (max-width: 767px) {
-            .form-inline .form-group {
+            .dashboard-card {
                 margin-bottom: 15px;
-                width: 100%;
-            }
-            .form-control {
-                width: 100%;
-            }
-            .btn-primary {
-                width: 100%;
-                text-align: center;
             }
         }
     </style>
@@ -249,8 +210,8 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="seller.jsp" class="nav-link active">Courses</a></li>
+                                <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="#communication" class="nav-link">Communication</a></li>
                                 <li class="nav-item"><a href="#performance" class="nav-link">Performance</a></li>
@@ -260,82 +221,67 @@
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Course Management</h2>
-                            <p>Manage your courses here.</p>
-                            <%
-                                TopicDAO topicDAO = new TopicDAO();
-                                List<Topic> topics = topicDAO.getAllTopics();
-                                Map<Long, String> topicMap = new HashMap<>();
-                                for (Topic t : topics) {
-                                    topicMap.put(t.getTopic_id(), t.getName());
-                                }
-                                request.setAttribute("topicMap", topicMap);
-                            %>
-                            <form action="listCousera" method="get" class="mb-4">
+                            <h2>Seller Dashboard</h2>
+                            <p>Welcome, [Seller Name]. Get an overview of your activities here.</p>
+                            <!-- Overview Section -->
+                            <div id="overview" class="management-section">
+                                <h3>Overview</h3>
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-12 form-group">
-                                        <label for="title" class="mr-2">Search Courses</label>
-                                        <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <i class="fas fa-book"></i>
+                                            <h4>Total Courses</h4>
+                                            <p>0</p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4 col-sm-12 form-group">
-                                        <label for="createdDate" class="mr-2">Date:</label>
-                                        <input type="date" class="form-control" name="createdDate" id="createdDate" value="${param.createdDate}">
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <i class="fas fa-blog"></i>
+                                            <h4>Total Blogs</h4>
+                                            <p>0</p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4 col-sm-12 form-group">
-                                        <label for="topicId" class="mr-2">Topic:</label>
-                                        <select name="topicId" id="topicId" class="form-control">
-                                            <option value="">All Topics</option>
-                                            <% for (Topic t : topics) { %>
-                                            <option value="<%= t.getTopic_id() %>" <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : "" %>>
-                                                <%= t.getName() %>
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </div>
-                                    <div class="col-12 form-group mt-3">
-                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <i class="fas fa-chart-line"></i>
+                                            <h4>Performance</h4>
+                                            <p>0 Views</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="page" value="1" />
-                            </form>
-                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-3">Create New Course</a>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Image</th>
-                                        <th>Title</th>
-                                        <th>Price</th>
-                                        <th>Create_At</th>
-                                        <th>Topic</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="course" items="${courses}">
-                                        <tr>
-                                            <td class="text-center">
-                                                <img src="${course.thumbnail_url}" alt="Thumbnail" style="width: 80px; border-radius: 8px;">
-                                            </td>
-                                            <td>${course.title}</td>
-                                            <td>${course.price}</td>
-                                            <td><fmt:formatDate value="${course.created_at}" pattern="yyyy-MM-dd" /></td>
-                                            <td>${topicMap[course.topic_id]}</td>
-                                            <td>
-                                                <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}" class="btn-action" title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="deleteCourse?courseId=${course.course_id}" class="btn-action" title="Delete" onclick="return confirm('Are you sure?');">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                                <a href="courseDetail?courseId=${course.course_id}" class="btn-action" title="View">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                            <jsp:include page="pagination.jsp" />
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="dashboard-card">
+                                            <h4>Recent Activity</h4>
+                                            <p>No recent activity available.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="dashboard-card">
+                                            <h4>Quick Actions</h4>
+                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
+                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Other Placeholder Sections -->
+                            <div id="communication" class="management-section" style="display: none;">
+                                <h3>Communication</h3>
+                                <p>Placeholder for communication features.</p>
+                            </div>
+                            <div id="performance" class="management-section" style="display: none;">
+                                <h3>Performance</h3>
+                                <p>Placeholder for performance analytics.</p>
+                            </div>
+                            <div id="tools" class="management-section" style="display: none;">
+                                <h3>Tools</h3>
+                                <p>Placeholder for tools section.</p>
+                            </div>
+                            <div id="resources" class="management-section" style="display: none;">
+                                <h3>Resources</h3>
+                                <p>Placeholder for resources section.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -451,5 +397,39 @@
             <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const navLinks = document.querySelectorAll('#sidebarNav .nav-link');
+                    const sections = document.querySelectorAll('.management-section');
+                    sections.forEach(section => section.style.display = 'none');
+                    navLinks.forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            const href = this.getAttribute('href');
+                            if (!href.startsWith('#')) return;
+                            e.preventDefault();
+                            const targetId = href.substring(1);
+                            navLinks.forEach(l => l.classList.remove('active'));
+                            this.classList.add('active');
+                            sections.forEach(section => section.style.display = 'none');
+                            const section = document.getElementById(targetId);
+                            if (section) {
+                                section.style.display = 'block';
+                            }
+                        });
+                    });
+                    const initialSection = window.location.hash;
+                    if (initialSection && document.querySelector(initialSection)) {
+                        const link = document.querySelector(`#sidebarNav a[href="${initialSection}"]`);
+                        const section = document.querySelector(initialSection);
+                        if (link && section) {
+                            link.classList.add('active');
+                            section.style.display = 'block';
+                        }
+                    } else {
+                        document.querySelector('#sidebarNav a[href="#overview"]').classList.add('active');
+                        document.getElementById('overview').style.display = 'block';
+                    }
+                });
+            </script>
 </body>
 </html>

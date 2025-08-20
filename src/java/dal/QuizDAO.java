@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nb://SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nb://SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
 
@@ -14,18 +14,15 @@ import java.util.ArrayList;
  * @author sondo
  */
 public class QuizDAO extends DBContext {
-
     public List<Quiz> getQuizzesByLessonId(long lessonId) {
         List<Quiz> quizzes = new ArrayList<>();
         String sql = "SELECT q.*, l.Title AS LessonTitle "
                 + "FROM Quiz q "
                 + "JOIN Lesson l ON q.Lesson_Id = l.Lesson_Id "
                 + "WHERE q.Lesson_Id = ?";
-
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, lessonId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
                 Quiz quiz = new Quiz();
                 quiz.setQuizId(rs.getLong("Quiz_Id"));
@@ -61,7 +58,7 @@ public class QuizDAO extends DBContext {
         }
     }
 
-    public void updateQuiz(Quiz quiz) {
+    public void updateQuiz(Quiz quiz) throws Exception{
         String sql = "UPDATE Quiz SET Question = ?, Answer_Options = ?, Correct_Answer = ?, Explanation = ?, Updated_At = ? WHERE Quiz_Id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, quiz.getQuestion());
@@ -109,4 +106,58 @@ public class QuizDAO extends DBContext {
         }
     }
 
+    public void deleteQuizzesByLessonId(long lessonId) {
+        String sql = "DELETE FROM Quiz WHERE Lesson_Id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, lessonId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isQuestionDuplicate(String question, Long lessonId) {
+        String sql = "SELECT COUNT(*) FROM Quiz WHERE LOWER(Question) = LOWER(?) AND Lesson_Id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, question.trim());
+            stmt.setLong(2, lessonId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isQuestionDuplicateForUpdate(String question, Long lessonId, Long quizId) {
+        String sql = "SELECT COUNT(*) FROM Quiz WHERE LOWER(Question) = LOWER(?) AND Lesson_Id = ? AND Quiz_Id != ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, question.trim());
+            stmt.setLong(2, lessonId);
+            stmt.setLong(3, quizId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasAssociatedQuizzes(long lessonId) {
+        String sql = "SELECT COUNT(*) FROM Quiz WHERE Lesson_Id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, lessonId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
