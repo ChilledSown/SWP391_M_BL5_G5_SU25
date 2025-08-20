@@ -10,9 +10,10 @@ public class Blog {
     private String thumbnailUrl;
     private LocalDate createdAt;
     private LocalDate updatedAt;
-    private String createdBy;
+    private int createdBy; // Changed from String to int to match database and servlet
 
-    public Blog(Long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, String createdBy) {
+    // Updated constructor
+    public Blog(Long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, int createdBy) {
         this.blogId = blogId;
         this.title = title;
         this.content = content;
@@ -71,11 +72,11 @@ public class Blog {
         this.updatedAt = updatedAt;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -83,5 +84,4 @@ public class Blog {
     public String toString() {
         return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + '}';
     }
-    
 }
