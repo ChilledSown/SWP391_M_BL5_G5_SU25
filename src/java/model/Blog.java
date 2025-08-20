@@ -1,28 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author sondo
- */
 public class Blog {
-    private long blogId;         
-    private String title;        
-    private String content;      
+
+    private Long blogId;
+    private String title;
+    private String content;
     private String thumbnailUrl;
-    private LocalDate createdAt; 
-    private LocalDate updatedAt; 
-    private String createdBy; 
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
+    private String createdBy;
 
-    public Blog() {
-    }
-
-    public Blog(long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, String createdBy) {
+    public Blog(Long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, String createdBy) {
         this.blogId = blogId;
         this.title = title;
         this.content = content;
@@ -32,11 +22,12 @@ public class Blog {
         this.createdBy = createdBy;
     }
 
-    public long getBlogId() {
+    // Getters and setters
+    public Long getBlogId() {
         return blogId;
     }
 
-    public void setBlogId(long blogId) {
+    public void setBlogId(Long blogId) {
         this.blogId = blogId;
     }
 
@@ -92,6 +83,5 @@ public class Blog {
     public String toString() {
         return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + '}';
     }
-    
     
 }

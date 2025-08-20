@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Blogs | Seller Dashboard</title>
+    <title>Manage Reviews | Seller Dashboard</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -243,67 +243,65 @@
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="seller.jsp" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link active">Blogs</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link active">Reviews</a></li>
+                               
                             </ul>
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Blog Management</h2>
-                            <p>Manage your blogs here.</p>
-                            <a href="createBlog.jsp" class="btn btn-primary mb-3">
-                                <i class="fas fa-plus"></i> Create New Blog
-                            </a>
-                            <!-- Search -->
-                            <form method="get" action="listBlogsSeller" class="mb-4">
+                            <h2>Reviews Management</h2>
+                            <p>View feedback and ratings from students here.</p>
+                            <!-- Search Form -->
+                            <form method="get" action="listReviews" class="mb-4">
                                 <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
+                                    <div class="col-md-4">
+                                        <input type="text" name="courseTitle" class="form-control" placeholder="Search by course title..." value="${param.courseTitle}" />
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="date" name="createdDate" class="form-control" value="${param.createdDate}" />
+                                        <input type="date" name="reviewDate" class="form-control" value="${param.reviewDate}" />
                                     </div>
                                     <div class="col-md-3">
+                                        <select name="rating" class="form-control">
+                                            <option value="">All Ratings</option>
+                                            <option value="5" ${param.rating == '5' ? 'selected' : ''}>5 Stars</option>
+                                            <option value="4" ${param.rating == '4' ? 'selected' : ''}>4 Stars</option>
+                                            <option value="3" ${param.rating == '3' ? 'selected' : ''}>3 Stars</option>
+                                            <option value="2" ${param.rating == '2' ? 'selected' : ''}>2 Stars</option>
+                                            <option value="1" ${param.rating == '1' ? 'selected' : ''}>1 Star</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
                                         <button type="submit" class="btn btn-primary w-100">Search</button>
                                     </div>
                                 </div>
                             </form>
-                            <!-- Blog Table -->
+                            <!-- Reviews Table -->
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Thumbnail</th>
-                                        <th>Title</th>
-                                        <th>Created At</th>
-                                        <th>Actions</th>
+                                        <th>Course</th>
+                                        <th>Student</th>
+                                        <th>Rating</th>
+                                        <th>Comment</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="blog" items="${blogs}">
+                                    <c:forEach var="review" items="${reviews}">
                                         <tr>
-                                            <td class="text-center">
-                                                <img src="${blog.thumbnailUrl}" alt="Thumbnail" style="width: 80px; border-radius: 8px;">
-                                            </td>
-                                            <td>${blog.title}</td>
-                                            <td><fmt:formatDate value="${blog.createdAt}" pattern="yyyy-MM-dd" /></td>
-                                            <td>
-                                                <a href="editBlog?blogId=${blog.blogId}" class="btn-action" title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                                <a href="blogDetail?blogId=${blog.blogId}" class="btn-action" title="Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
+                                            <td>${review.courseTitle}</td>
+                                            <td>${review.studentName}</td>
+                                            <td>${review.rating} / 5</td>
+                                            <td>${review.comment}</td>
+                                            <td><fmt:formatDate value="${review.date}" pattern="yyyy-MM-dd" /></td>
                                         </tr>
                                     </c:forEach>
-                                    <c:if test="${empty blogs}">
+                                    <c:if test="${empty reviews}">
                                         <tr>
-                                            <td colspan="4" class="text-center">No blogs found.</td>
+                                            <td colspan="5" class="text-center">No reviews found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>

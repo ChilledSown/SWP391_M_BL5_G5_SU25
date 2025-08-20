@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Seller Dashboard | Online Learning</title>
-    <meta name="description" content="Seller dashboard for managing blogs and courses">
+    <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.ico">
@@ -213,10 +213,9 @@
                                 <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="#communication" class="nav-link">Communication</a></li>
-                                <li class="nav-item"><a href="#performance" class="nav-link">Performance</a></li>
-                                <li class="nav-item"><a href="#tools" class="nav-link">Tools</a></li>
-                                <li class="nav-item"><a href="#resources" class="nav-link">Resources</a></li>
+                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                           
                             </ul>
                         </div>
                         <!-- Main Content -->
@@ -405,7 +404,7 @@
                     navLinks.forEach(link => {
                         link.addEventListener('click', function (e) {
                             const href = this.getAttribute('href');
-                            if (!href.startsWith('#')) return;
+                            if (!href.startsWith('#')) return; // Allow navigation to external pages like listCousera, seller_blog.jsp, balance.jsp, reviews.jsp
                             e.preventDefault();
                             const targetId = href.substring(1);
                             navLinks.forEach(l => l.classList.remove('active'));
@@ -415,6 +414,8 @@
                             if (section) {
                                 section.style.display = 'block';
                             }
+                            // Update URL with hash
+                            history.pushState({}, '', `#${targetId}`);
                         });
                     });
                     const initialSection = window.location.hash;
