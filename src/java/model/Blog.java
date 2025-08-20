@@ -1,28 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
-/**
- *
- * @author sondo
- */
+
 public class Blog {
     private long blogId;         
     private String title;        
     private String content;      
     private String thumbnailUrl;
-    private LocalDate createdAt; 
-    private LocalDate updatedAt; 
+    private Timestamp createdAt; 
+    private Timestamp updatedAt; 
     private String createdBy; 
 
     public Blog() {
     }
 
-    public Blog(long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, String createdBy) {
+    public Blog(long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, String createdBy) {
         this.blogId = blogId;
         this.title = title;
         this.content = content;
@@ -64,19 +58,19 @@ public class Blog {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public LocalDate getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -92,6 +86,8 @@ public class Blog {
     public String toString() {
         return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + '}';
     }
+
+    
     
     
 }

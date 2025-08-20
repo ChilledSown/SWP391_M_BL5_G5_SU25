@@ -1,45 +1,57 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Blog;
-import java.sql.*;
-import java.time.LocalDate;
 
-/**
- *
- * @author sondo
- */
 public class BlogDAO extends DBContext {
-    public List<Blog> getStudentsByClassID(String classID) {
-        List<Blog> listBog = new ArrayList<>();
-        String sql = "SELECT * FROM Student WHERE classID = ?";
+
+    public List<Blog> getAllBlogs() {
+        List<Blog> blogs = new ArrayList<>();
+        String sql = "SELECT * FROM Blog ORDER BY Created_At DESC"; // Sắp xếp theo ngày tạo mới nhất
         try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setString(1, classID);
-            ResultSet rs = stm.executeQuery();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                listBog.add(new Blog(rs.getLong("blogId"),rs.getString("title"),
-                        rs.getString("content"),rs.getString("thumbnailUrl"), LocalDate.MAX, LocalDate.MAX,rs.getString("createdBy")                   
+                blogs.add(new Blog(
+                    rs.getLong("BlogId"),
+                    rs.getString("Title"),
+                    rs.getString("Content"),
+                    rs.getString("ThumbnailUrl"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
+                    rs.getString("CreatedBy")
                 ));
             }
-            
-            System.out.println("Fetched " + listBog.size() + " students for classID: " + classID); 
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            System.out.println("SQL Error: " + ex.getMessage()); // Debug
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return listBog;
-    }
-    public static void main(String[] args) {
-        BlogDAO blog =new BlogDAO();
-        
+        return blogs;
     }
 
+    public Blog getBlogById(long blogId) {
+        String sql = "SELECT * FROM Blog WHERE BlogId = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, blogId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Blog(
+                    rs.getLong("BlogId"),
+                    rs.getString("Title"),
+                    rs.getString("Content"),
+                    rs.getString("ThumbnailUrl"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
+                    rs.getString("CreatedBy")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
