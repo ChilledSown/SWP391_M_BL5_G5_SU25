@@ -20,8 +20,7 @@ import utils.PasswordHashUtil;
         maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class ProfileServlet extends HttpServlet {
 
-    private static final String UPLOAD_DIR = "Upload"; // Tên thư mục trong đường dẫn tuyệt đối
-    private static final String UPLOAD_ABSOLUTE_PATH = "D:\\SU25\\SWP391_M_BL5_G5_SU25\\web\\Upload\\"; // Đường dẫn tuyệt đối của bạn
+    private static final String UPLOAD_DIR = "Upload"; // Thư mục trong webapp
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -117,14 +116,16 @@ public class ProfileServlet extends HttpServlet {
             Part filePart = request.getPart("avatar");
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = extractFileName(filePart);
-                File uploadDir = new File(UPLOAD_ABSOLUTE_PATH);
+                String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+                File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
-                String filePath = UPLOAD_ABSOLUTE_PATH + fileName;
+                String filePath = uploadPath + File.separator + fileName;
                 filePart.write(filePath);
-                avatarUrl = "/uploads/" + fileName; // Đường dẫn tương đối dựa trên alias /uploads
+                avatarUrl = request.getContextPath() + "/" + UPLOAD_DIR + "/" + fileName; // Đường dẫn tuyệt đối từ context
                 System.out.println("File saved at: " + filePath); // Log để kiểm tra
+                System.out.println("Avatar URL: " + avatarUrl); // Log để kiểm tra
             }
 
             // Create updated user object
