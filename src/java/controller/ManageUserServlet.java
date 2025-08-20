@@ -7,7 +7,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.User;
 import utils.PasswordHashUtil;
@@ -29,12 +28,7 @@ public class ManageUserServlet extends HttpServlet {
             request.setAttribute("user", user);
             request.getRequestDispatcher("updateuser.jsp").forward(request, response);
             return;
-        } else if ("add".equals(action)) {
-            request.removeAttribute("user");
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                session.removeAttribute("user");
-            }
+        } else if ("add".equals(action)) {   
             request.getRequestDispatcher("adduser.jsp").forward(request, response);
             return;
         }
