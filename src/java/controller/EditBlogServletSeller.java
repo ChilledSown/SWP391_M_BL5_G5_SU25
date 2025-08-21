@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10,      // 10MB
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
-public class EditBlogServlet extends HttpServlet {
+public class EditBlogServletSeller extends HttpServlet {
     private static final String UPLOAD_DIR = "assets/img/uploads";
 
     @Override
@@ -68,6 +68,7 @@ public class EditBlogServlet extends HttpServlet {
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         String thumbnailUrl = request.getParameter("thumbnail_url");
+        String existingThumbnail = request.getParameter("existingThumbnail");
         Part filePart = request.getPart("thumbnail");
 
         // Validation
@@ -81,7 +82,7 @@ public class EditBlogServlet extends HttpServlet {
             hasError = true;
         }
 
-        // Fetch existing blog to get current thumbnail URL
+        // Fetch existing blog to verify
         BlogDAO blogDAO = new BlogDAO();
         Blog existingBlog = blogDAO.getBlogById(Long.parseLong(blogId));
         if (existingBlog == null) {
@@ -91,7 +92,7 @@ public class EditBlogServlet extends HttpServlet {
         }
 
         // Handle thumbnail logic
-        String finalThumbnailUrl = existingBlog.getThumbnailUrl(); // Default to existing thumbnail
+        String finalThumbnailUrl = existingThumbnail; // Default to existing thumbnail
         if (thumbnailUrl != null && thumbnailUrl.equals("null")) {
             // User removed the thumbnail
             finalThumbnailUrl = null;
