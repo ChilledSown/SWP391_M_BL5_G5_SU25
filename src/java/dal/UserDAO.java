@@ -331,8 +331,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
