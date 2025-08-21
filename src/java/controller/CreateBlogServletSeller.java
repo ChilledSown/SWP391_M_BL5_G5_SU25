@@ -3,7 +3,6 @@ package controller;
 import dal.BlogDAO;
 import model.Blog;
 import model.User;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,22 +13,20 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @WebServlet(name = "CreateBlogServlet", urlPatterns = {"/createBlog"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
-        maxRequestSize = 1024 * 1024 * 50)   // 50MB
+        maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class CreateBlogServletSeller extends HttpServlet {
-
     private static final String UPLOAD_DIR = "assets/img/uploads";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        // Check if user is logged in and is a seller
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"seller".equalsIgnoreCase(user.getRole()) || user.getUser_id() == null) {
             response.sendRedirect("login.jsp");
             return;
         }
@@ -50,43 +47,53 @@ public class CreateBlogServletSeller extends HttpServlet {
             session.setAttribute("contentError", "Content is required.");
             hasError = true;
         }
-        if (thumbnailUrl == null || thumbnailUrl.trim().isEmpty() || thumbnailUrl.equals("null")) {
-            if (filePart == null || filePart.getSize() == 0) {
-                session.setAttribute("thumbnailError", "Thumbnail URL or file is required.");
-                hasError = true;
-            }
+        if ((thumbnailUrl == null || thumbnailUrl.trim().isEmpty() || thumbnailUrl.equals("null")) && 
+            (filePart == null || filePart.getSize() == 0)) {
+            session.setAttribute("thumbnailError", "Thumbnail URL or file is required.");
+            hasError = true;
         }
 
         // Check for duplicate title
         BlogDAO blogDAO = new BlogDAO();
-        if (blogDAO.isBlogTitleExists(title, null)) { // No excludeBlogId for create
+        if (blogDAO.isBlogTitleExists(title, null)) {
             session.setAttribute("duplicateMessage", "Blog title already exists.");
             hasError = true;
         }
 
         if (hasError) {
-            response.sendRedirect("Add_EditSeller.jsp?action=create");
+            // Preserve form data
+            Blog blog = new Blog(0, title, content, thumbnailUrl, new Timestamp(System.currentTimeMillis()), 
+                new Timestamp(System.currentTimeMillis()), user.getUser_id().intValue(), null);
+            request.setAttribute("blog", blog);
+            request.setAttribute("action", "create");
+            request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
             return;
         }
 
         // Handle file upload
-        String fileName = null;
+        String finalThumbnailUrl = thumbnailUrl;
         if (filePart != null && filePart.getSize() > 0) {
             String uploadPath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
-            fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
+            String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
             filePart.write(uploadPath + File.separator + fileName);
-            thumbnailUrl = UPLOAD_DIR + "/" + fileName;
+            finalThumbnailUrl = UPLOAD_DIR + "/" + fileName;
         }
 
         // Create blog
-        Blog blog = new Blog(null, title, content, thumbnailUrl, LocalDate.now(), LocalDate.now(), user.getUser_id().intValue()); // Updated constructor
+        Blog blog = new Blog(0, title, content, finalThumbnailUrl, new Timestamp(System.currentTimeMillis()), 
+            new Timestamp(System.currentTimeMillis()), user.getUser_id().intValue(), null);
         blogDAO.createBlog(blog);
 
-        // Redirect to blog management
+        // Clear session attributes
+        session.removeAttribute("titleError");
+        session.removeAttribute("contentError");
+        session.removeAttribute("thumbnailError");
+        session.removeAttribute("duplicateMessage");
+
         response.sendRedirect("listBlogsSeller");
     }
 }
