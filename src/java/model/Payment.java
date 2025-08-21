@@ -1,6 +1,8 @@
+
 package model;
 
 import java.time.LocalDate;
+
 
 /**
  * Represents a Payment entity corresponding to the Payment table in the
@@ -96,4 +98,5 @@ public class Payment {
                 + ", description='" + description + '\''
                 + '}';
     }
+
 }
