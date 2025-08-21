@@ -89,6 +89,14 @@
         .back-to-blog:hover {
             background: #5a67d8;
         }
+        .message {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -169,6 +177,11 @@
         <!-- Blog Details Area Start -->
         <div class="blog-details-area section-padding40">
             <div class="container">
+                <c:if test="${not empty message}">
+                    <div class="message">
+                        ${message}
+                    </div>
+                </c:if>
                 <c:if test="${not empty blog}">
                     <div class="blog-details-header">
                         <h1>${blog.title}</h1>
