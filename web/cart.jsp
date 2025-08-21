@@ -172,14 +172,9 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             gap: 16px;
             margin-top: 25px;
-        }
-
-        /* PayPal button container */
-        #paypal-button-container {
-            min-width: 280px;
         }
 
         @media (max-width: 992px) {
@@ -204,9 +199,7 @@
             }
             .cart-actions {
                 justify-content: center;
-            }
-            #paypal-button-container {
-                width: 100%;
+                flex-direction: column;
             }
         }
         
@@ -302,6 +295,49 @@
     </div>
     <!-- Preloader Start -->
    
+    <!-- Header Start -->
+    <header>
+        <div class="header-area header-transparent">
+            <div class="main-header ">
+                <div class="header-bottom  header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <!-- Logo -->
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <!-- Main-menu -->
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">                                                                                          
+                                                <li><a href="home">Home</a></li>
+                                                <li><a href="courses">Courses</a></li>
+                                                <li><a href="purchased-courses">Purchased courses</a></li>
+                                                <li><a href="blog">Blog</a></li>
+                                                <li class="active"><a href="cart">Cart</a></li>
+                                                <li><a href="customer-list-order">My Order</a></li>
+                                                <li><a href="profile" class="btn">Profile</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div> 
+                            <!-- Mobile Menu -->
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->
 
     <main>
         <!-- Cart Section -->
@@ -343,16 +379,15 @@
                             
                             <!-- Cart Summary -->
                             <div class="cart-summary">
-                                <div class="summary-row">
-                                    <span class="summary-label">Total:</span>
-                                    <span class="summary-value">$${cartTotal}</span>
+                                <div class="summary-row total-row">
+                                    <span class="summary-label total-label">Total:</span>
+                                    <span class="summary-value total-value">$${cartTotal}</span>
                                 </div>
                                 
                                 <div class="cart-actions">
                                     <a href="courses" class="btn-continue">Continue Shopping</a>
-                                    
+                                    <a href="checkout" class="btn-checkout">Proceed to Checkout</a>
                                 </div>
-                                <div id="paypal-button-container" style="margin-left: auto;"></div>
                             </div>
                         </c:otherwise>
                     </c:choose>
@@ -361,9 +396,9 @@
         </section>
     </main>
 
+    <!-- Footer Start-->
     <footer>
         <div class="footer-wrappper footer-bg">
-            <!-- Footer Start-->
             <div class="footer-area footer-padding">
                 <div class="container">
                     <div class="row justify-content-between">
@@ -505,42 +540,6 @@
             });
         }
     }
-</script>
-
-<!-- PayPal JS SDK (Sandbox). Replace client-id with your Sandbox Client ID -->
-<script src="https://www.paypal.com/sdk/js?client-id=ATdH4OWCF17eQ5EJcvqaswbwhnxjceeobCVEzGY4qMrECabo_aAHhmGIbja5Cmy3ppxGUfRDRKc9z4xw&currency=USD"></script>
-<script>
-    (function renderPaypalButton() {
-        var container = document.getElementById('paypal-button-container');
-        if (!container) return;
-        var total = '${cartTotal}';
-        if (!total || total === '0' || total === '0.00') return;
-
-        if (typeof paypal === 'undefined') {
-            console.error('PayPal SDK not loaded');
-            return;
-        }
-
-        paypal.Buttons({
-            style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'paypal' },
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{ amount: { value: String(total) } }]
-                });
-            },
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    var amount = String(total);
-                    var currency = 'USD';
-                    window.location.href = 'payment-success?orderId=' + encodeURIComponent(details.id) + '&amount=' + encodeURIComponent(amount) + '&currency=' + encodeURIComponent(currency);
-                });
-            },
-            onError: function (err) {
-                console.error(err);
-                alert('Payment failed. Please try again.');
-            }
-        }).render('#paypal-button-container');
-    })();
 </script>
 
 </body>

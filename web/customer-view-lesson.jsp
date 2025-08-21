@@ -15,14 +15,127 @@
         <style>
             body { font-family: "Helvetica Neue", Arial, sans-serif; }
             .lesson-layout { padding: 60px 0; background: #f7f9fc; }
-            .sidebar { background: #ffffff; border-radius: 12px; box-shadow: 0 6px 22px rgba(0,0,0,0.06); }
-            .sidebar .sidebar-title { padding: 16px 20px; font-weight: 700; color: #2c3e50; border-bottom: 1px solid #eef2f7; }
-            .lesson-link { display: block; padding: 14px 18px; color: #2c3e50; text-decoration: none; border-bottom: 1px solid #f0f2f5; transition: background .2s ease; }
-            .lesson-link:hover { background: #f7f9fc; }
-            .lesson-link.active { background: #eef2ff; color: #3445d4; font-weight: 600; }
-            .quiz-box { padding: 18px; background: #f8fafc; }
-            .player-card { background: #ffffff; border-radius: 12px; box-shadow: 0 6px 22px rgba(0,0,0,0.06); padding: 16px; }
-            .video-wrapper { position: relative; background: #000; border-radius: 10px; overflow: hidden; height: 480px; }
+            
+            /* Coursera-style sidebar */
+            .sidebar { 
+                background: #ffffff; 
+                border-radius: 8px; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+                border: 1px solid #e1e5e9;
+            }
+            .sidebar .sidebar-title { 
+                padding: 20px 24px; 
+                font-weight: 600; 
+                color: #1f1f1f; 
+                border-bottom: 1px solid #e1e5e9; 
+                font-size: 18px;
+                background: #f8f9fa;
+                border-radius: 8px 8px 0 0;
+            }
+            
+            /* Coursera-style lesson links */
+            .lesson-link { 
+                display: flex; 
+                align-items: center;
+                padding: 16px 24px; 
+                color: #1f1f1f; 
+                text-decoration: none; 
+                border-bottom: 1px solid #f0f2f5; 
+                transition: all 0.2s ease;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            .lesson-link:hover { 
+                background: #f8f9fa; 
+                color: #0056b3;
+                text-decoration: none;
+            }
+            .lesson-link.active { 
+                background: #e8f4fd; 
+                color: #0056b3; 
+                font-weight: 600;
+                border-left: 4px solid #0056b3;
+                padding-left: 20px;
+            }
+            
+            /* Lesson number styling */
+            .lesson-number {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 24px;
+                height: 24px;
+                background: #e1e5e9;
+                border-radius: 50%;
+                font-size: 12px;
+                font-weight: 600;
+                color: #6a6f73;
+                margin-right: 12px;
+                flex-shrink: 0;
+            }
+            
+            .lesson-link.active .lesson-number {
+                background: #0056b3;
+                color: white;
+            }
+            
+            /* Coursera-style quiz box */
+            .quiz-box { 
+                padding: 20px 24px; 
+                background: #f8f9fa; 
+                border-top: 1px solid #e1e5e9;
+                border-radius: 0 0 8px 8px;
+            }
+            
+            .quiz-box .btn {
+                border-radius: 6px;
+                font-weight: 600;
+                font-size: 14px;
+                padding: 12px 20px;
+                border: none;
+                transition: all 0.2s ease;
+            }
+            
+            .quiz-box .btn-primary {
+                background: #0056b3;
+                color: white;
+            }
+            
+            .quiz-box .btn-primary:hover {
+                background: #004085;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+            }
+            
+            .quiz-box .btn-secondary {
+                background: #6c757d;
+                color: white;
+            }
+            
+            .quiz-box .quiz-info {
+                margin-top: 12px;
+                font-size: 13px;
+                color: #6a6f73;
+                text-align: center;
+            }
+            
+            /* Main content styling */
+            .player-card { 
+                background: #ffffff; 
+                border-radius: 8px; 
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+                padding: 20px; 
+                border: 1px solid #e1e5e9;
+            }
+            
+            .video-wrapper { 
+                position: relative; 
+                background: #000; 
+                border-radius: 8px; 
+                overflow: hidden; 
+                height: 480px; 
+            }
+            
             /* Ensure video fills the wrapper while keeping aspect ratio */
             .video-js, #lessonVideo { width: 100% !important; height: 100% !important; }
             .video-js .vjs-tech, #lessonVideo { object-fit: contain; background-color: #000; }
@@ -177,14 +290,15 @@
                             <c:forEach items="${lessons}" var="lesson" varStatus="s">
                                 <a class="lesson-link ${activeLesson != null && lesson.lessonId == activeLesson.lessonId ? 'active' : ''}"
                                    href="customer-view-lesson?courseId=${courseId}&lessonId=${lesson.lessonId}">
-                                    ${s.index + 1} - ${lesson.title}
+                                    <span class="lesson-number">${s.index + 1}</span>
+                                    ${lesson.title}
                                 </a>
                             </c:forEach>
                             <div class="quiz-box">
                                 <c:choose>
                                     <c:when test="${not empty quizzes}">
-                                        <a class="btn w-100 btn-primary" href="quizDetail?lessonId=${activeLesson.lessonId}&quizId=${quizzes[0].quizId}">Lesson Quiz</a>
-                                        <div class="text-muted mt-2" style="font-size: 13px">${fn:length(quizzes)} questions available</div>
+                                        <a class="btn w-100 btn-primary" href="quizDetail?lessonId=${activeLesson.lessonId}&quizId=${quizzes[0].quizId}">Practice Quiz</a>
+                                        <div class="quiz-info text-muted mt-2" style="font-size: 13px">${fn:length(quizzes)} questions available</div>
                                     </c:when>
                                     <c:otherwise>
                                         <button class="btn w-100 btn-secondary" disabled>No quiz available</button>
