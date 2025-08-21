@@ -1,31 +1,82 @@
-
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import dal.ListDAO;
+import model.Topic;
+import java.util.List;
 
 @WebServlet(name="AdminTopicServlet", urlPatterns={"/admintopic"})
 public class AdminTopicServlet extends HttpServlet {
 
+    private final int PAGE_SIZE = 8;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-         request.getRequestDispatcher("admintopic.jsp").forward(request, response);
+            throws ServletException, IOException {
+        ListDAO dao = new ListDAO();
+
+        String action = request.getParameter("action");
+        if ("view".equals(action)) {
+            try {
+                long topicId = Long.parseLong(request.getParameter("topicId"));
+                Topic topic = dao.getTopicById(topicId);
+                if (topic == null) {
+                    request.setAttribute("error", "Topic not found");
+                    request.getRequestDispatcher("admintopic.jsp").forward(request, response);
+                    return;
+                }
+                request.setAttribute("topic", topic);
+                request.getRequestDispatcher("admintopicdetail.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid topic ID");
+                request.getRequestDispatcher("admintopic.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        int page = 1;
+        String pageStr = request.getParameter("page");
+        if (pageStr != null) {
+            try {
+                page = Integer.parseInt(pageStr);
+            } catch (NumberFormatException e) {
+                // Default to page 1
+            }
+        }
+
+        String searchQuery = request.getParameter("query");
+        List<Topic> topics;
+        int totalTopics;
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            topics = dao.getTopicsWithPagination(searchQuery, page, PAGE_SIZE);
+            totalTopics = dao.getTotalTopics(searchQuery);
+        } else {
+            topics = dao.getTopicsWithPagination(null, page, PAGE_SIZE);
+            totalTopics = dao.getTotalTopics(null);
+        }
+        int totalPages = (int) Math.ceil((double) totalTopics / PAGE_SIZE);
+
+        request.setAttribute("topics", topics);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchQuery", searchQuery);
+
+        String message = (String) request.getSession().getAttribute("message");
+        if (message != null) {
+            request.setAttribute("message", message);
+            request.getSession().removeAttribute("message");
+        }
+        request.getRequestDispatcher("admintopic.jsp").forward(request, response);
     } 
 
- 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        
+            throws ServletException, IOException {
+        doGet(request, response); // Delegate to doGet for simplicity
     }
-
-
 }
