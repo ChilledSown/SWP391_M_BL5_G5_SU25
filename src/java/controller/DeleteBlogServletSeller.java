@@ -13,16 +13,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import model.Blog;
 import model.User;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ListBlogsServletSeller", urlPatterns = {"/listBlogsSeller"})
-public class ListBlogsServletSeller extends HttpServlet {
+@WebServlet(name = "DeleteBlogServletSeller", urlPatterns = {"/deleteBlog"})
+public class DeleteBlogServletSeller extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class ListBlogsServletSeller extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ListBlogsServletSeller</title>");
+            out.println("<title>Servlet DeleteBlogServletSeller</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ListBlogsServletSeller at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteBlogServletSeller at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,25 +61,32 @@ public class ListBlogsServletSeller extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        // Check if user is logged in and is a seller
         if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect("login.jsp");
             return;
         }
-        // Get creator ID
-        Long creatorId = user.getUser_id();
-        // Get search parameters
-        String title = request.getParameter("title");
-        String createdDate = request.getParameter("createdDate");
-        // Fetch blogs using BlogDAO
-        BlogDAO blogDAO = new BlogDAO();
-        List<Blog> blogs = blogDAO.getBlogsByCreatorId(creatorId.intValue(), title, createdDate);
-        // Store data
-        request.setAttribute("blogs", blogs);
-        session.setAttribute("blogTitle", title);
-        session.setAttribute("blogCreatedDate", createdDate);
-        // Forward to seller_blog.jsp
-        request.getRequestDispatcher("seller_blog.jsp").forward(request, response);
+
+        String blogId = request.getParameter("blogId");
+        if (blogId != null && !blogId.isEmpty()) {
+            try {
+                BlogDAO blogDAO = new BlogDAO();
+                // Verify blog exists and user has permission
+                model.Blog blog = blogDAO.getBlogById(Long.parseLong(blogId));
+                if (blog != null && blog.getCreatedBy() == user.getUser_id().intValue()) {
+                    blogDAO.deleteBlog(Long.parseLong(blogId));
+                    response.sendRedirect("seller_blog.jsp");
+                } else {
+                    session.setAttribute("errorMessage", "Blog not found or you do not have permission to delete it.");
+                    response.sendRedirect("seller_blog.jsp");
+                }
+            } catch (NumberFormatException e) {
+                session.setAttribute("errorMessage", "Invalid blog ID.");
+                response.sendRedirect("seller_blog.jsp");
+            }
+        } else {
+            session.setAttribute("errorMessage", "Blog ID is missing.");
+            response.sendRedirect("seller_blog.jsp");
+        }
     }
 
     /**
@@ -95,7 +100,7 @@ public class ListBlogsServletSeller extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+        processRequest(request, response);
     }
 
     /**
