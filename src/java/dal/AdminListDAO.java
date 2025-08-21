@@ -10,7 +10,7 @@ import model.Course;
 import model.Lesson;
 import model.Quiz;
 
-public class ListDAO extends DBContext {
+public class AdminListDAO extends DBContext {
 
     // Topic Methods (unchanged)
     public List<Topic> getAllTopics() {
