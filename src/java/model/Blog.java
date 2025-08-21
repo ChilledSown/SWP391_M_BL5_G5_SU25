@@ -1,19 +1,19 @@
 package model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
+
 
 public class Blog {
-
-    private Long blogId;
-    private String title;
-    private String content;
+    private long blogId;         
+    private String title;        
+    private String content;      
     private String thumbnailUrl;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
-    private int createdBy; // Changed from String to int to match database and servlet
+    private Timestamp createdAt; 
+    private Timestamp updatedAt; 
+    private int createdBy; 
+    private String createdByName;
 
-    // Updated constructor
-    public Blog(Long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, int createdBy) {
+    public Blog(long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, int createdBy, String createdByName) {
         this.blogId = blogId;
         this.title = title;
         this.content = content;
@@ -21,6 +21,7 @@ public class Blog {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
+        this.createdByName = createdByName;
     }
 
     // Getters and setters
@@ -56,19 +57,19 @@ public class Blog {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public LocalDate getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -80,8 +81,16 @@ public class Blog {
         this.createdBy = createdBy;
     }
 
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
+    }
+
     @Override
     public String toString() {
-        return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + '}';
+        return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + ", createdByName=" + createdByName + '}';
     }
 }

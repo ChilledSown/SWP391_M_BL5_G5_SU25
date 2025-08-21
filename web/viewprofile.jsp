@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>View Profile</title>
     <!-- CSS from index.jsp -->
     <link rel="manifest" href="assets/img/site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
@@ -40,43 +40,33 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        .profile-form {
+        .profile-view {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             max-width: 600px;
             margin: 0 auto;
+            position: relative;
         }
-        .profile-form h2 {
+        .profile-view h2 {
             text-align: center;
             margin-bottom: 20px;
         }
-        .form-group {
+        .profile-field {
             margin-bottom: 20px;
         }
-        .form-group label {
+        .profile-field label {
             display: block;
             font-weight: 500;
             margin-bottom: 5px;
         }
-        .form-group input,
-        .form-group select {
-            width: 100%;
+        .profile-field span {
+            display: block;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 16px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
-            outline: none;
-        }
-        .form-group input[type="file"] {
-            padding: 3px;
+            background-color: #f9f9f9;
         }
         .avatar-preview {
             width: 100px;
@@ -86,43 +76,29 @@
             display: block;
             margin: 0 auto 10px;
             border: 2px solid #3498db;
+            position: relative;
         }
-        .form-actions {
-            text-align: center;
-        }
-        .save-btn {
-            background-color: #2ecc71;
+        .edit-btn {
+            background-color: #3498db;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.3s ease;
+            font-size: 12px;
+            position: absolute;
+            top: 105px;
+            left: 63%;
+            transform: translateX(-50%);
         }
-        .save-btn:hover {
-            background-color: #27ae60;
+        .edit-btn:hover {
+            background-color: #2980b9;
         }
-        .error-message {
-            color: #ff4d4d;
-            background-color: #ffe6e6;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .success-message {
-            color: #2ecc71;
-            background-color: #e6ffe6;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        /* Header styling with fixed color */
         .header-area {
             padding: 20px 0;
-            background-color: blueviolet; 
+            background-color: blueviolet;
             color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
@@ -131,10 +107,8 @@
             margin: 0;
             font-size: 24px;
             font-weight: 700;
-            color: white; 
-        } 
-        
-        
+            color: white;
+        }
         .back-btn {
             position: absolute;
             top: 15px;
@@ -152,12 +126,27 @@
             background-color: #e6e6e6;
             color: #6a0dad;
         }
+        .success-message {
+            color: #2ecc71;
+            background-color: #e6ffe6;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .error-message {
+            color: #ff4d4d;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
     </style>
-     <script>
-        // Lưu trang ban đầu khi đăng nhập (giả sử đã được lưu trong session hoặc có thể truyền qua hidden input)
-        let initialPage = '<c:out value="${sessionScope.initialPage}" />'; 
+    <script>
+        // Lưu trang ban đầu khi đăng nhập
+        let initialPage = '<c:out value="${sessionScope.initialPage}" />';
 
-        // Cập nhật initialPage nếu được truyền từ servlet
         document.addEventListener('DOMContentLoaded', function() {
             const role = '<c:out value="${sessionScope.user.role}" />';
             let backText = "Back to Admin";
@@ -172,17 +161,14 @@
                 initialPage = initialPage || '${pageContext.request.contextPath}/admin';
             }
 
-            // Cập nhật văn bản nút Back
             const backButton = document.querySelector('.back-btn');
             if (backButton && initialPage) {
                 backButton.textContent = backText;
             } else {
-                // Nếu initialPage không được thiết lập, ẩn nút Back để tránh lỗi
                 if (backButton) backButton.style.display = 'none';
             }
         });
 
-        // Hàm điều hướng về trang ban đầu
         function goBack() {
             if (initialPage) {
                 window.location.href = initialPage;
@@ -191,15 +177,14 @@
     </script>
 </head>
 <body>
-    <!-- Header from index.jsp with only user name -->
-    <header class="header-area header-transparent">
+    <header class="header-area">
         <div class="main-header">
             <div class="header-bottom header-sticky">
                 <div class="container-fluid">
                     <div class="row align-items-center">
                         <div class="col-12">
                             <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}"/></h1>
-                             <button class="back-btn" onclick="goBack()">Back</button>
+                            <button class="back-btn" onclick="goBack()">Back</button>
                         </div>
                     </div>
                 </div>
@@ -207,67 +192,64 @@
         </div>
     </header>
 
-    <main class="main-content">   
-        <div class="profile-form">
-            <h2>User Profile</h2>
+    <main class="main-content">
+        <div class="profile-view">
+            <h2>View Profile</h2>
+            <c:if test="${not empty sessionScope.message}">
+                <div class="success-message">${sessionScope.message}</div>
+                <% session.removeAttribute("message"); %> <!-- Xóa thông báo sau khi hiển thị -->
+            </c:if>
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
             </c:if>
-            <c:if test="${not empty message}">
-                <div class="success-message">${message}</div>
-            </c:if>
-            <form action="profile" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="userId" value="${user.user_id}">
-                <div class="form-group">
-                    <label for="avatar">Profile Picture</label>
-                    <img src="${empty user.avataUrl ? 'assets/img/blog/author.png' : user.avataUrl}" alt="Avatar" class="avatar-preview">
-                    <input type="file" id="avatar" name="avatar" accept="image/*">
-                </div>
-                <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="firstName" name="firstName" value="${user.firstName}" required>
-                </div>
-                <div class="form-group">
-                    <label for="middleName">Middle Name</label>
-                    <input type="text" id="middleName" name="middleName" value="${user.middleName}" required>
-                </div>
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" name="lastName" value="${user.lastName}" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="text" id="phone" name="phone" value="${user.phone}" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" name="address" value="${user.address}" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="${user.email}" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Leave blank if no change">
-                </div>
-                <!-- Display role and accountStatus as readonly -->
-                <div class="form-group">
-                    <label for="role">Role</label>
-                    <input type="text" id="role" name="role" value="${user.role}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="accountStatus">Account Status</label>
-                    <input type="text" id="accountStatus" name="accountStatus" value="${user.accountStatus}" readonly>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="save-btn">Save Changes</button>
-                </div>
-            </form>
+            <div class="profile-field" style="position: relative;">
+                <label>Profile Picture</label>
+                <a href="updateprofile" class="edit-btn">Edit</a>
+                <img src="${empty user.avataUrl ? 'assets/img/blog/author.png' : user.avataUrl}" alt="Avatar" class="avatar-preview">
+            </div>
+            <div class="profile-field">
+                <label>First Name</label>
+                <span>${user.firstName}</span>
+            </div>
+            <div class="profile-field">
+                <label>Middle Name</label>
+                <span>${user.middleName}</span>
+            </div>
+            <div class="profile-field">
+                <label>Last Name</label>
+                <span>${user.lastName}</span>
+            </div>
+            <div class="profile-field">
+                <label>Phone Number</label>
+                <span>${user.phone}</span>
+            </div>
+            <div class="profile-field">
+                <label>Address</label>
+                <span>${user.address}</span>
+            </div>
+            <div class="profile-field">
+                <label>Email</label>
+                <span>${user.email}</span>
+            </div>
+            <div class="profile-field">
+                <label>Create At</label>
+                <span><fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy HH:mm" /></span>
+            </div>
+            <div class="profile-field">
+                <label>Update At</label>
+                <span><fmt:formatDate value="${user.updatedAt}" pattern="dd/MM/yyyy HH:mm" /></span>
+            </div>
+            <div class="profile-field">
+                <label>Role</label>
+                <span>${user.role}</span>
+            </div>
+            <div class="profile-field">
+                <label>Account Status</label>
+                <span>${user.accountStatus}</span>
+            </div>          
         </div>
     </main>
 
-    <!-- Footer from index.jsp -->
     <footer>
         <div class="footer-wrappper footer-bg">
             <!-- Footer Start-->
@@ -358,12 +340,10 @@
         </div>
     </footer>
 
-    <!-- Scroll Up -->
     <div id="back-top">
         <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
     </div>
 
-    <!-- JS from index.jsp -->
     <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
     <script src="./assets/js/popper.min.js"></script>
