@@ -377,6 +377,19 @@
                     max-height: 35px;
                 }
             }
+
+            /* Disable hover effects for non-button nav links */
+            #navigation li a:not(.btn):hover {
+                color: white !important;
+                background: transparent !important;
+                transform: none !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+            }
+
+            #navigation li a:not(.btn):hover::after {
+                width: 0 !important;
+            }
         </style>
     </head>
 
