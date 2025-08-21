@@ -1,128 +1,337 @@
-<%--
-    Document : manageLesson
-    Created on : Aug 15, 2025, 4:21:01 PM
-    Author : Admin
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<html>
-    <head>
-        <title>Manage Lessons</title>
-        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    </head>
-    <body class="container mt-5">
-        <h2>Manage Lessons for Course ID: ${courseId}</h2>
-        <a href="courseDetail?courseId=${courseId}" class="btn btn-secondary mb-3">Back to Course Detail</a>
-
-        <form method="get" action="manageLesson" class="mb-3">
-            <input type="hidden" name="courseId" value="${courseId}" />
-            <div class="row g-2">
-                <div class="col-md-4">
-                    <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
-                </div>
-                <div class="col-md-3">
-                    <input type="date" name="createdDate" class="form-control" value="${param.createdDate}" />
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Search</button>
-                </div>
-                <div class="col-md-2">
-                    <a href="manageLesson?courseId=${courseId}" class="btn btn-secondary w-100">Reset</a>
-                </div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Lesson Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sidebar-nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar-nav li {
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+        }
+        .sidebar-nav li:hover {
+            background-color: #34495e;
+        }
+        .sidebar-nav li.active {
+            background-color: #3498db;
+        }
+        .sidebar-nav a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        .sidebar-nav a:hover {
+            color: #ecf0f1;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+        .main-header {
+            margin-bottom: 20px;
+        }
+        .content-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .content-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        .stat-card p {
+            font-size: 36px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 0;
+        }
+        .course-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .course-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .course-actions button {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .edit-btn {
+            background-color: #2ecc71;
+        }
+        .edit-btn:hover {
+            background-color: #27ae60;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            margin-left: 5px;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .view-btn {
+            background-color: #3498db;
+        }
+        .view-btn:hover {
+            background-color: #2980b9;
+        }
+        .topic-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .topic-table th, .topic-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .topic-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .topic-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .pagination a {
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+        }
+        .pagination a.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .pagination a.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        .pagination a:hover:not(.disabled) {
+            background-color: #f5f5f5;
+        }
+        .success-message {
+            color: green;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            background-color: #7f8c8d;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background-color: #6c7a89;
+        }
+        .add-btn {
+            background-color: #3498db;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            margin-left: 10px;
+        }
+        .add-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <c:if test="${empty sessionScope.user}">
+        <c:redirect url="login"/>
+    </c:if>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Admin Dashboard</h3>
             </div>
-        </form>
-
-        <table class="table table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Title</th>
-                    <th>Video</th>
-                    <th>Content</th>
-                    <th>Created</th>
-                    <th>Updated</th>
-                    <th>Actions</th>
-                    <th>Quiz</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="lesson" items="${lessons}">
+            <nav class="sidebar-nav">
+                <ul>
+                    <li data-section="overview"><a href="overview">Overview</a></li>
+                    <li class="active" data-section="topics"><a href="managetopic">Manage Topics</a></li>
+                    <li data-section="users"><a href="manageuser">Manage Users</a></li>
+                    <li data-section="settings"><a href="login">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.lastName}" />!</h1>
+            </header>
+            <c:if test="${not empty message}">
+                <div class="success-message">${message}</div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="error-message">${error}</div>
+            </c:if>
+            <a href="managecourse?topicId=${param.topicId}" class="back-btn">Back to Courses</a>
+            <table class="topic-table">
+                <thead>
                     <tr>
-                        <td>${lesson.title}</td>
-                        <td>
-                            <a href="${lesson.videoUrl}" target="_blank" class="btn btn-sm btn-danger" title="Watch on YouTube">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                        </td>
-                        <td>${lesson.content}</td>
-                        <td>${lesson.createdAt}</td>
-                        <td>${lesson.updatedAt}</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-warning" title="Edit"
-                                    onclick="openEditLesson('${lesson.lessonId}', '${courseId}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-
-                            <form action="deleteLesson" method="post" class="d-inline"
-                                  onsubmit="return confirm('Are you sure you want to delete this lesson?');">
-                                <input type="hidden" name="lessonId" value="${lesson.lessonId}" />
-                                <input type="hidden" name="courseId" value="${courseId}" />
-                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        </td>
-                        <td>
-                            <a href="manageQuiz?lessonId=${lesson.lessonId}" 
-                               class="btn btn-sm btn-info" title="Manage Quiz">
-                                <i class="fas fa-question-circle"></i>
-                            </a>
-                        </td>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Video URL</th>
+                        <th>Content</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Course ID</th>
+                        <th>Actions</th>
                     </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${not empty lessons}">
+                            <c:forEach var="lesson" items="${lessons}">
+                                <tr>
+                                    <td><c:out value="${lesson.lessonId}" /></td>
+                                    <td><c:out value="${lesson.title}" /></td>
+                                    <td><c:out value="${lesson.videoUrl != null ? lesson.videoUrl : 'N/A'}" /></td>
+                                    <td><c:out value="${lesson.content != null ? lesson.content : 'N/A'}" /></td>
+                                    <td><fmt:formatDate value="${lesson.createdAt}" pattern="dd-MM-yyyy" /></td>
+                                    <td><c:out value="${lesson.updatedAt != null ? lesson.updatedAt : 'N/A'}" /></td>
+                                    <td><c:out value="${lesson.courseId}" /></td>
+                                    <td>
+                                        <form action="managequiz" method="get" style="display:inline;">
+                                            <input type="hidden" name="topicId" value="${param.topicId}">
+                                            <input type="hidden" name="courseId" value="${param.courseId}">
+                                            <input type="hidden" name="lessonId" value="${lesson.lessonId}">
+                                            <button type="submit" class="view-btn">View Quizzes</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="8" class="no-data">No lessons found for this course</td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <c:if test="${currentPage > 1}">
+                    <a href="managelesson?page=${currentPage - 1}&topicId=${param.topicId}&courseId=${param.courseId}">Previous</a>
+                </c:if>
+                <c:if test="${currentPage <= 1}">
+                    <a class="disabled">Previous</a>
+                </c:if>
+                <c:forEach begin="1" end="${totalPages}" var="i">
+                    <a href="managelesson?page=${i}&topicId=${param.topicId}&courseId=${param.courseId}" 
+                       <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
                 </c:forEach>
-            </tbody>
-        </table>
-
-        <jsp:include page="pagination.jsp">
-            <jsp:param name="currentPage" value="${currentPage}" />
-            <jsp:param name="totalPages" value="${totalPages}" />
-            <jsp:param name="baseUrl" value="${baseUrl}" />
-        </jsp:include>
-
-        <button class="btn btn-success" onclick="openLessonForm('${param.courseId}')">
-            <i class="fas fa-plus"></i> Add Lesson
-        </button>
-
-        <div class="modal fade" id="lessonFormModal" tabindex="-1" aria-labelledby="lessonFormModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="lessonFormModalLabel">Add Lesson</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-0" style="height: 500px;">
-                        <iframe id="lessonFormFrame" src="" frameborder="0" style="width:100%; height:100%;"></iframe>
-                    </div>
-                </div>
+                <c:if test="${currentPage < totalPages}">
+                    <a href="managelesson?page=${currentPage + 1}&topicId=${param.topicId}&courseId=${param.courseId}">Next</a>
+                </c:if>
+                <c:if test="${currentPage >= totalPages}">
+                    <a class="disabled">Next</a>
+                </c:if>
             </div>
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-            function openLessonForm(courseId) {
-                var url = 'lesson_form.jsp?courseId=' + courseId;
-                document.getElementById('lessonFormFrame').src = url;
-                document.getElementById('lessonFormModalLabel').innerText = 'Add Lesson';
-                var modal = new bootstrap.Modal(document.getElementById('lessonFormModal'));
-                modal.show();
-            }
-            function openEditLesson(lessonId, courseId) {
-                var url = 'editLesson?lessonId=' + lessonId + '&courseId=' + courseId;
-                document.getElementById('lessonFormFrame').src = url;
-                document.getElementById('lessonFormModalLabel').innerText = 'Edit Lesson';
-                var modal = new bootstrap.Modal(document.getElementById('lessonFormModal'));
-                modal.show();
-            }
-        </script>
-    </body>
+        </main>
+    </div>
+</body>
 </html>
