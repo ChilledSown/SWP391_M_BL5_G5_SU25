@@ -173,24 +173,6 @@
         .reset-btn:hover {
             background-color: #d35400;
         }
-        .view-btn {
-            background-color: #3498db;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            color: white;
-            transition: background-color 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-        }
-        .view-btn:hover {
-            background-color: #2980b9;
-        }
         .back-btn {
             background-color: #3498db;
             color: white;
@@ -249,6 +231,21 @@
             padding: 20px;
             color: #7f8c8d;
         }
+        .course-image-container {
+            width: 100px;
+            height: 60px;
+            display: inline-block;
+            overflow: hidden;
+            border-radius: 5px;
+            vertical-align: middle;
+            margin-top: 5px;
+        }
+        .course-image {
+            max-width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
         @media (max-width: 768px) {
             .header-controls {
                 flex-direction: column;
@@ -259,6 +256,13 @@
             }
             .search-section input[type="text"] {
                 width: 100%;
+            }
+            .course-image-container {
+                width: 80px;
+                height: 48px;
+            }
+            .course-image {
+                max-width: 80px;
             }
         }
     </style>
@@ -330,7 +334,13 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Actions</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Thumbnail</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
+                                <th>Topic ID</th>
+                                <th>Average Rating</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -338,14 +348,27 @@
                                 <tr>
                                     <td><c:out value="${course.course_id}" /></td>
                                     <td><a href="adminlesson?courseId=${course.course_id}&topicId=${selectedTopic.topic_id}" style="color: #3498db; text-decoration: none;">${course.title}</a></td>
+                                    <td><c:out value="${course.description != null ? course.description : 'N/A'}" /></td>
+                                    <td><c:out value="${course.price}" /></td>
                                     <td>
-                                        <form action="admincourse" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="view">
-                                            <input type="hidden" name="courseId" value="${course.course_id}">
-                                            <input type="hidden" name="topicId" value="${selectedTopic.topic_id}">
-                                            <button type="submit" class="view-btn" title="View Course Details"><i class="fas fa-eye"></i></button>
-                                        </form>
+                                        <c:choose>
+                                            <c:when test="${not empty course.thumbnail_url and course.thumbnail_url != ''}">
+                                                <span class="course-image-container">
+                                                    <img src="${course.thumbnail_url.startsWith('http') ? course.thumbnail_url : pageContext.request.contextPath.concat(course.thumbnail_url)}" 
+                                                         alt="Course Thumbnail" 
+                                                         class="course-image" 
+                                                         onerror="this.parentNode.innerHTML='N/A'" />
+                                                </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                N/A
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
+                                    <td><fmt:formatDate value="${course.created_at}" pattern="dd/MM/yyyy" /></td>
+                                    <td><fmt:formatDate value="${course.updated_at}" pattern="dd/MM/yyyy" /></td>
+                                    <td><c:out value="${course.topic_id}" /></td>
+                                    <td><fmt:formatNumber value="${course.averageRating}" maxFractionDigits="2" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>

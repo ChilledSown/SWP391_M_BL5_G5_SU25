@@ -21,7 +21,6 @@ public class AdminLessonServlet extends HttpServlet {
             throws ServletException, IOException {
         AdminListDAO dao = new AdminListDAO();
 
-        String action = request.getParameter("action");
         String courseIdStr = request.getParameter("courseId");
         Long courseId = null;
         try {
@@ -46,26 +45,6 @@ public class AdminLessonServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Invalid topic ID");
             request.getRequestDispatcher("admincourse.jsp").forward(request, response);
-            return;
-        }
-
-        if ("view".equals(action)) {
-            try {
-                long lessonId = Long.parseLong(request.getParameter("lessonId"));
-                Lesson lesson = dao.getLessonById(lessonId);
-                if (lesson == null) {
-                    request.setAttribute("error", "Lesson not found");
-                    request.getRequestDispatcher("adminlesson.jsp").forward(request, response);
-                    return;
-                }
-                request.setAttribute("lesson", lesson);
-                request.setAttribute("courseId", courseId);
-                request.setAttribute("topicId", topicId);
-                request.getRequestDispatcher("adminlessondetail.jsp").forward(request, response);
-            } catch (NumberFormatException e) {
-                request.setAttribute("error", "Invalid lesson ID");
-                request.getRequestDispatcher("adminlesson.jsp").forward(request, response);
-            }
             return;
         }
 

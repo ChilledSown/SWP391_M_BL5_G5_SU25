@@ -173,24 +173,6 @@
         .reset-btn:hover {
             background-color: #d35400;
         }
-        .view-btn {
-            background-color: #3498db;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            color: white;
-            transition: background-color 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-        }
-        .view-btn:hover {
-            background-color: #2980b9;
-        }
         .profile-section {
             text-align: center;
             margin-bottom: 30px;
@@ -236,6 +218,64 @@
             padding: 20px;
             color: #7f8c8d;
         }
+        .topic-image-container {
+            width: 100px;
+            height: 60px;
+            display: inline-block;
+            overflow: hidden;
+            border-radius: 5px;
+            vertical-align: middle;
+            margin-top: 5px;
+        }
+        .topic-image {
+            max-width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 5px;
+            cursor: pointer; /* Indicate clickable image */
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain; /* Ensure image fits without distortion */
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .close-btn:hover {
+            color: #3498db;
+        }
         @media (max-width: 768px) {
             .header-controls {
                 flex-direction: column;
@@ -246,6 +286,13 @@
             }
             .search-section input[type="text"] {
                 width: 100%;
+            }
+            .topic-image-container {
+                width: 80px;
+                height: 48px;
+            }
+            .topic-image {
+                max-width: 80px;
             }
         }
     </style>
@@ -305,6 +352,13 @@
                     </form>
                 </div>
             </div>
+            <!-- Modal for displaying full-size image -->
+            <div id="imageModal" class="modal">
+                <div class="modal-content">
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                    <img id="modalImage" class="modal-image" src="" alt="Full-size Thumbnail">
+                </div>
+            </div>
             <c:choose>
                 <c:when test="${empty topics}">
                     <div class="no-data">No topics found</div>
@@ -315,7 +369,8 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Actions</th>
+                                <th>Thumbnail</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -324,12 +379,22 @@
                                     <td><c:out value="${topic.topic_id}" /></td>
                                     <td><a href="admincourse?topicId=${topic.topic_id}" style="color: #3498db; text-decoration: none;">${topic.name}</a></td>
                                     <td>
-                                        <form action="admintopic" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="view">
-                                            <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="view-btn" title="View Topic Details"><i class="fas fa-eye"></i></button>
-                                        </form>
+                                        <c:choose>
+                                            <c:when test="${not empty topic.thumbnail_url and topic.thumbnail_url != ''}">
+                                                <span class="topic-image-container">
+                                                    <img src="${topic.thumbnail_url.startsWith('http') ? topic.thumbnail_url : pageContext.request.contextPath.concat(topic.thumbnail_url)}" 
+                                                         alt="Topic Thumbnail" 
+                                                         class="topic-image" 
+                                                         onclick="openModal(this.src)"
+                                                         onerror="this.parentNode.innerHTML='N/A'" />
+                                                </span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                N/A
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
+                                    <td><c:out value="${topic.description != null ? topic.description : 'N/A'}" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
@@ -355,5 +420,26 @@
             </div>
         </main>
     </div>
+    <script>
+        function openModal(src) {
+            var modal = document.getElementById('imageModal');
+            var modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside the image
+        window.onclick = function(event) {
+            var modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
