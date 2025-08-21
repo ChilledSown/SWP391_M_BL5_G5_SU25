@@ -15,6 +15,7 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @WebServlet(name = "CreateBlogServlet", urlPatterns = {"/createBlog"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
@@ -81,9 +82,8 @@ public class CreateBlogServletSeller extends HttpServlet {
             filePart.write(uploadPath + File.separator + fileName);
             thumbnailUrl = UPLOAD_DIR + "/" + fileName;
         }
-
-        // Create blog
-        Blog blog = new Blog(null, title, content, thumbnailUrl, LocalDate.now(), LocalDate.now(), user.getUser_id().intValue()); // Updated constructor
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        Blog blog = new Blog(null, title, content, thumbnailUrl, currentTimestamp, currentTimestamp, user.getUser_id().intValue());
         blogDAO.createBlog(blog);
 
         // Redirect to blog management
