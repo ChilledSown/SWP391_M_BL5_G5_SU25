@@ -19,7 +19,7 @@ import model.Quiz;
  *
  * @author Admin
  */
-@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuiz"})
+@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuizSeller"})
 public class ManageQuizServlet extends HttpServlet {
 
     /**
@@ -77,7 +77,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     request.setAttribute("lessonId", lessonId);
     request.setAttribute("quizzes", quizzes);
 
-    request.getRequestDispatcher("manageQuiz.jsp").forward(request, response);
+    request.getRequestDispatcher("manageQuizSeller.jsp").forward(request, response);
 }
 
 
@@ -106,3 +106,4 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     }// </editor-fold>
 
 }
+
