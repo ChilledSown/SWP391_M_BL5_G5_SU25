@@ -4,63 +4,82 @@
     <head>
         <title>Course Detail</title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
         <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', sans-serif;
+            }
             .course-detail-card {
-                max-width: 700px;
-                margin: auto;
-                margin-top: 40px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                padding: 30px;
-                border-radius: 8px;
+                max-width: 800px;
+                margin: 60px auto;
+                background-color: #fff;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+                border-radius: 10px;
             }
             .course-thumbnail {
-                max-width: 200px;
+                max-width: 220px;
                 height: auto;
-                border-radius: 4px;
-                margin-top: 10px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
             }
             .course-label {
-                font-weight: bold;
-                color: #007bff;
+                font-weight: 600;
+                color: #495057;
+                width: 150px;
+                vertical-align: top;
+            }
+            .table td {
+                padding: 10px;
+                vertical-align: middle;
             }
         </style>
     </head>
-    <body class="container">
+    <body>
 
-        <div class="course-detail-card bg-white">
-            <h2 class="text-center mb-4">Course Detail</h2>
+        <div class="course-detail-card">
+            <h2 class="text-center mb-4 text-primary">Course Detail</h2>
+
             <c:if test="${not empty course}">
-                <div class="mb-3">
-                    <span class="course-label">Title:</span> ${course.title}
-                </div>
-                <div class="mb-3">
-                    <span class="course-label">Description:</span>
-                    <p>${course.description}</p>
-                </div>
-                <div class="mb-3">
-                    <span class="course-label">Price:</span> $${course.price}
-                </div>
-                <div class="mb-3">
-                    <span class="course-label">Created At:</span> ${course.created_at}
-                </div>
-                <div class="mb-3">
-                    <span class="course-label">Updated At:</span> ${course.updated_at}
-                </div>
-                <div class="mb-3">
-                    <span class="course-label">Thumbnail:</span><br>
-                    <img src="${course.thumbnail_url}" class="course-thumbnail" alt="Thumbnail" />
-                </div>
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="course-label">Title:</td>
+                        <td>${course.title}</td>
+                    </tr>
+                    <tr>
+                        <td class="course-label">Description:</td>
+                        <td>${course.description}</td>
+                    </tr>
+                    <tr>
+                        <td class="course-label">Price:</td>
+                        <td>$${course.price}</td>
+                    </tr>
+                    <tr>
+                        <td class="course-label">Created At:</td>
+                        <td>${course.created_at}</td>
+                    </tr>
+                    <tr>
+                        <td class="course-label">Updated At:</td>
+                        <td>${course.updated_at}</td>
+                    </tr>
+                    <tr>
+                        <td class="course-label">Thumbnail:</td>
+                        <td><img src="${course.thumbnail_url}" class="course-thumbnail" alt="Thumbnail" /></td>
+                    </tr>
+                </table>
             </c:if>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="listCousera" class="btn btn-secondary">Back</a>
-                <a href="manageLessonSeller?courseId=${course.course_id}" class="btn btn-outline-primary">
-                    Manage Lessons
+                <a href="listCousera" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+                <a href="manageLessonSeller?courseId=${course.course_id}" class="btn btn-primary">
+                    <i class="bi bi-journal-code"></i> Manage Lessons
                 </a>
             </div>
         </div>
 
-        <!-- Bootstrap JS (optional if needed for modal, etc.) -->
         <script src="assets/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
