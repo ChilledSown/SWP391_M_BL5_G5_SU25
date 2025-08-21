@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Slider;
 
-/**
- * Data Access Object for Slider-related database operations.
- */
 public class SliderDAO extends DBContext {
 
     // Validate URL format (basic check)

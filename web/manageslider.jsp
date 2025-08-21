@@ -242,6 +242,12 @@
             .edit-profile-btn:hover {
                 color: #2980b9;
             }
+            .slider-image {
+                max-width: 100px;
+                height: auto;
+                border-radius: 5px;
+                margin-top: 5px;
+            }
             @media (max-width: 768px) {
                 .header-controls {
                     flex-direction: column;
@@ -308,6 +314,9 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Title</th>
+                                    <th>Image</th>
+                                    <th>Created At</th>
+                                    <th>Updated At</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -317,9 +326,11 @@
                                         <td><c:out value="${slider.slider_id}" /></td>
                                         <td><c:out value="${slider.title}" /></td>
                                         <td>
-                                            <a href="manageslider?action=details&sliderId=${slider.slider_id}" style="text-decoration: none;">
-                                                <button class="edit-btn" title="View Slider"><i class="fas fa-eye"></i></button>
-                                            </a>
+                                            <img src="${slider.image_url.startsWith('http') ? slider.image_url : pageContext.request.contextPath.concat(slider.image_url)}?t=<%= System.currentTimeMillis() %>" alt="Slider Image" class="slider-image" onerror="this.src='${pageContext.request.contextPath}/assets/img/default-slider.png'" />
+                                        </td>
+                                        <td><fmt:formatDate value="${slider.created_at}" pattern="dd/MM/yyyy" /></td>
+                                        <td><fmt:formatDate value="${slider.updated_at}" pattern="dd/MM/yyyy" /></td>
+                                        <td>
                                             <a href="manageslider?action=edit&sliderId=${slider.slider_id}" style="text-decoration: none;">
                                                 <button class="edit-btn" title="Edit Slider"><i class="fas fa-edit"></i></button>
                                             </a>
