@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @WebServlet(name = "EditBlogServlet", urlPatterns = {"/editBlog"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
@@ -119,9 +119,9 @@ public class EditBlogServletSeller extends HttpServlet {
             response.sendRedirect("Add_EditSeller.jsp?action=update&blogId=" + blogId);
             return;
         }
-
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         // Update blog
-        Blog blog = new Blog(Long.parseLong(blogId), title, content, finalThumbnailUrl, existingBlog.getCreatedAt(), LocalDate.now(), user.getUser_id().intValue());
+        Blog blog = new Blog(Long.parseLong(blogId), title, content, finalThumbnailUrl, existingBlog.getCreatedAt(), new Timestamp(System.currentTimeMillis()), user.getUser_id().intValue());
         blogDAO.updateBlog(blog);
 
         // Redirect to blog management
