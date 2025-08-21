@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class User {
 
@@ -14,14 +14,14 @@ public class User {
     private String email;
     private String passwordHash;
     private String role;
-    private Date createdAt;
-    private Date updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
     private String accountStatus;
 
     public User() {
     }
 
-    public User(Long user_id, String firstName, String middleName, String lastName, String avataUrl, String phone, String address, String email, String passwordHash, String role, Date createdAt, Date updatedAt, String accountStatus) {
+    public User(Long user_id, String firstName, String middleName, String lastName, String avataUrl, String phone, String address, String email, String passwordHash, String role, Timestamp createdAt, Timestamp updatedAt, String accountStatus) {
         this.user_id = user_id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -117,19 +117,19 @@ public class User {
         this.role = role;
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -145,6 +145,8 @@ public class User {
     public String toString() {
         return "User{" + "user_id=" + user_id + ", firstName=" + firstName + ", middleName=" + middleName + ", lastName=" + lastName + ", avataUrl=" + avataUrl + ", phone=" + phone + ", address=" + address + ", email=" + email + ", passwordHash=" + passwordHash + ", role=" + role + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", accountStatus=" + accountStatus + '}';
     }
+
+   
     
     
 }
