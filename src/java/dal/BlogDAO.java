@@ -7,10 +7,11 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class BlogDAO extends DBContext {
+
     public List<Blog> getBlogsByCreatorId(int createdBy, String title, String createdDate) {
         List<Blog> blogs = new ArrayList<>();
-        String sql = "SELECT Blog_Id, Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By " +
-                     "FROM Blog WHERE Created_By = ? AND Title LIKE ? AND CAST(Created_At AS DATE) LIKE ?";
+        String sql = "SELECT Blog_Id, Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By "
+                + "FROM Blog WHERE Created_By = ? AND Title LIKE ? AND CAST(Created_At AS DATE) LIKE ?";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, createdBy);
@@ -19,13 +20,13 @@ public class BlogDAO extends DBContext {
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 blogs.add(new Blog(
-                    rs.getLong("Blog_Id"),
-                    rs.getString("Title"),
-                    rs.getString("Content"),
-                    rs.getString("Thumbnail_Url"),
-                    rs.getDate("Created_At").toLocalDate(),
-                    rs.getDate("Updated_At").toLocalDate(),
-                    rs.getInt("Created_By") // Changed to getInt
+                        rs.getLong("Blog_Id"),
+                        rs.getString("Title"),
+                        rs.getString("Content"),
+                        rs.getString("Thumbnail_Url"),
+                        rs.getDate("Created_At").toLocalDate(),
+                        rs.getDate("Updated_At").toLocalDate(),
+                        rs.getInt("Created_By") // Changed to getInt
                 ));
             }
         } catch (SQLException ex) {
@@ -35,21 +36,21 @@ public class BlogDAO extends DBContext {
     }
 
     public Blog getBlogById(long blogId) {
-        String sql = "SELECT Blog_Id, Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By " +
-                     "FROM Blog WHERE Blog_Id = ?";
+        String sql = "SELECT Blog_Id, Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By "
+                + "FROM Blog WHERE Blog_Id = ?";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setLong(1, blogId);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
                 return new Blog(
-                    rs.getLong("Blog_Id"),
-                    rs.getString("Title"),
-                    rs.getString("Content"),
-                    rs.getString("Thumbnail_Url"),
-                    rs.getDate("Created_At").toLocalDate(),
-                    rs.getDate("Updated_At").toLocalDate(),
-                    rs.getInt("Created_By") // Changed to getInt
+                        rs.getLong("Blog_Id"),
+                        rs.getString("Title"),
+                        rs.getString("Content"),
+                        rs.getString("Thumbnail_Url"),
+                        rs.getDate("Created_At").toLocalDate(),
+                        rs.getDate("Updated_At").toLocalDate(),
+                        rs.getInt("Created_By") // Changed to getInt
                 );
             }
         } catch (SQLException ex) {
@@ -59,8 +60,8 @@ public class BlogDAO extends DBContext {
     }
 
     public void createBlog(Blog blog) {
-        String sql = "INSERT INTO Blog (Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Blog (Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setString(1, blog.getTitle());
@@ -110,5 +111,16 @@ public class BlogDAO extends DBContext {
             java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public void deleteBlog(long blogId) {
+        String sql = "DELETE FROM Blog WHERE Blog_Id = ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setLong(1, blogId);
+            stm.executeUpdate();
+        } catch (SQLException ex) {
+            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }
 }

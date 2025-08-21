@@ -245,7 +245,7 @@
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="seller.jsp" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="seller_blog.jsp" class="nav-link active">Blogs</a></li>
-                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
