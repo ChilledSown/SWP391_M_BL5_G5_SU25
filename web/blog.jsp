@@ -206,6 +206,8 @@
                 </div>
             </div>
         </section>
+        
+        
         <!-- Blog Area Start -->
         <div class="blog-area section-padding40 fix">
             <div class="container">
@@ -224,7 +226,7 @@
                                     <div class="properties__card">
                                         <div class="properties__img overlay1">
                                             <a href="blog_details?id=${blog.blogId}">
-                                                <img src="${empty blog.thumbnailUrl ? 'assets/img/blog/default_blog.png' : blog.thumbnailUrl}" alt="${blog.title}">
+                                                <img src="${empty blog.thumbnailUrl ? 'assets/img/blog/comment_1.png' : blog.thumbnailUrl}" alt="${blog.title}">
                                             </a>
                                         </div>
                                         <div class="properties__caption">
@@ -241,8 +243,8 @@
                                             </p>
                                             <div class="properties__footer d-flex justify-content-between align-items-center">
                                                 <div class="blog-meta">
-                                                    <span><i class="fas fa-user"></i> ${blog.createdBy}</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> <fmt:formatDate value="${blog.createdAt}" pattern="MMM dd, yyyy"/></span>
+                                                    <span><i class="fas fa-user"></i> ${blog.createdByName}</span>
+                                                    <span><i class="fas fa-calendar-alt"></i> <fmt:formatDate value="${blog.createdAt}" pattern="dd/MM/yyyy HH:mm"/></span>
                                                 </div>
                                             </div>
                                             <a href="blog_details?id=${blog.blogId}" class="border-btn border-btn2">Read More</a>
@@ -261,6 +263,8 @@
             </div>
         </div>
         <!-- Blog Area End -->
+        
+        
     </main>
     <footer>
         <div class="footer-wrappper footer-bg">
