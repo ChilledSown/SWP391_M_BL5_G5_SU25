@@ -33,17 +33,7 @@ public class ManageSliderServlet extends HttpServlet {
         // Get action parameter
         String action = request.getParameter("action");
         
-        if (action != null && action.equals("details")) {
-            // Handle details page
-            String sliderIdStr = request.getParameter("sliderId");
-            if (sliderIdStr != null) {
-                Long sliderId = Long.parseLong(sliderIdStr);
-                Slider slider = sliderDAO.getSliderById(sliderId);
-                request.setAttribute("slider", slider);
-                request.getRequestDispatcher("sliderdetails.jsp").forward(request, response);
-                return;
-            }
-        } else if (action != null && action.equals("edit")) {
+        if (action != null && action.equals("edit")) {
             // Handle edit page
             String sliderIdStr = request.getParameter("sliderId");
             if (sliderIdStr != null) {

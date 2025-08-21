@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import dal.ListDAO;
+import dal.AdminListDAO;
 import model.Lesson;
 import model.Quiz;
 import java.util.List;
@@ -19,7 +19,7 @@ public class AdminQuizServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ListDAO dao = new ListDAO();
+        AdminListDAO dao = new AdminListDAO();
 
         // Retrieve and validate parameters
         String lessonIdStr = request.getParameter("lessonId");
