@@ -19,6 +19,7 @@ public class Review {
     private Long user_id;
     
     
+
     public Review(Long review_id, Long course_id, int rating, String comment, Date created_at, Long user_id) {
         this.review_id = review_id;
         this.course_id = course_id;
