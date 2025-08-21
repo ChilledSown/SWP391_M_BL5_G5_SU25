@@ -173,24 +173,6 @@
         .reset-btn:hover {
             background-color: #d35400;
         }
-        .view-btn {
-            background-color: #3498db;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            color: white;
-            transition: background-color 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-        }
-        .view-btn:hover {
-            background-color: #2980b9;
-        }
         .back-btn {
             background-color: #3498db;
             color: white;
@@ -331,7 +313,11 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Actions</th>
+                                <th>Video URL</th>
+                                <th>Content</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
+                                <th>Course ID</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -339,15 +325,11 @@
                                 <tr>
                                     <td><c:out value="${lesson.lessonId}" /></td>
                                     <td><a href="adminquiz?lessonId=${lesson.lessonId}&courseId=${selectedCourse.course_id}&topicId=${topicId}" style="color: #3498db; text-decoration: none;">${lesson.title}</a></td>
-                                    <td>
-                                        <form action="adminlesson" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="view">
-                                            <input type="hidden" name="lessonId" value="${lesson.lessonId}">
-                                            <input type="hidden" name="courseId" value="${selectedCourse.course_id}">
-                                            <input type="hidden" name="topicId" value="${topicId}">
-                                            <button type="submit" class="view-btn" title="View Lesson Details"><i class="fas fa-eye"></i></button>
-                                        </form>
-                                    </td>
+                                    <td><c:out value="${lesson.videoUrl != null ? lesson.videoUrl : 'N/A'}" /></td>
+                                    <td><c:out value="${lesson.content != null ? lesson.content : 'N/A'}" /></td>
+                                    <td><fmt:formatDate value="${lesson.createdAt}" pattern="dd/MM/yyyy" /></td>
+                                    <td><fmt:formatDate value="${lesson.updatedAt}" pattern="dd/MM/yyyy" /></td>
+                                    <td><c:out value="${lesson.courseId}" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
