@@ -295,49 +295,58 @@
     </div>
     <!-- Preloader Start -->
    
-    <!-- Header Start -->
-    <header>
-        <div class="header-area header-transparent">
-            <div class="main-header ">
-                <div class="header-bottom  header-sticky">
-                    <div class="container-fluid">
-                        <div class="row align-items-center">
-                            <!-- Logo -->
-                            <div class="col-xl-2 col-lg-2">
-                                <div class="logo">
-                                    <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
-                                </div>
-                            </div>
-                            <div class="col-xl-10 col-lg-10">
-                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
-                                    <!-- Main-menu -->
-                                    <div class="main-menu d-none d-lg-block">
-                                        <nav>
-                                            <ul id="navigation">                                                                                          
-                                                <li><a href="home">Home</a></li>
-                                                <li><a href="courses">Courses</a></li>
-                                                <li><a href="purchased-courses">Purchased courses</a></li>
-                                                <li><a href="blog">Blog</a></li>
-                                                <li class="active"><a href="cart">Cart</a></li>
-                                                <li><a href="customer-list-order">My Order</a></li>
-                                                <li><a href="profile" class="btn">Profile</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div> 
-                            <!-- Mobile Menu -->
-                            <div class="col-12">
-                                <div class="mobile_menu d-block d-lg-none"></div>
+    <!-- Combined Header Start (from purchased-courses) -->
+    <style>
+        .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
+        .page-header-content { padding: 40px 0; position: relative; z-index: 2; text-align: center; color: white; }
+        #navigation { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        #navigation li { margin: 0; padding: 0; display: flex; align-items: center; }
+        #navigation li a { color: white !important; font-weight: 500; font-size: 16px; text-decoration: none; padding: 12px 20px; border-radius: 8px; transition: all 0.3s ease; display: block; position: relative; margin: 0 5px; }
+        #navigation li a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: white; transition: all 0.3s ease; transform: translateX(-50%); }
+        /* Disable hover effects for non-button nav links */
+        #navigation li a:not(.btn):hover { color: white !important; background: transparent !important; transform: none !important; box-shadow: none !important; backdrop-filter: none !important; }
+        #navigation li a:not(.btn):hover::after { width: 0 !important; }
+        .logo img { max-height: 40px; }
+    </style>
+    <div class="combined-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-2 col-lg-2 col-md-2">
+                        <div class="logo">
+                            <a href="home"><img src="assets/img/logo/logo.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col-xl-10 col-lg-10 col-md-10">
+                        <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                            <div class="main-menu d-none d-lg-block">
+                                <nav>
+                                    <ul id="navigation">                                                                                          
+                                        <li><a href="home">Home</a></li>
+                                        <li><a href="courses">Courses</a></li>
+                                        <li><a href="purchased-courses">Purchased courses</a></li>
+                                        <li><a href="blog">Blog</a></li>
+                                        <li class="active"><a href="cart">Cart</a></li>
+                                        <li><a href="customer-list-order">My Order</a></li>
+                                        <li><a href="profile" class="btn">Profile</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </header>
-    <!-- Header End -->
+        <div class="page-header-content">
+            <div class="container">
+                <h1 class="cart-title" style="margin:0;">Shopping Cart</h1>
+            </div>
+        </div>
+    </div>
+    <!-- Combined Header End -->
 
     <main>
         <!-- Cart Section -->
