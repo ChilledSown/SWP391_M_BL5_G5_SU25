@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 
 public class Blog {
-    private long blogId;         
+    private Long blogId;         
     private String title;        
     private String content;      
     private String thumbnailUrl;
@@ -24,6 +24,20 @@ public class Blog {
         this.createdByName = createdByName;
     }
 
+    public Blog(Long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, int createdBy) {
+        this.blogId = blogId;
+        this.title = title;
+        this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+    }
+
+    public Blog() {
+    }
+    
+    
     // Getters and setters
     public Long getBlogId() {
         return blogId;

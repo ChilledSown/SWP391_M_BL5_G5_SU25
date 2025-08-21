@@ -3,37 +3,35 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/BlogDetailSeller.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/PasswordResetToken.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/PaymentDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/balance.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller_blog.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_form.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_detail.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/BalanceServlet.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/EditBlogServletSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteBlogServletSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/Add_EditSeller.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Blog.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/LoginServlet.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/BlogDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Payment.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/User.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_details.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/BalanceDTOSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/BalanceDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/UserDAO.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ListBlogsServletSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CreateBlogServletSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/BlogDetailServletSeller.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/EditLessonServlet.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/BalanceDetail.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_course_form.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/DashBoardSeller.jsp</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteReviewServlet.java</file>
-            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/LessonDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-view-lesson.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/admin.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PaymentSuccessServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Review.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PurchasedCoursesServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/manageuser.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/purchased-courses.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Blog.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/managelesson.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ManageTopicServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/courses.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/checkout.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/OrderDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ProcessCheckoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-course-detail.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/CartItemWithCourse.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CheckoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/CourseDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/PasswordResetToken.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Order.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/index.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Lesson.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/LogoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/CartItem.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/cart.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/DBContext.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/OrderDetail.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/VideoQuiz.java</file>
         </group>
     </open-files>
 </project-private>
