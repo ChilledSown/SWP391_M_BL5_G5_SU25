@@ -30,8 +30,11 @@ public class AddToCartServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            // Get course ID from request
+            // Get course ID from request (support both courseId and id)
             String courseIdStr = request.getParameter("courseId");
+            if (courseIdStr == null || courseIdStr.trim().isEmpty()) {
+                courseIdStr = request.getParameter("id");
+            }
             if (courseIdStr == null || courseIdStr.trim().isEmpty()) {
                 response.sendRedirect("courses");
                 return;
@@ -61,10 +64,10 @@ public class AddToCartServlet extends HttpServlet {
             long userId = user.getUser_id();
             
             // Get or create user's cart
-            Cart userCart = cartDAO.getCartByUserId(userId);
+            Cart userCart = cartDAO.findOrCreateActiveCart(userId);
             if (userCart == null) {
-                cartDAO.createCart(userId);
-                userCart = cartDAO.getCartByUserId(userId);
+                response.sendRedirect("courses");
+                return;
             }
             
             // Check if course is already in cart
@@ -72,7 +75,7 @@ public class AddToCartServlet extends HttpServlet {
                 // Add course to cart
                 cartDAO.addCourseToCart(userCart.getCart_id(), courseId, course.getPrice());
             }
-            response.sendRedirect("customer-course-detail?id=" + courseId);
+            response.sendRedirect("cart");
         } catch (NumberFormatException e) {
             response.sendRedirect("courses");
         } catch (Exception e) {

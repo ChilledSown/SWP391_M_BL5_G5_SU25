@@ -283,7 +283,7 @@
                 font-size: 16px;
                 cursor: pointer;
                 position: relative;
-                top: -50px; 
+                top: -58px; 
                 left: 30px; 
                 transition: color 0.3s ease;
             }
