@@ -80,41 +80,33 @@ public class ProcessCheckoutServlet extends HttpServlet {
                             // Store order ID in session for payment processing
                             session.setAttribute("pendingOrderId", orderId);
                             session.setAttribute("orderAmount", cartTotal);
-                            
-                            // Return success response
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"success\": true, \"orderId\": " + orderId + ", \"amount\": " + cartTotal + "}");
+                            // No JSON body; indicate success with 204 No Content
+                            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                             return;
                         } else {
                             // Failed to insert order details
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"success\": false, \"message\": \"Failed to create order details\"}");
+                            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to create order details");
                             return;
                         }
                     } else {
                         // Failed to create order
-                        response.setContentType("application/json");
-                        response.getWriter().write("{\"success\": false, \"message\": \"Failed to create order\"}");
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to create order");
                         return;
                     }
                 } else {
                     // Empty cart
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"success\": false, \"message\": \"Cart is empty\"}");
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cart is empty");
                     return;
                 }
             } else {
                 // No cart found
-                response.setContentType("application/json");
-                response.getWriter().write("{\"success\": false, \"message\": \"No cart found\"}");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No cart found");
                 return;
             }
             
         } catch (Exception e) {
             e.printStackTrace();
-            // Return error response
-            response.setContentType("application/json");
-            response.getWriter().write("{\"success\": false, \"message\": \"Internal server error\"}");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
 
