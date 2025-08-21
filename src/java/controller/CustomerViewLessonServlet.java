@@ -102,4 +102,3 @@ public class CustomerViewLessonServlet extends HttpServlet {
     }
 }
 
-
