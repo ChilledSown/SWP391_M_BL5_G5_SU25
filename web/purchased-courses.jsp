@@ -275,8 +275,8 @@
                 text-transform: uppercase;
                 letter-spacing: 1px;
                 margin-bottom: 8px;
-                background: #e3f2fd;
-                color: #1976d2;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: #ffffff;
             }
 
             /* Navigation Styling for Combined Header */
@@ -530,6 +530,15 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </p>
+
+                                                <c:if test="${not empty courseTopicsMap}">
+                                                    <c:set var="courseTopic" value="${courseTopicsMap[course.course_id]}" />
+                                                    <c:if test="${not empty courseTopic}">
+                                                        <div class="course-topic">
+                                                            <span class="badge"><i class="fas fa-tag"></i>${courseTopic.name}</span>
+                                                        </div>
+                                                    </c:if>
+                                                </c:if>
 
                                                 <div class="properties__footer d-flex justify-content-between align-items-center">
                                                     <div class="restaurant-name">

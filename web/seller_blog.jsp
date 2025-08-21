@@ -222,7 +222,7 @@
                                                 <ul id="navigation">
                                                     <li><a href="index.jsp">Home</a></li>
                                                     <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
-                                                    <li><a href="logout.jsp">Logout</a></li>
+                                                    <li><a href="logout">Logout</a></li>
                                                 </ul>
                                             </nav>
                                         </div>
