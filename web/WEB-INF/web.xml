@@ -3,4 +3,18 @@
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
+
+    <mime-mapping>
+        <extension>mp4</extension>
+        <mime-type>video/mp4</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>webm</extension>
+        <mime-type>video/webm</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>ogv</extension>
+        <mime-type>video/ogg</mime-type>
+    </mime-mapping>
+
 </web-app>

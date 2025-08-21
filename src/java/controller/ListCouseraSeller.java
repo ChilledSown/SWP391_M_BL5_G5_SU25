@@ -76,6 +76,7 @@ public class ListCouseraSeller extends HttpServlet {
         int page = 1;
         int pageSize = 5;
 
+
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
             try {
