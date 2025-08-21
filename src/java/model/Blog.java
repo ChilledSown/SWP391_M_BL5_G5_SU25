@@ -11,12 +11,13 @@ public class Blog {
     private String thumbnailUrl;
     private Timestamp createdAt; 
     private Timestamp updatedAt; 
-    private String createdBy; 
+    private int createdBy; 
+    private String createdByName;
 
     public Blog() {
     }
 
-    public Blog(long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, String createdBy) {
+    public Blog(long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, int createdBy, String createdByName) {
         this.blogId = blogId;
         this.title = title;
         this.content = content;
@@ -24,6 +25,7 @@ public class Blog {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
+        this.createdByName = createdByName;
     }
 
     public long getBlogId() {
@@ -74,19 +76,28 @@ public class Blog {
         this.updatedAt = updatedAt;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
     }
 
     @Override
     public String toString() {
-        return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + '}';
+        return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + ", createdByName=" + createdByName + '}';
     }
 
+   
     
     
     
