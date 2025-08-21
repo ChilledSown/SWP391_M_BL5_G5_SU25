@@ -85,6 +85,7 @@
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
+            vertical-align: top; /* Align content to top for wrapped text */
         }
         .quiz-table th {
             background-color: #f8f9fa;
@@ -173,24 +174,6 @@
         .reset-btn:hover {
             background-color: #d35400;
         }
-        .view-btn {
-            background-color: #3498db;
-            border: none;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            color: white;
-            transition: background-color 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-        }
-        .view-btn:hover {
-            background-color: #2980b9;
-        }
         .back-btn {
             background-color: #3498db;
             color: white;
@@ -255,6 +238,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        .wrap-text {
+            max-width: 300px;
+            white-space: normal; /* Allow text to wrap */
+            word-wrap: break-word; /* Break long words if necessary */
+        }
         @media (max-width: 768px) {
             .header-controls {
                 flex-direction: column;
@@ -270,7 +258,7 @@
                 padding: 8px;
                 font-size: 14px;
             }
-            .truncate {
+            .truncate, .wrap-text {
                 max-width: 150px;
             }
         }
@@ -345,7 +333,12 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Question</th>
-                                <th>Action</th>
+                                <th>Answer Options</th>
+                                <th>Correct Answer</th>
+                                <th>Explanation</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
+                                <th>Lesson ID</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -353,16 +346,12 @@
                                 <tr>
                                     <td><c:out value="${quiz.quizId}" /></td>
                                     <td class="truncate"><c:out value="${quiz.question}" /></td>
-                                    <td>
-                                        <form action="adminquiz" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="view">
-                                            <input type="hidden" name="quizId" value="${quiz.quizId}">
-                                            <input type="hidden" name="lessonId" value="${selectedLesson.lessonId}">
-                                            <input type="hidden" name="courseId" value="${courseId}">
-                                            <input type="hidden" name="topicId" value="${topicId}">
-                                            <button type="submit" class="view-btn" title="View Quiz Details"><i class="fas fa-eye"></i></button>
-                                        </form>
-                                    </td>
+                                    <td class="wrap-text"><c:out value="${quiz.answerOptions != null ? quiz.answerOptions : 'N/A'}" /></td>
+                                    <td><c:out value="${quiz.correctAnswer != null ? quiz.correctAnswer : 'N/A'}" /></td>
+                                    <td class="truncate"><c:out value="${quiz.explanation != null ? quiz.explanation : 'N/A'}" /></td>
+                                    <td><fmt:formatDate value="${quiz.createdAt}" pattern="dd/MM/yyyy" /></td>
+                                    <td><fmt:formatDate value="${quiz.updatedAt}" pattern="dd/MM/yyyy" /></td>
+                                    <td><c:out value="${quiz.lessonId}" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>

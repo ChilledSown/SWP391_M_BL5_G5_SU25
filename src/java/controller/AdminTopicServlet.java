@@ -20,25 +20,6 @@ public class AdminTopicServlet extends HttpServlet {
             throws ServletException, IOException {
         AdminListDAO dao = new AdminListDAO();
 
-        String action = request.getParameter("action");
-        if ("view".equals(action)) {
-            try {
-                long topicId = Long.parseLong(request.getParameter("topicId"));
-                Topic topic = dao.getTopicById(topicId);
-                if (topic == null) {
-                    request.setAttribute("error", "Topic not found");
-                    request.getRequestDispatcher("admintopic.jsp").forward(request, response);
-                    return;
-                }
-                request.setAttribute("topic", topic);
-                request.getRequestDispatcher("admintopicdetail.jsp").forward(request, response);
-            } catch (NumberFormatException e) {
-                request.setAttribute("error", "Invalid topic ID");
-                request.getRequestDispatcher("admintopic.jsp").forward(request, response);
-            }
-            return;
-        }
-
         int page = 1;
         String pageStr = request.getParameter("page");
         if (pageStr != null) {

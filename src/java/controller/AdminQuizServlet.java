@@ -25,7 +25,6 @@ public class AdminQuizServlet extends HttpServlet {
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
         String topicIdStr = request.getParameter("topicId");
-        String action = request.getParameter("action");
 
         Long lessonId;
         try {
@@ -60,29 +59,6 @@ public class AdminQuizServlet extends HttpServlet {
             request.setAttribute("error", "Lesson not found");
             request.getRequestDispatcher("adminlesson.jsp").forward(request, response);
             return;
-        }
-
-        // Handle "view" action for quiz details
-        if ("view".equals(action)) {
-            try {
-                long quizId = Long.parseLong(request.getParameter("quizId"));
-                Quiz quiz = dao.getQuizById(quizId);
-                if (quiz == null) {
-                    request.setAttribute("error", "Quiz not found");
-                    request.getRequestDispatcher("adminquiz.jsp").forward(request, response);
-                    return;
-                }
-                request.setAttribute("quiz", quiz);
-                request.setAttribute("lessonId", lessonId);
-                request.setAttribute("courseId", courseId);
-                request.setAttribute("topicId", topicId);
-                request.getRequestDispatcher("adminquizdetail.jsp").forward(request, response);
-                return;
-            } catch (NumberFormatException | NullPointerException e) {
-                request.setAttribute("error", "Invalid quiz ID");
-                request.getRequestDispatcher("adminquiz.jsp").forward(request, response);
-                return;
-            }
         }
 
         // Handle pagination
