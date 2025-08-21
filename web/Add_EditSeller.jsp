@@ -170,34 +170,35 @@
                         <% if (errorMessage != null) { %>
                             <div class="error-message"><%= errorMessage %></div>
                         <% } %>
-                        <form action="<%= formAction %>" method="POST" enctype="multipart/form-data">
+                        <form id="blogForm" action="<%= formAction %>" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="action" value="<%= action != null ? action : "create" %>">
                             <% if ("update".equals(action) && blogId != null) { %>
                                 <input type="hidden" name="blogId" value="<%= blogId %>">
+                                <input type="hidden" name="existingThumbnail" value="<%= thumbnailUrlValue %>">
                             <% } %>
                             <div class="form-group">
                                 <label for="title">Title</label>
-                                <input type="text" class="form-control" name="title" value="<%= titleValue %>">
+                                <input type="text" class="form-control" name="title" id="title" value="<%= titleValue %>">
                                 <% if (titleError != null) { %>
                                     <div class="error-message"><%= titleError %></div>
                                 <% } %>
                             </div>
                             <div class="form-group">
                                 <label for="content">Content</label>
-                                <textarea class="form-control" name="content" rows="5"><%= contentValue %></textarea>
+                                <textarea class="form-control" name="content" id="content" rows="5"><%= contentValue %></textarea>
                                 <% if (contentError != null) { %>
                                     <div class="error-message"><%= contentError %></div>
                                 <% } %>
                             </div>
                             <div class="form-group">
                                 <label for="thumbnail_url">Thumbnail</label>
-                                <input type="url" class="form-control mb-2" id="thumbnailUrlInput" placeholder="Paste image URL here" value="<%= thumbnailUrlValue %>">
+                                <input type="url" class="form-control mb-2" id="thumbnailUrlInput" placeholder="Paste image URL here" value="">
                                 <input type="file" class="form-control mb-2" id="thumbnailInput" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
                                 <div id="thumbPreviewWrap" style="margin-top:12px; display:<%= (thumbnailUrlValue != null && !thumbnailUrlValue.isEmpty()) ? "block" : "none" %>;">
                                     <button type="button" class="remove-thumb" id="btnRemoveThumb">&times;</button>
                                     <img id="thumbPreview" src="<%= thumbnailUrlValue %>" alt="Thumbnail preview" style="max-width: 100%; border:1px solid #e9ecef; border-radius:6px;">
                                 </div>
-                                <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="<%= thumbnailUrlValue %>">
+                                <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="">
                                 <% if (thumbnailError != null) { %>
                                     <div class="error-message"><%= thumbnailError %></div>
                                 <% } %>
@@ -247,6 +248,7 @@
         <script src="${pageContext.request.contextPath}/assets/js/vendor/jquery-1.12.4.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets/js/jquery.validate.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
         <script>
             const urlInput = document.getElementById('thumbnailUrlInput');
@@ -256,8 +258,12 @@
             const previewWrap = document.getElementById('thumbPreviewWrap');
             const removeBtn = document.getElementById('btnRemoveThumb');
 
-            // Initialize hidden input with existing thumbnail URL
-            hiddenInput.value = "<%= thumbnailUrlValue %>";
+            // Initialize inputs
+            const existingThumbnail = "<%= thumbnailUrlValue %>";
+            if (existingThumbnail) {
+                urlInput.value = existingThumbnail;
+                hiddenInput.value = existingThumbnail;
+            }
 
             urlInput.addEventListener('input', function () {
                 const url = urlInput.value.trim();
@@ -266,6 +272,11 @@
                     previewWrap.style.display = "block";
                     hiddenInput.value = url;
                     fileInput.value = "";
+                } else {
+                    // Reset to existing thumbnail if URL is cleared
+                    previewImg.src = existingThumbnail;
+                    previewWrap.style.display = existingThumbnail ? "block" : "none";
+                    hiddenInput.value = existingThumbnail;
                 }
             });
 
@@ -288,6 +299,31 @@
                 urlInput.value = "";
                 fileInput.value = "";
                 hiddenInput.value = "null";
+            });
+
+            // Client-side validation (only for title and content)
+            $(document).ready(function () {
+                $("#blogForm").validate({
+                    rules: {
+                        title: { required: true },
+                        content: { required: true },
+                        thumbnailUrlInput: { required: false, url: false } // Explicitly disable URL validation
+                    },
+                    messages: {
+                        title: "Please enter a title.",
+                        content: "Please enter content."
+                    },
+                    errorPlacement: function (error, element) {
+                        error.appendTo(element.closest(".form-group"));
+                    },
+                    submitHandler: function (form) {
+                        // Ensure thumbnail_url is set to existing thumbnail if unchanged
+                        if (!hiddenInput.value && existingThumbnail) {
+                            hiddenInput.value = existingThumbnail;
+                        }
+                        form.submit();
+                    }
+                });
             });
         </script>
     </body>

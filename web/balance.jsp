@@ -1,8 +1,3 @@
-<%-- 
-    Document   : balance
-    Created on : Aug 20, 2025, 10:52:39 AM
-    Author     : Admin
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -175,6 +170,11 @@
             color: #495057;
             font-size: 1.1rem;
         }
+        .error-message {
+            color: #dc3545;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
         .footer-wrappper {
             background: #343a40;
         }
@@ -274,18 +274,20 @@
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance.jsp" class="nav-link active">Balance</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link active">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
-                               
                             </ul>
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
                             <h2>Balance Management</h2>
                             <p>View your earnings and transaction history here.</p>
+                            <c:if test="${not empty errorMessage}">
+                                <div class="error-message">${errorMessage}</div>
+                            </c:if>
                             <div class="dashboard-card">
                                 <h4>Current Balance</h4>
-                                <p>${balance != null ? balance : '0.00'} USD</p>
+                                <p><fmt:formatNumber value="${balance}" type="currency" currencySymbol="$" maxFractionDigits="2" /></p>
                             </div>
                             <table class="table table-striped">
                                 <thead>
@@ -293,21 +295,27 @@
                                         <th>Date</th>
                                         <th>Description</th>
                                         <th>Amount</th>
-                                        <th>Type</th>
+                                        <th>Method</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <c:forEach var="transaction" items="${transactions}">
                                         <tr>
-                                            <td><fmt:formatDate value="${transaction.date}" pattern="yyyy-MM-dd" /></td>
+                                            <td><fmt:formatDate value="${transaction.orderDate}" pattern="yyyy-MM-dd" /></td>
                                             <td>${transaction.description}</td>
-                                            <td>${transaction.amount} USD</td>
-                                            <td>${transaction.type}</td>
+                                            <td><fmt:formatNumber value="${transaction.amount}" type="currency" currencySymbol="$" maxFractionDigits="2" /></td>
+                                            <td>${transaction.paymentMethod}</td>
+                                            <td>
+                                                <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                                     </c:forEach>
                                     <c:if test="${empty transactions}">
                                         <tr>
-                                            <td colspan="4" class="text-center">No transactions found.</td>
+                                            <td colspan="5" class="text-center">No transactions found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>
