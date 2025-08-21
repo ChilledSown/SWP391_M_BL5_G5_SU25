@@ -12,6 +12,15 @@ import model.Slider;
  */
 public class SliderDAO extends DBContext {
 
+    // Validate URL format (basic check)
+    private boolean isValidImageUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return true; // Allow null/empty as optional
+        }
+        // Basic URL validation (starts with http, https, or server path)
+        return url.matches("^(https?://.*|(/[a-zA-Z0-9_/\\-\\.]+\\.(jpg|jpeg|png|gif)))$");
+    }
+
     // Get all sliders
     public List<Slider> getAllSlider() {
         List<Slider> sliders = new ArrayList<>();
@@ -163,7 +172,7 @@ public class SliderDAO extends DBContext {
     }
     
     // Get sliders by page
-    public List<Slider> getSlidersByPage(int page, int pageSize){
+    public List<Slider> getSlidersByPage(int page, int pageSize) {
         List<Slider> sliders = new ArrayList<>();
         String sql = "SELECT * FROM Slider ORDER BY Slider_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -203,6 +212,10 @@ public class SliderDAO extends DBContext {
     
     // Update a slider
     public boolean updateSlider(Slider slider) {
+        if (!isValidImageUrl(slider.getImage_url())) {
+            System.out.println("Invalid image URL: " + slider.getImage_url());
+            return false;
+        }
         String sql = "UPDATE Slider SET Title = ?, Image_Url = ?, Updated_At = GETDATE() WHERE Slider_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, slider.getTitle());
@@ -217,6 +230,10 @@ public class SliderDAO extends DBContext {
 
     // Insert a new slider
     public boolean insertSlider(Slider slider) {
+        if (!isValidImageUrl(slider.getImage_url())) {
+            System.out.println("Invalid image URL: " + slider.getImage_url());
+            return false;
+        }
         String sql = "INSERT INTO Slider (Title, Image_Url, Created_At, Updated_At) VALUES (?, ?, GETDATE(), GETDATE())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, slider.getTitle());
