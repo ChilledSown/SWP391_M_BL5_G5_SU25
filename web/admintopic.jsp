@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Topic Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -65,119 +66,12 @@
         .main-header {
             margin-bottom: 20px;
         }
-        .content-section {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-        .content-section.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .header-controls {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
             gap: 20px;
-        }
-        .stat-card {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
-        .stat-card h3 {
-            margin-top: 0;
-            font-size: 18px;
-            color: #7f8c8d;
-        }
-        .stat-card p {
-            font-size: 36px;
-            font-weight: bold;
-            color: #3498db;
-            margin: 0;
-        }
-        .course-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .course-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .course-actions button {
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-        .edit-btn {
-            background-color: #2ecc71;
-        }
-        .edit-btn:hover {
-            background-color: #27ae60;
-        }
-        .delete-btn {
-            background-color: #e74c3c;
-            margin-left: 5px;
-        }
-        .delete-btn:hover {
-            background-color: #c0392b;
-        }
-        .view-btn {
-            background-color: #3498db;
-        }
-        .view-btn:hover {
-            background-color: #2980b9;
-        }
-        .search-bar {
             margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .search-bar input[type="text"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 300px;
-        }
-        .search-bar button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-        }
-        .search-bar button[type="submit"] {
-            background-color: #3498db;
-        }
-        .search-bar button[type="submit"]:hover {
-            background-color: #2980b9;
-        }
-        .search-bar button[type="button"] {
-            background-color: #7f8c8d;
-        }
-        .search-bar button[type="button"]:hover {
-            background-color: #6c7a89;
         }
         .topic-table {
             width: 100%;
@@ -199,35 +93,133 @@
         .topic-table tr:hover {
             background-color: #f5f5f5;
         }
-        .no-data {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-        }
         .pagination {
             margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+            text-align: center;
         }
         .pagination a {
-            padding: 8px 12px;
+            padding: 8px 16px;
             text-decoration: none;
+            color: #3498db;
             border: 1px solid #ddd;
+            margin: 0 4px;
             border-radius: 4px;
-            color: #333;
+            transition: background-color 0.3s;
         }
-        .pagination a.active {
+        .pagination a:hover {
             background-color: #3498db;
             color: white;
-            border-color: #3498db;
         }
-        .pagination a.disabled {
+        .pagination .active {
+            background-color: #3498db;
+            color: white;
+        }
+        .pagination .disabled {
             color: #ccc;
-            cursor: not-allowed;
+            pointer-events: none;
         }
-        .pagination a:hover:not(.disabled) {
-            background-color: #f5f5f5;
+        .search-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+        }
+        .search-section input[type="text"] {
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 300px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-section input[type="text"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+        .search-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .search-btn:hover {
+            background-color: #27ae60;
+        }
+        .reset-btn {
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .reset-btn:hover {
+            background-color: #d35400;
+        }
+        .view-btn {
+            background-color: #3498db;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+        .view-btn:hover {
+            background-color: #2980b9;
+        }
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3498db;
+        }
+        .profile-name {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .edit-profile-btn {
+            background-color: transparent;
+            border: none;
+            color: #3498db;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+            top: -58px;
+            left: 30px;
+            transition: color 0.3s ease;
+        }
+        .edit-profile-btn:hover {
+            color: #2980b9;
         }
         .success-message {
             color: green;
@@ -239,6 +231,23 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        @media (max-width: 768px) {
+            .header-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-section {
+                width: 100%;
+            }
+            .search-section input[type="text"] {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -249,31 +258,37 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h3>Admin Dashboard</h3>
-            </div> 
+            </div>
+            <div class="profile-section">
+                <img src="${empty sessionScope.user.avataUrl ? 'assets/img/default-avatar.png' : sessionScope.user.avataUrl}" alt="Avatar" class="profile-avatar">
+                <div class="profile-name">
+                    <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName != null ? sessionScope.user.middleName : ''} ${sessionScope.user.lastName}"/>
+                </div>
+                <a href="${pageContext.request.contextPath}/profile"><button class="edit-profile-btn" title="Edit Profile"><i class="fas fa-edit"></i></button></a>
+            </div>
             <nav class="sidebar-nav">
                 <ul>
                     <li data-section="overview">
-                        <a href="overview">Overview</a>
+                        <a href="admin">Overview</a>
                     </li>
-                    <li class="active" data-section="courses">
-                        <a href="admintopic">Manage Topic</a>
+                    <li class="active" data-section="topics">
+                        <a href="admintopic">List Topic</a>
                     </li>
                     <li data-section="users">
                         <a href="manageuser">Manage Users</a>
-                    </li>    
+                    </li>
                     <li data-section="slider">
                         <a href="manageslider">Manage Slider</a>
                     </li>
                     <li data-section="settings">
-                        <a href="login">Logout</a>
+                        <a href="${pageContext.request.contextPath}/logout">Logout</a>
                     </li>
                 </ul>
-            </nav>  
+            </nav>
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Welcome, <c:out value="${sessionScope.user.firstName} 
-                ${sessionScope.user.middleName != null ? sessionScope.user.middleName : ''} ${sessionScope.user.lastName}" />!</h1>
+                <h1>Welcome to Manage Topics</h1>
             </header>
             <c:if test="${not empty message}">
                 <div class="success-message">${message}</div>
@@ -281,77 +296,64 @@
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
             </c:if>
-            <div class="search-bar">
-                <form action="managetopic" method="get">
-                    <input type="text" name="query" placeholder="Search topics by name..." value="${searchQuery}">
-                    <button type="submit">Search</button>
-                </form>
-                <a href="managetopic"><button type="button">Reset</button></a>
+            <div class="header-controls">
+                <div class="search-section">
+                    <form action="admintopic" method="get">
+                        <input type="text" name="query" placeholder="Search topics by name..." value="${searchQuery}">
+                        <button type="submit" class="search-btn" title="Search"><i class="fas fa-search"></i></button>
+                        <a href="admintopic"><button type="button" class="reset-btn" title="Reset"><i class="fas fa-rotate"></i></button></a>
+                    </form>
+                </div>
             </div>
-            <table class="topic-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Thumbnail URL</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:choose>
-                        <c:when test="${not empty topics}">
+            <c:choose>
+                <c:when test="${empty topics}">
+                    <div class="no-data">No topics found</div>
+                </c:when>
+                <c:otherwise>
+                    <table class="topic-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             <c:forEach var="topic" items="${topics}">
                                 <tr>
                                     <td><c:out value="${topic.topic_id}" /></td>
-                                    <td><c:out value="${topic.name}" /></td>
-                                    <td><c:out value="${topic.thumbnail_url}" /></td>
-                                    <td><c:out value="${topic.description != null ? topic.description : 'N/A'}" /></td>
+                                    <td><a href="admincourse?topicId=${topic.topic_id}" style="color: #3498db; text-decoration: none;">${topic.name}</a></td>
                                     <td>
-                                        <form action="managecourse" method="get" style="display:inline;">
+                                        <form action="admintopic" method="get" style="display:inline;">
+                                            <input type="hidden" name="action" value="view">
                                             <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="view-btn">View</button>
-                                        </form>
-                                        <form action="managetopic" method="get" style="display:inline;">
-                                            <input type="hidden" name="action" value="edit">
-                                            <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="edit-btn">Edit</button>
-                                        </form>
-                                        <form action="managetopic" method="post" style="display:inline;">
-                                            <input type="hidden" name="action" value="delete">
-                                            <input type="hidden" name="topicId" value="${topic.topic_id}">
-                                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this topic?')">Delete</button>
+                                            <button type="submit" class="view-btn" title="View Topic Details"><i class="fas fa-eye"></i></button>
                                         </form>
                                     </td>
                                 </tr>
                             </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <tr>
-                                <td colspan="5" class="no-data">No topics found</td>
-                            </tr>
-                        </c:otherwise>
-                    </c:choose>
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
             <div class="pagination">
                 <c:if test="${currentPage > 1}">
-                    <a href="managetopic?page=${currentPage - 1}&query=${searchQuery}">Previous</a>
+                    <a href="admintopic?page=${currentPage - 1}&query=${searchQuery}">Previous</a>
                 </c:if>
                 <c:if test="${currentPage <= 1}">
                     <a class="disabled">Previous</a>
                 </c:if>
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="managetopic?page=${i}&query=${searchQuery}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
+                    <a href="admintopic?page=${i}&query=${searchQuery}" <c:if test="${currentPage == i}">class="active"</c:if>>${i}</a>
                 </c:forEach>
                 <c:if test="${currentPage < totalPages}">
-                    <a href="managetopic?page=${currentPage + 1}&query=${searchQuery}">Next</a>
+                    <a href="admintopic?page=${currentPage + 1}&query=${searchQuery}">Next</a>
                 </c:if>
                 <c:if test="${currentPage >= totalPages}">
                     <a class="disabled">Next</a>
                 </c:if>
             </div>
         </main>
-    </div>     
+    </div>
 </body>
 </html>

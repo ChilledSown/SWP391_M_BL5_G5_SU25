@@ -6,9 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Slider Details</title>
+    <title>Slider Details</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -26,6 +26,7 @@
             color: white;
             padding: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: width 0.3s ease-in-out;
         }
         .sidebar-header {
             text-align: center;
@@ -52,6 +53,7 @@
             color: white;
             text-decoration: none;
             font-size: 16px;
+            transition: color 0.3s ease;
         }
         .sidebar-nav a:hover {
             color: #ecf0f1;
@@ -59,6 +61,7 @@
         .main-content {
             flex-grow: 1;
             padding: 30px;
+            transition: margin-left 0.3s ease-in-out;
         }
         .main-header {
             margin-bottom: 20px;
@@ -74,28 +77,62 @@
         }
         .content-section p {
             margin: 10px 0;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
         }
-        .back-button {
+        .back-btn {
             display: inline-block;
-            padding: 8px 16px;
+            padding: 10px 20px;
             background-color: #3498db;
             color: white;
             text-decoration: none;
             border-radius: 4px;
             margin-bottom: 20px;
+            transition: background-color 0.3s ease;
         }
-        .back-button:hover {
+        .back-btn:hover {
             background-color: #2980b9;
         }
-        .success-message {
-            color: green;
-            text-align: center;
-            margin-bottom: 20px;
+        .slider-image {
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 5px;
         }
-        .error-message {
-            color: red;
+        .profile-section {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3498db;
+        }
+        .profile-name {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .edit-profile-btn {
+            background-color: transparent;
+            border: none;
+            color: #3498db;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+            top: -58px;
+            left: 30px;
+            transition: color 0.3s ease;
+        }
+        .edit-profile-btn:hover {
+            color: #2980b9;
+        }
+        @media (max-width: 768px) {
+            .content-section {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -108,39 +145,42 @@
             <div class="sidebar-header">
                 <h3>Admin Dashboard</h3>
             </div>
+            <div class="profile-section">
+                <img src="${empty sessionScope.user.avataUrl ? 'assets/img/default-avatar.png' : sessionScope.user.avataUrl}" alt="Avatar" class="profile-avatar">
+                <div class="profile-name">
+                    <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName != null ? sessionScope.user.middleName : ''} ${sessionScope.user.lastName}"/>
+                </div>
+                <a href="${pageContext.request.contextPath}/profile"><button class="edit-profile-btn" title="Edit Profile"><i class="fas fa-edit"></i></button></a>
+            </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li data-section="overview"><a href="overview">Overview</a></li>
-                    <li data-section="courses"><a href="admintopic">Manage Topic</a></li>
+                    <li data-section="overview"><a href="admin">Overview</a></li>
+                    <li data-section="courses"><a href="admintopic">List Topic</a></li>
                     <li data-section="users"><a href="manageuser">Manage Users</a></li>
                     <li data-section="slider" class="active"><a href="manageslider">Manage Slider</a></li>
-                    <li data-section="settings"><a href="login">Logout</a></li>
+                    <li data-section="settings"><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
                 </ul>
             </nav>
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName != null ? sessionScope.user.middleName : ''} ${sessionScope.user.lastName}" />!</h1>
+                <h1>Welcome to Slider Details</h1>
             </header>
-            <c:if test="${not empty message}">
-                <div class="success-message">${message}</div>
-            </c:if>
-            <c:if test="${not empty error}">
-                <div class="error-message">${error}</div>
-            </c:if>
             <div class="content-section">
-                <a href="manageslider" class="back-button">Back to Slider List</a>
+                <a href="manageslider" class="back-btn">Back to Slider List</a>
                 <h2>Slider Details</h2>
                 <c:choose>
                     <c:when test="${not empty slider}">
                         <p><strong>ID:</strong> <c:out value="${slider.slider_id}" /></p>
                         <p><strong>Title:</strong> <c:out value="${slider.title}" /></p>
-                        <p><strong>Image URL:</strong> <c:out value="${slider.image_url}" /></p>
-                        <p><strong>Created At:</strong> <fmt:formatDate value="${slider.created_at}" pattern="yyyy-MM-dd" /></p>
-                        <p><strong>Updated At:</strong> <fmt:formatDate value="${slider.updated_at}" pattern="yyyy-MM-dd" /></p>
+                        <p><strong>Image:</strong><br>
+                           <img src="${slider.image_url.startsWith('http') ? slider.image_url : pageContext.request.contextPath.concat(slider.image_url)}?t=<%= System.currentTimeMillis() %>" alt="Slider Image" class="slider-image" onerror="this.src='${pageContext.request.contextPath}/assets/img/default-slider.png'" />
+                        </p>
+                        <p><strong>Created At:</strong> <fmt:formatDate value="${slider.created_at}" pattern="dd/MM/yyyy" /></p>
+                        <p><strong>Updated At:</strong> <fmt:formatDate value="${slider.updated_at}" pattern="dd/MM/yyyy" /></p>
                     </c:when>
                     <c:otherwise>
-                        <p class="error-message">Slider not found.</p>
+                        <div style="color:red; text-align:center; padding: 20px;">Slider not found</div>
                     </c:otherwise>
                 </c:choose>
             </div>

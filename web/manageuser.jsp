@@ -332,10 +332,13 @@
                             <a href="admin">Overview</a>
                         </li>
                         <li data-section="courses">
-                            <a href="managetopic">Manage Topic</a>
+                            <a href="admintopic">List Topic</a>
                         </li>
                         <li class="active" data-section="users">
                             <a href="manageuser">Manage Users</a>
+                        </li>
+                        <li data-section="slider">
+                        <a href="manageslider">Manage Slider</a>
                         </li>
                         <li data-section="settings">
                             <a href="${pageContext.request.contextPath}/logout">Logout</a>
