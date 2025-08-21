@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbproject://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
 
@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Course;
 
 /**
@@ -266,9 +264,9 @@ public class CourseDAO extends DBContext {
     public List<Course> getFilteredCoursesPaged(String searchTerm, String priceFilter, String ratingFilter, String sortBy, String topicFilter, int offset, int limit) {
         List<Course> courses = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT c.*, AVG(r.Rating) AS AverageRating\n");
+        sql.append("SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n");
         sql.append("FROM Course c\n");
-        sql.append("LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n");
+        sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
 
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
@@ -317,10 +315,9 @@ public class CourseDAO extends DBContext {
             sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
         }
 
-        sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n");
-
+        // Không cần GROUP BY nữa vì đã dùng subquery
         if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            sql.append("HAVING AVG(r.Rating) >= ?\n");
+            sql.append("HAVING ISNULL(ar.AverageRating, 0) >= ?\n");
             parameters.add(Double.parseDouble(ratingFilter));
         }
 
@@ -336,21 +333,26 @@ public class CourseDAO extends DBContext {
                 sql.append("c.Price DESC\n");
                 break;
             case "rating":
-                sql.append("AverageRating DESC\n");
+                sql.append("ISNULL(ar.AverageRating, 0) DESC\n");
                 break;
             default:
                 sql.append("c.Created_At DESC\n");
                 break;
         }
-        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
+
+        if (limit != Integer.MAX_VALUE) {
+            sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY\n");
+        }
 
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             for (Object param : parameters) {
                 statement.setObject(paramIndex++, param);
             }
-            statement.setInt(paramIndex++, offset);
-            statement.setInt(paramIndex, limit);
+            if (limit != Integer.MAX_VALUE) {
+                statement.setInt(paramIndex++, offset);
+                statement.setInt(paramIndex, limit);
+            }
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -427,6 +429,53 @@ public class CourseDAO extends DBContext {
         return courses;
     }
 
+    public List<Course> getPurchasedCoursesByUser(long userId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT DISTINCT c.* "
+                + "FROM Course c "
+                + "JOIN Order_Detail od ON od.Course_Id = c.Course_Id "
+                + "JOIN [Order] o ON o.Order_Id = od.Order_Id "
+                + "LEFT JOIN Payment p ON p.Order_Id = o.Order_Id "
+                + "WHERE o.User_Id = ? AND o.Status = 'paid'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourse_id(rs.getLong("Course_Id"));
+                c.setTitle(rs.getString("Title"));
+                c.setDescription(rs.getString("Description"));
+                c.setPrice(rs.getInt("Price"));
+                c.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                c.setCreated_at(rs.getTimestamp("Created_At") == null ? null : new java.util.Date(rs.getTimestamp("Created_At").getTime()));
+                c.setUpdated_at(rs.getTimestamp("Updated_At") == null ? null : new java.util.Date(rs.getTimestamp("Updated_At").getTime()));
+                c.setTopic_id(rs.getLong("Topic_Id"));
+                courses.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
+
+    public boolean hasUserPurchasedCourse(long userId, long courseId) {
+        String sql = "SELECT 1 "
+                + "FROM [Order] o "
+                + "JOIN Order_Detail od ON od.Order_Id = o.Order_Id "
+                + "LEFT JOIN Payment p ON p.Order_Id = o.Order_Id "
+                + "WHERE o.User_Id = ? AND od.Course_Id = ? AND (o.Status = 'paid' OR p.Payment_Status = 'completed')";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setLong(2, courseId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
     public void markCourseAsDeleted(long courseId) {
         String sql = "UPDATE Course SET Status = 'inactive' WHERE Course_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -459,7 +508,6 @@ public class CourseDAO extends DBContext {
                         null // averageRating nếu chưa có trong query
                 );
                 courses.add(c);
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -519,6 +567,30 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public List<Course> getCoursesByTopicId(long topicId) {
+        List<Course> courses = new ArrayList<>();
+        String sql = "SELECT * FROM Course WHERE Topic_Id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourse_id(rs.getLong("Course_Id"));
+                c.setTitle(rs.getString("Title"));
+                c.setDescription(rs.getString("Description"));
+                c.setPrice(rs.getInt("Price"));
+                c.setThumbnail_url(rs.getString("Thumbnail_Url"));
+                c.setCreated_at(rs.getDate("Created_At"));
+                c.setUpdated_at(rs.getDate("Updated_At"));
+                c.setTopic_id(rs.getLong("Topic_Id"));
+                courses.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
     }
 
     // lay phan trang theo ID chu khong phai All tren kia 
@@ -703,4 +775,56 @@ public class CourseDAO extends DBContext {
         return condition.toString();
     }
 
+     public List<Course> getCoursesByTopicIdWithSearch(String query, long topicId, int offset, int limit) {
+        List<Course> courses = new ArrayList<>();
+        String search = (query == null ? "" : query.trim());
+        String like = "%" + search + "%";
+        String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n"
+                + "FROM Course c\n"
+                + "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n"
+                + "WHERE c.Topic_Id = ? AND (c.Title LIKE ? OR c.Description LIKE ?) AND c.Status = 'active'\n"
+                + "ORDER BY c.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ps.setString(2, like);
+            ps.setString(3, like);
+            ps.setInt(4, offset);
+            ps.setInt(5, limit);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Course course = new Course();
+                course.setCourse_id(resultSet.getLong("Course_Id"));
+                course.setTitle(resultSet.getString("Title"));
+                course.setDescription(resultSet.getString("Description"));
+                course.setPrice(resultSet.getInt("Price"));
+                course.setThumbnail_url(resultSet.getString("Thumbnail_Url"));
+                course.setCreated_at(resultSet.getTimestamp("Created_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Created_At").getTime()));
+                course.setUpdated_at(resultSet.getTimestamp("Updated_At") == null ? null : new java.util.Date(resultSet.getTimestamp("Updated_At").getTime()));
+                course.setTopic_id(resultSet.getLong("Topic_Id"));
+                course.setAverageRating(resultSet.getObject("AverageRating") != null ? resultSet.getDouble("AverageRating") : 0.0);
+                courses.add(course);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return courses;
+    }
+
+    public int getTotalCoursesByTopicIdWithSearch(String query, long topicId) {
+        String search = (query == null ? "" : query.trim());
+        String like = "%" + search + "%";
+        String sql = "SELECT COUNT(*) FROM Course c WHERE c.Topic_Id = ? AND (c.Title LIKE ? OR c.Description LIKE ?) AND c.Status = 'active'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, topicId);
+            ps.setString(2, like);
+            ps.setString(3, like);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
