@@ -343,7 +343,7 @@
                                         </video>
                                     </c:when>
                                     <c:otherwise>
-                                        <div style="color:#fff;display:flex;align-items:center;justify-content:center;height:360px;">Chỉ hỗ trợ phát video nội bộ (local). Vui lòng cập nhật URL video không phải YouTube.</div>
+                                        <div style="color:#fff;display:flex;align-items:center;justify-content:center;height:360px;">Ch? h? tr? ph�t video n?i b? (local). Vui l�ng c?p nh?t URL video kh�ng ph?i YouTube.</div>
                                     </c:otherwise>
                                 </c:choose>
                                 
@@ -656,5 +656,4 @@
         </script>
     </body>
     </html>
-
 
