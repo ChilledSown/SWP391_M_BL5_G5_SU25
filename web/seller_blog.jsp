@@ -299,7 +299,7 @@
                                                 <a href="deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
-                                                <a href="blogDetail?blogId=${blog.blogId}" class="btn-action" title="Detail">
+                                                <a href="blogDetailSeller?blogId=${blog.blogId}" class="btn-action" title="Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>

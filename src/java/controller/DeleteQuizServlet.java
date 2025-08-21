@@ -65,7 +65,7 @@ public class DeleteQuizServlet extends HttpServlet {
             QuizDAO dao = new QuizDAO();
             dao.deleteQuiz(quizId);
 
-            response.sendRedirect("manageQuiz?lessonId=" + lessonId);
+            response.sendRedirect("manageQuizSeller?lessonId=" + lessonId);
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete quiz.");

@@ -3,7 +3,6 @@ package controller;
 import dal.BlogDAO;
 import model.Blog;
 import model.User;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,13 +13,14 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @WebServlet(name = "EditBlogServlet", urlPatterns = {"/editBlog"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-                 maxFileSize = 1024 * 1024 * 10,      // 10MB
-                 maxRequestSize = 1024 * 1024 * 50)   // 50MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class EditBlogServletSeller extends HttpServlet {
+
     private static final String UPLOAD_DIR = "assets/img/uploads";
 
     @Override
@@ -50,7 +50,7 @@ public class EditBlogServletSeller extends HttpServlet {
                 request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
             }
         } else {
-            response.sendRedirect("seller_blog.jsp");
+            response.sendRedirect("listBlogsSeller");
         }
     }
 
@@ -58,7 +58,7 @@ public class EditBlogServletSeller extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"seller".equalsIgnoreCase(user.getRole()) || user.getUser_id() == null) {
             response.sendRedirect("login.jsp");
             return;
         }
@@ -84,28 +84,32 @@ public class EditBlogServletSeller extends HttpServlet {
 
         // Fetch existing blog to verify
         BlogDAO blogDAO = new BlogDAO();
-        Blog existingBlog = blogDAO.getBlogById(Long.parseLong(blogId));
-        if (existingBlog == null) {
-            session.setAttribute("errorMessage", "Blog not found.");
-            response.sendRedirect("Add_EditSeller.jsp?action=update&blogId=" + blogId);
-            return;
+        Blog existingBlog = null;
+        try {
+            existingBlog = blogDAO.getBlogById(Long.parseLong(blogId));
+            if (existingBlog == null || existingBlog.getCreatedBy() != user.getUser_id().intValue()) {
+                session.setAttribute("errorMessage", "Blog not found or you do not have permission to edit it.");
+                hasError = true;
+            }
+        } catch (NumberFormatException e) {
+            session.setAttribute("errorMessage", "Invalid blog ID.");
+            hasError = true;
         }
 
         // Handle thumbnail logic
-        String finalThumbnailUrl = existingThumbnail; // Default to existing thumbnail
+        String finalThumbnailUrl = existingThumbnail;
         if (thumbnailUrl != null && thumbnailUrl.equals("null")) {
-            // User removed the thumbnail
             finalThumbnailUrl = null;
         } else if (filePart != null && filePart.getSize() > 0) {
-            // New file uploaded
             String uploadPath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
             File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) uploadDir.mkdir();
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
             String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
             filePart.write(uploadPath + File.separator + fileName);
             finalThumbnailUrl = UPLOAD_DIR + "/" + fileName;
         } else if (thumbnailUrl != null && !thumbnailUrl.trim().isEmpty() && !thumbnailUrl.equals("file")) {
-            // New URL provided
             finalThumbnailUrl = thumbnailUrl;
         }
 
@@ -116,15 +120,29 @@ public class EditBlogServletSeller extends HttpServlet {
         }
 
         if (hasError) {
-            response.sendRedirect("Add_EditSeller.jsp?action=update&blogId=" + blogId);
+            // Preserve form data
+            Blog blog = new Blog(Long.parseLong(blogId), title, content, finalThumbnailUrl,
+                    existingBlog != null ? existingBlog.getCreatedAt() : null,
+                    new Timestamp(System.currentTimeMillis()), user.getUser_id().intValue(),
+                    existingBlog != null ? existingBlog.getCreatedByName() : null);
+            request.setAttribute("blog", blog);
+            request.setAttribute("action", "update");
+            request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
             return;
         }
 
         // Update blog
-        Blog blog = new Blog(Long.parseLong(blogId), title, content, finalThumbnailUrl, existingBlog.getCreatedAt(), LocalDate.now(), user.getUser_id().intValue());
+        Blog blog = new Blog(Long.parseLong(blogId), title, content, finalThumbnailUrl,
+                existingBlog.getCreatedAt(), new Timestamp(System.currentTimeMillis()),
+                user.getUser_id().intValue(), existingBlog.getCreatedByName());
         blogDAO.updateBlog(blog);
 
-        // Redirect to blog management
-        response.sendRedirect("seller_blog.jsp");
+        // Clear session attributes
+        session.removeAttribute("titleError");
+        session.removeAttribute("contentError");
+        session.removeAttribute("duplicateMessage");
+        session.removeAttribute("errorMessage");
+
+        response.sendRedirect("listBlogsSeller");
     }
 }
