@@ -9,18 +9,30 @@
 <head>
     <title>Manage Lessons</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         .alert {
             margin-bottom: 20px;
+        }
+        .btn-icon {
+            padding: 6px 10px;
+        }
+        .btn-icon i {
+            font-size: 16px;
         }
     </style>
 </head>
 <body class="container mt-5">
     <h2>Manage Lessons for Course ID: ${courseId}</h2>
+
     <c:if test="${not empty errorMessage}">
         <div class="alert alert-danger">${errorMessage}</div>
     </c:if>
+
     <a href="courseDetail?courseId=${courseId}" class="btn btn-secondary mb-3">Back to Course Detail</a>
+
+    <!-- Search form -->
     <form method="get" action="manageLessonSeller" class="mb-3">
         <input type="hidden" name="courseId" value="${courseId}" />
         <div class="row g-2">
@@ -38,6 +50,8 @@
             </div>
         </div>
     </form>
+
+    <!-- Lesson Table -->
     <table class="table table-bordered">
         <thead class="thead-dark">
             <tr>
@@ -46,7 +60,7 @@
                 <th>Content</th>
                 <th>Created</th>
                 <th>Updated</th>
-                <th>Action</th>
+                <th>Delete</th>
                 <th>Edit</th>
                 <th>Quiz</th>
             </tr>
@@ -59,38 +73,53 @@
                     <td>${lesson.content}</td>
                     <td>${lesson.createdAt}</td>
                     <td>${lesson.updatedAt}</td>
+
+                    <!-- Delete -->
                     <td>
                         <form action="deleteLesson" method="post"
                               onsubmit="return confirm('Are you sure you want to delete this lesson?');">
                             <input type="hidden" name="lessonId" value="${lesson.lessonId}" />
                             <input type="hidden" name="courseId" value="${courseId}" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Delete">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                         </form>
                     </td>
+
+                    <!-- Edit -->
                     <td>
-                        <button class="btn btn-warning btn-sm"
-                                onclick="openEditLesson('${lesson.lessonId}', '${courseId}')">
-                            Edit
+                        <button class="btn btn-warning btn-sm btn-icon"
+                                onclick="openEditLesson('${lesson.lessonId}', '${courseId}')"
+                                title="Edit">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </td>
+
+                    <!-- Quiz -->
                     <td>
                         <a href="manageQuizSeller?lessonId=${lesson.lessonId}"
-                           class="btn btn-info btn-sm">
-                            Manage Quiz
+                           class="btn btn-info btn-sm btn-icon" title="Manage Quiz">
+                            <i class="fa-solid fa-circle-question"></i>
                         </a>
                     </td>
                 </tr>
             </c:forEach>
         </tbody>
     </table>
+
+    <!-- Pagination -->
     <jsp:include page="pagination.jsp">
         <jsp:param name="currentPage" value="${currentPage}" />
         <jsp:param name="totalPages" value="${totalPages}" />
         <jsp:param name="baseUrl" value="${baseUrl}" />
     </jsp:include>
+
+    <!-- Add Lesson -->
     <button class="btn btn-success" onclick="openLessonForm('${param.courseId}')">
-        Add Lesson
+        <i class="fa-solid fa-plus"></i> Add Lesson
     </button>
+
+    <!-- Modal -->
     <div class="modal fade" id="lessonFormModal" tabindex="-1" aria-labelledby="lessonFormModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -104,6 +133,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function openLessonForm(courseId) {

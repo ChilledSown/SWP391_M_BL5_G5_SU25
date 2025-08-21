@@ -11,15 +11,15 @@
     <head>
         <title>Blog Detail</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css"/>
-        
+
     </head>
     <body class="container mt-5">
         <h3>Blog Detail</h3>
-    <c:if test="${not empty errorMessage}">
-        <div class="error-message">${errorMessage}</div>
-    </c:if>
-    <c:choose>
-        <c:when test="${not empty blog}">
+        <c:if test="${not empty errorMessage}">
+            <div class="alert alert-danger">${errorMessage}</div>
+        </c:if>
+
+        <c:if test="${not empty blog}">
             <table class="table table-bordered">
                 <tr>
                     <th>Title</th>
@@ -32,38 +32,29 @@
                 <tr>
                     <th>Thumbnail</th>
                     <td>
-                <c:if test="${not empty blog.thumbnailUrl}">
-                    <img src="${blog.thumbnailUrl}" alt="Blog Thumbnail">
-                </c:if>
-                <c:if test="${empty blog.thumbnailUrl}">
-                    No thumbnail available
-                </c:if>
-                </td>
+                        <c:if test="${not empty blog.thumbnailUrl}">
+                            <img src="${blog.thumbnailUrl}" alt="Blog Thumbnail" style="max-width: 200px;">
+                        </c:if>
+                        <c:if test="${empty blog.thumbnailUrl}">
+                            No thumbnail
+                        </c:if>
+                    </td>
                 </tr>
                 <tr>
                     <th>Created At</th>
-                    <td>
-                <fmt:parseDate value="${blog.createdAt}" pattern="yyyy-MM-dd" var="parsedCreatedAt" />
-                <fmt:formatDate value="${parsedCreatedAt}" pattern="yyyy-MM-dd" />
-                </td>
+                    <td><fmt:formatDate value="${blog.createdAt}" pattern="yyyy-MM-dd" /></td>
                 </tr>
                 <tr>
                     <th>Updated At</th>
-                    <td>
-                <fmt:parseDate value="${blog.updatedAt}" pattern="yyyy-MM-dd" var="parsedUpdatedAt" />
-                <fmt:formatDate value="${parsedUpdatedAt}" pattern="yyyy-MM-dd" />
-                </td>
+                    <td><fmt:formatDate value="${blog.updatedAt}" pattern="yyyy-MM-dd" /></td>
                 </tr>
                 <tr>
                     <th>Created By</th>
                     <td>${blog.createdBy}</td>
                 </tr>
             </table>
-        </c:when>
-        <c:otherwise>
-            <p>No blog details available.</p>
-        </c:otherwise>
-    </c:choose>
+        </c:if>
+
     <a href="listBlogsSeller" class="btn btn-secondary">Back</a>
 </body>
 </html>
