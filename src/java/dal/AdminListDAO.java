@@ -12,7 +12,7 @@ import model.Quiz;
 
 public class AdminListDAO extends DBContext {
 
-    // Topic Methods (unchanged)
+    // Topic Methods 
     public List<Topic> getAllTopics() {
         List<Topic> topics = new ArrayList<>();
         String sql = "SELECT * FROM Topic ORDER BY Topic_Id";
@@ -149,7 +149,7 @@ public class AdminListDAO extends DBContext {
         return 0;
     }
 
-    // Course Methods (unchanged)
+    // Course Methods
     public List<Course> getCoursesByTopicId(Long topicId) {
         List<Course> courses = new ArrayList<>();
         String sql = "SELECT c.*, COALESCE(AVG(r.Rating), 0) as AverageRating " +
@@ -256,7 +256,7 @@ public class AdminListDAO extends DBContext {
         return 0;
     }
 
-    // Lesson Methods (unchanged)
+    // Lesson Methods 
     public List<Lesson> getLessonsByCourseId(Long courseId) {
         List<Lesson> lessons = new ArrayList<>();
         String sql = "SELECT * FROM Lesson WHERE Course_Id = ? ORDER BY Lesson_Id";
