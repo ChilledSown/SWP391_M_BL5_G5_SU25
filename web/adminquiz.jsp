@@ -338,7 +338,6 @@
                                 <th>Explanation</th>
                                 <th>Created At</th>
                                 <th>Updated At</th>
-                                <th>Lesson ID</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -351,7 +350,6 @@
                                     <td class="truncate"><c:out value="${quiz.explanation != null ? quiz.explanation : 'N/A'}" /></td>
                                     <td><fmt:formatDate value="${quiz.createdAt}" pattern="dd/MM/yyyy" /></td>
                                     <td><fmt:formatDate value="${quiz.updatedAt}" pattern="dd/MM/yyyy" /></td>
-                                    <td><c:out value="${quiz.lessonId}" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
