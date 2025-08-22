@@ -46,6 +46,7 @@ public class PaymentSuccessServlet extends HttpServlet {
         }
 
         String orderIdFromPg = request.getParameter("orderId");
+        String paypalOrderId = request.getParameter("paypalOrderId");
         String amountStr = request.getParameter("amount");
         String currency = request.getParameter("currency");
         String method = request.getParameter("method");
@@ -53,31 +54,43 @@ public class PaymentSuccessServlet extends HttpServlet {
         double amount = 0.0;
         try { amount = Double.parseDouble(amountStr); } catch (Exception ignored) {}
 
-        // Build order from cart
-        CartDAO cartDAO = new CartDAO();
-        CourseDAO courseDAO = new CourseDAO();
-        List<CartItem> cartItems = new ArrayList<>();
-        Cart userCart = cartDAO.getCartByUserId(user.getUser_id());
-        if (userCart != null) {
-            cartItems = cartDAO.getCartItemsByCartId(userCart.getCart_id());
+        // Get the pending order from session
+        Long pendingOrderId = (Long) session.getAttribute("pendingOrderId");
+        Double orderAmount = (Double) session.getAttribute("orderAmount");
+        
+        // Determine final order id and amount with fallbacks
+        Long finalOrderId = pendingOrderId;
+        if (finalOrderId == null && orderIdFromPg != null) {
+            try { finalOrderId = Long.parseLong(orderIdFromPg); } catch (Exception ignored) {}
         }
-
-        if (cartItems == null || cartItems.isEmpty()) {
-            response.sendRedirect("cart.jsp");
+        double finalAmount = amount > 0 ? amount : (orderAmount != null ? orderAmount.doubleValue() : 0.0);
+        if (finalOrderId == null || finalAmount <= 0) {
+            response.sendRedirect("cart");
             return;
         }
 
         OrderDAO orderDAO = new OrderDAO();
         OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
         PaymentDAO paymentDAO = new PaymentDAO();
+        CartDAO cartDAO = new CartDAO();
+        CourseDAO courseDAO = new CourseDAO();
 
-        long orderId = orderDAO.insertOrder(user.getUser_id(), amount, "paid");
+        // Update order status to paid
+        boolean orderUpdated = orderDAO.updateOrderStatus(finalOrderId, "paid");
         
-        for (CartItem item : cartItems) {
-            boolean orderDetailInserted = orderDetailDAO.insertOrderDetail(orderId, item.getCourse_id(), item.getPrice());
+        if (!orderUpdated) {
+            response.sendRedirect("cart");
+            return;
         }
 
-        long paymentId = paymentDAO.insertPayment(orderId, amount, method, "completed");
+        // Get order details for email
+        List<CartItem> cartItems = new ArrayList<>();
+        Cart userCart = cartDAO.getCartByUserId(user.getUser_id());
+        if (userCart != null) {
+            cartItems = cartDAO.getCartItemsByCartId(userCart.getCart_id());
+        }
+
+        long paymentId = paymentDAO.insertPayment(finalOrderId, finalAmount, method, "completed");
         // Clear cart
         if (userCart != null) {
             for (CartItem item : cartItems) {
@@ -88,7 +101,7 @@ public class PaymentSuccessServlet extends HttpServlet {
         // Send Email
         try {
             String orderDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(new java.util.Date());
-            String totalFormatted = String.format("%.2f", amount) + " " + (currency != null ? currency : "USD");
+            String totalFormatted = String.format("%.2f", finalAmount) + " " + (currency != null ? currency : "USD");
 
             StringBuilder itemsTable = new StringBuilder();
             for (CartItem item : cartItems) {
@@ -119,10 +132,10 @@ public class PaymentSuccessServlet extends HttpServlet {
                    .append("<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='margin-bottom:12px;'>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;width:40%'>Customer</td><td style='font-weight:600;color:#2c3e50;'>")
                    .append(user.getFirstName()).append(" ").append(user.getMiddleName()).append(" ").append(user.getLastName()).append(" (" ).append(user.getEmail()).append(")</td></tr>")
-                   .append("<tr><td style='padding:8px 0;color:#6c757d;'>Order ID</td><td style='font-weight:600;color:#2c3e50;'>#").append(orderId).append("</td></tr>")
+                   .append("<tr><td style='padding:8px 0;color:#6c757d;'>Order ID</td><td style='font-weight:600;color:#2c3e50;'>#").append(finalOrderId).append("</td></tr>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;'>Order Date</td><td style='font-weight:600;color:#2c3e50;'>").append(orderDate).append("</td></tr>")
                    .append("<tr><td style='padding:8px 0;color:#6c757d;'>Payment Method</td><td style='font-weight:600;color:#2c3e50;'>").append(method).append("</td></tr>")
-                   .append("<tr><td style='padding:8px 0;color:#6c757d;'>Transaction ID</td><td style='font-weight:600;color:#2c3e50;'>").append(orderIdFromPg != null ? orderIdFromPg : "").append("</td></tr>")
+                   .append("<tr><td style='padding:8px 0;color:#6c757d;'>Transaction ID</td><td style='font-weight:600;color:#2c3e50;'>").append(paypalOrderId != null ? paypalOrderId : "").append("</td></tr>")
                    .append("</table>")
 
                    .append("<table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='border:1px solid #eef2f7;border-radius:10px;overflow:hidden;'>")
@@ -148,8 +161,12 @@ public class PaymentSuccessServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        request.setAttribute("orderId", orderId);
-        request.setAttribute("amount", amount);
+        // Clear session attributes
+        session.removeAttribute("pendingOrderId");
+        session.removeAttribute("orderAmount");
+        
+        request.setAttribute("orderId", finalOrderId);
+        request.setAttribute("amount", finalAmount);
         request.setAttribute("currency", currency != null ? currency : "USD");
         request.getRequestDispatcher("payment-success.jsp").forward(request, response);
     }
