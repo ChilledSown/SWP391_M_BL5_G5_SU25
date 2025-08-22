@@ -21,7 +21,6 @@ public class AdminQuizServlet extends HttpServlet {
             throws ServletException, IOException {
         AdminListDAO dao = new AdminListDAO();
 
-        // Retrieve and validate parameters
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
         String topicIdStr = request.getParameter("topicId");
@@ -53,7 +52,6 @@ public class AdminQuizServlet extends HttpServlet {
             return;
         }
 
-        // Fetch the selected lesson
         Lesson selectedLesson = dao.getLessonById(lessonId);
         if (selectedLesson == null) {
             request.setAttribute("error", "Lesson not found");
@@ -61,7 +59,6 @@ public class AdminQuizServlet extends HttpServlet {
             return;
         }
 
-        // Handle pagination
         int page = 1;
         String pageStr = request.getParameter("page");
         if (pageStr != null) {
@@ -69,11 +66,9 @@ public class AdminQuizServlet extends HttpServlet {
                 page = Integer.parseInt(pageStr);
                 if (page < 1) page = 1;
             } catch (NumberFormatException e) {
-                // Default to page 1
             }
         }
 
-        // Handle search query
         String searchQuery = request.getParameter("query");
         List<Quiz> quizzes;
         int totalQuizzes;
@@ -90,9 +85,8 @@ public class AdminQuizServlet extends HttpServlet {
         }
 
         int totalPages = (int) Math.ceil((double) totalQuizzes / PAGE_SIZE);
-        if (totalPages == 0) totalPages = 1; // Ensure at least one page
+        if (totalPages == 0) totalPages = 1; 
 
-        // Set attributes for JSP
         request.setAttribute("selectedLesson", selectedLesson);
         request.setAttribute("quizzes", quizzes);
         request.setAttribute("currentPage", page);
@@ -101,7 +95,6 @@ public class AdminQuizServlet extends HttpServlet {
         request.setAttribute("courseId", courseId);
         request.setAttribute("topicId", topicId);
 
-        // Handle session message
         String message = (String) request.getSession().getAttribute("message");
         if (message != null) {
             request.setAttribute("message", message);
@@ -114,6 +107,6 @@ public class AdminQuizServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response); // Delegate to doGet for simplicity
+        doGet(request, response); 
     }
 }
