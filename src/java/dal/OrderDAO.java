@@ -31,7 +31,7 @@ public class OrderDAO extends DBContext {
     }
 
     public boolean updateOrderStatus(long orderId, String status) {
-        String sql = "UPDATE [Order] SET Status = ?, Updated_At = GETDATE() WHERE Order_Id = ?";
+        String sql = "UPDATE [Order] SET Status = ? WHERE Order_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setLong(2, orderId);
