@@ -207,7 +207,7 @@
                 width: 32px;
                 height: 32px;
                 margin-right: 5px;
-                text-decoration: none; /* Remove underline from button links */
+                text-decoration: none;
             }
             .edit-btn:hover, .delete-btn:hover {
                 background-color: #27ae60;
@@ -247,6 +247,38 @@
                 height: auto;
                 border-radius: 5px;
                 margin-top: 5px;
+                cursor: pointer;
+            }
+            /* Modal styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.8);
+                justify-content: center;
+                align-items: center;
+            }
+            .modal-content {
+                max-width: 90%;
+                max-height: 90%;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            .close-btn {
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                color: white;
+                font-size: 30px;
+                cursor: pointer;
+                transition: color 0.3s ease;
+            }
+            .close-btn:hover {
+                color: #ccc;
             }
             @media (max-width: 768px) {
                 .header-controls {
@@ -258,6 +290,10 @@
                 }
                 .search-section input[type="text"] {
                     width: 100%;
+                }
+                .modal-content {
+                    max-width: 95%;
+                    max-height: 95%;
                 }
             }
         </style>
@@ -326,7 +362,7 @@
                                         <td><c:out value="${slider.slider_id}" /></td>
                                         <td><c:out value="${slider.title}" /></td>
                                         <td>
-                                            <img src="${slider.image_url.startsWith('http') ? slider.image_url : pageContext.request.contextPath.concat(slider.image_url)}?t=<%= System.currentTimeMillis() %>" alt="Slider Image" class="slider-image" onerror="this.src='${pageContext.request.contextPath}/assets/img/default-slider.png'" />
+                                            <img src="${slider.image_url.startsWith('http') ? slider.image_url : pageContext.request.contextPath.concat(slider.image_url)}?t=<%= System.currentTimeMillis() %>" alt="Slider Image" class="slider-image" onclick="openModal(this.src)" onerror="this.src='${pageContext.request.contextPath}/assets/img/default-slider.png'" />
                                         </td>
                                         <td><fmt:formatDate value="${slider.created_at}" pattern="dd/MM/yyyy" /></td>
                                         <td><fmt:formatDate value="${slider.updated_at}" pattern="dd/MM/yyyy" /></td>
@@ -361,7 +397,31 @@
                         <a class="disabled">Next</a>
                     </c:if>
                 </div>
+                <div id="imageModal" class="modal">
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                    <img id="modalImage" class="modal-content">
+                </div>
             </main>
         </div>
+        <script>
+            function openModal(imageSrc) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('modalImage');
+                modal.style.display = 'flex';
+                modalImg.src = imageSrc;
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('imageModal');
+                modal.style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                const modal = document.getElementById('imageModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            }
+        </script>
     </body>
 </html>
