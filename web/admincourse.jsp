@@ -339,7 +339,6 @@
                                 <th>Thumbnail</th>
                                 <th>Created At</th>
                                 <th>Updated At</th>
-                                <th>Topic ID</th>
                                 <th>Average Rating</th>
                             </tr>
                         </thead>
@@ -367,7 +366,6 @@
                                     </td>
                                     <td><fmt:formatDate value="${course.created_at}" pattern="dd/MM/yyyy" /></td>
                                     <td><fmt:formatDate value="${course.updated_at}" pattern="dd/MM/yyyy" /></td>
-                                    <td><c:out value="${course.topic_id}" /></td>
                                     <td><fmt:formatNumber value="${course.averageRating}" maxFractionDigits="2" /></td>
                                 </tr>
                             </c:forEach>
