@@ -192,7 +192,7 @@
             .reset-btn:hover {
                 background-color: #d35400;
             }
-            .edit-btn, .delete-btn {
+            .edit-btn {
                 background-color: #d35400;
                 border: none;
                 padding: 8px;
@@ -209,8 +209,28 @@
                 margin-right: 5px;
                 text-decoration: none;
             }
-            .edit-btn:hover, .delete-btn:hover {
+            .edit-btn:hover {
                 background-color: #27ae60;
+            }
+            .delete-btn {
+                background-color: #dc3545; /* Changed to red */
+                border: none;
+                padding: 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                color: white;
+                transition: background-color 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                margin-right: 5px;
+                text-decoration: none;
+            }
+            .delete-btn:hover {
+                background-color: #c82333; /* Darker red on hover */
             }
             .profile-section {
                 text-align: center;
