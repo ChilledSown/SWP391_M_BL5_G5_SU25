@@ -172,14 +172,9 @@
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             gap: 16px;
             margin-top: 25px;
-        }
-
-        /* PayPal button container */
-        #paypal-button-container {
-            min-width: 280px;
         }
 
         @media (max-width: 992px) {
@@ -204,9 +199,7 @@
             }
             .cart-actions {
                 justify-content: center;
-            }
-            #paypal-button-container {
-                width: 100%;
+                flex-direction: column;
             }
         }
         
@@ -302,6 +295,58 @@
     </div>
     <!-- Preloader Start -->
    
+    <!-- Combined Header Start (from purchased-courses) -->
+    <style>
+        .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
+        .page-header-content { padding: 40px 0; position: relative; z-index: 2; text-align: center; color: white; }
+        #navigation { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+        #navigation li { margin: 0; padding: 0; display: flex; align-items: center; }
+        #navigation li a { color: white !important; font-weight: 500; font-size: 16px; text-decoration: none; padding: 12px 20px; border-radius: 8px; transition: all 0.3s ease; display: block; position: relative; margin: 0 5px; }
+        #navigation li a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: white; transition: all 0.3s ease; transform: translateX(-50%); }
+        /* Disable hover effects for non-button nav links */
+        #navigation li a:not(.btn):hover { color: white !important; background: transparent !important; transform: none !important; box-shadow: none !important; backdrop-filter: none !important; }
+        #navigation li a:not(.btn):hover::after { width: 0 !important; }
+        .logo img { max-height: 40px; }
+    </style>
+    <div class="combined-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-2 col-lg-2 col-md-2">
+                        <div class="logo">
+                            <a href="home"><img src="assets/img/logo/logo.png" alt=""></a>
+                        </div>
+                    </div>
+                    <div class="col-xl-10 col-lg-10 col-md-10">
+                        <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                            <div class="main-menu d-none d-lg-block">
+                                <nav>
+                                    <ul id="navigation">                                                                                          
+                                        <li><a href="home">Home</a></li>
+                                        <li><a href="courses">Courses</a></li>
+                                        <li><a href="purchased-courses">Purchased courses</a></li>
+                                        <li><a href="blog">Blog</a></li>
+                                        <li class="active"><a href="cart">Cart</a></li>
+                                        <li><a href="customer-list-order">My Order</a></li>
+                                        <li><a href="profile" class="btn">Profile</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-header-content">
+            <div class="container">
+                <h1 class="cart-title" style="margin:0;">Shopping Cart</h1>
+            </div>
+        </div>
+    </div>
+    <!-- Combined Header End -->
 
     <main>
         <!-- Cart Section -->
@@ -343,16 +388,15 @@
                             
                             <!-- Cart Summary -->
                             <div class="cart-summary">
-                                <div class="summary-row">
-                                    <span class="summary-label">Total:</span>
-                                    <span class="summary-value">$${cartTotal}</span>
+                                <div class="summary-row total-row">
+                                    <span class="summary-label total-label">Total:</span>
+                                    <span class="summary-value total-value">$${cartTotal}</span>
                                 </div>
                                 
                                 <div class="cart-actions">
                                     <a href="courses" class="btn-continue">Continue Shopping</a>
-                                    
+                                    <a href="checkout" class="btn-checkout">Proceed to Checkout</a>
                                 </div>
-                                <div id="paypal-button-container" style="margin-left: auto;"></div>
                             </div>
                         </c:otherwise>
                     </c:choose>
@@ -361,9 +405,9 @@
         </section>
     </main>
 
+    <!-- Footer Start-->
     <footer>
         <div class="footer-wrappper footer-bg">
-            <!-- Footer Start-->
             <div class="footer-area footer-padding">
                 <div class="container">
                     <div class="row justify-content-between">
@@ -505,42 +549,6 @@
             });
         }
     }
-</script>
-
-<!-- PayPal JS SDK (Sandbox). Replace client-id with your Sandbox Client ID -->
-<script src="https://www.paypal.com/sdk/js?client-id=ATdH4OWCF17eQ5EJcvqaswbwhnxjceeobCVEzGY4qMrECabo_aAHhmGIbja5Cmy3ppxGUfRDRKc9z4xw&currency=USD"></script>
-<script>
-    (function renderPaypalButton() {
-        var container = document.getElementById('paypal-button-container');
-        if (!container) return;
-        var total = '${cartTotal}';
-        if (!total || total === '0' || total === '0.00') return;
-
-        if (typeof paypal === 'undefined') {
-            console.error('PayPal SDK not loaded');
-            return;
-        }
-
-        paypal.Buttons({
-            style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'paypal' },
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{ amount: { value: String(total) } }]
-                });
-            },
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    var amount = String(total);
-                    var currency = 'USD';
-                    window.location.href = 'payment-success?orderId=' + encodeURIComponent(details.id) + '&amount=' + encodeURIComponent(amount) + '&currency=' + encodeURIComponent(currency);
-                });
-            },
-            onError: function (err) {
-                console.error(err);
-                alert('Payment failed. Please try again.');
-            }
-        }).render('#paypal-button-container');
-    })();
 </script>
 
 </body>
