@@ -317,7 +317,6 @@
                                 <th>Content</th>
                                 <th>Created At</th>
                                 <th>Updated At</th>
-                                <th>Course ID</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -329,7 +328,6 @@
                                     <td><c:out value="${lesson.content != null ? lesson.content : 'N/A'}" /></td>
                                     <td><fmt:formatDate value="${lesson.createdAt}" pattern="dd/MM/yyyy" /></td>
                                     <td><fmt:formatDate value="${lesson.updatedAt}" pattern="dd/MM/yyyy" /></td>
-                                    <td><c:out value="${lesson.courseId}" /></td>
                                 </tr>
                             </c:forEach>
                         </tbody>
