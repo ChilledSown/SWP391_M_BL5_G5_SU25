@@ -9,16 +9,13 @@ import model.Slider;
 
 public class SliderDAO extends DBContext {
 
-    // Validate URL format (basic check)
     private boolean isValidImageUrl(String url) {
         if (url == null || url.trim().isEmpty()) {
-            return true; // Allow null/empty as optional
+            return true; 
         }
-        // Basic URL validation (starts with http, https, or server path)
         return url.matches("^(https?://.*|(/[a-zA-Z0-9_/\\-\\.]+\\.(jpg|jpeg|png|gif)))$");
     }
 
-    // Get all sliders
     public List<Slider> getAllSlider() {
         List<Slider> sliders = new ArrayList<>();
         String sql = "SELECT * FROM Slider ORDER BY Slider_Id";
@@ -41,7 +38,6 @@ public class SliderDAO extends DBContext {
         return sliders;
     }
 
-    // Get slider by ID
     public Slider getSliderById(Long sliderId) {
         String sql = "SELECT * FROM Slider WHERE Slider_Id = ?";
 
@@ -65,7 +61,6 @@ public class SliderDAO extends DBContext {
         return null;
     }
 
-    // Get slider by title (for uniqueness validation)
     public Slider getSliderByTitle(String title) {
         String sql = "SELECT * FROM Slider WHERE Title = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -87,7 +82,6 @@ public class SliderDAO extends DBContext {
         return null;
     }
 
-    // Get sliders with pagination and search
     public List<Slider> getSlidersWithPagination(String query, int page, int pageSize) {
         List<Slider> sliders = new ArrayList<>();
         String sql = "SELECT * FROM Slider WHERE Title LIKE ? ORDER BY Slider_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -112,7 +106,6 @@ public class SliderDAO extends DBContext {
         return sliders;
     }
 
-    // Get total number of sliders for pagination
     public int getTotalSliders(String query) {
         String sql = "SELECT COUNT(*) FROM Slider WHERE Title LIKE ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -152,7 +145,6 @@ public class SliderDAO extends DBContext {
         return sliders;
     }
 
-    // Get total number of sliders by title
     public int getTotalSlidersByTitle(String query) {
         String sql = "SELECT COUNT(*) FROM Slider WHERE Title LIKE ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -168,7 +160,6 @@ public class SliderDAO extends DBContext {
         return 0;
     }
     
-    // Get sliders by page
     public List<Slider> getSlidersByPage(int page, int pageSize) {
         List<Slider> sliders = new ArrayList<>();
         String sql = "SELECT * FROM Slider ORDER BY Slider_Id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -192,7 +183,6 @@ public class SliderDAO extends DBContext {
         return sliders;
     }
     
-    // Get total number of sliders
     public int getTotalSliders() {
         String sql = "SELECT COUNT(*) FROM Slider";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -207,7 +197,6 @@ public class SliderDAO extends DBContext {
         return 0;
     }
     
-    // Update a slider
     public boolean updateSlider(Slider slider) {
         if (!isValidImageUrl(slider.getImage_url())) {
             System.out.println("Invalid image URL: " + slider.getImage_url());
@@ -225,7 +214,6 @@ public class SliderDAO extends DBContext {
         }
     }
 
-    // Insert a new slider
     public boolean insertSlider(Slider slider) {
         if (!isValidImageUrl(slider.getImage_url())) {
             System.out.println("Invalid image URL: " + slider.getImage_url());
@@ -242,7 +230,6 @@ public class SliderDAO extends DBContext {
         }
     }
 
-    // Delete a slider
     public boolean deleteSlider(long sliderId) {
         String sql = "DELETE FROM Slider WHERE Slider_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -254,7 +241,6 @@ public class SliderDAO extends DBContext {
         }
     }
 
-    // Main method for testing
     public static void main(String[] args) {
         SliderDAO sliderDAO = new SliderDAO();
         List<Slider> sliders = sliderDAO.getAllSlider();

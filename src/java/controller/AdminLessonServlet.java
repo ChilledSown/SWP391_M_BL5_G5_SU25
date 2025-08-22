@@ -54,7 +54,6 @@ public class AdminLessonServlet extends HttpServlet {
             try {
                 page = Integer.parseInt(pageStr);
             } catch (NumberFormatException e) {
-                // Default to page 1
             }
         }
 
@@ -81,6 +80,6 @@ public class AdminLessonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response); // Delegate to doGet for simplicity
+        doGet(request, response); 
     }
 }
