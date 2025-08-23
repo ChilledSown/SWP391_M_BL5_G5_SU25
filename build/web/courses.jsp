@@ -511,9 +511,9 @@
                                             <li><a href="purchased-courses">Purchased courses</a></li>
                                             <li><a href="blog">Blog</a></li>
                                             <li><a href="cart">Cart</a></li>
-                                            <li><a href="customer-list-order">My Order</a></li>
-                                            <li><a href="profile" class="btn">Profile</a></li>
-                                            <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                                            <!-- Button -->
+                                            <li class="button-header margin-left "><a href="profile" class="btn">Profile</a></li>
                                         </ul>
                                     </nav>
                                 </div>

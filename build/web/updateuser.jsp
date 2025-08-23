@@ -9,7 +9,6 @@
         <title>Update User</title>
         <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -22,46 +21,15 @@
                 min-height: 100vh;
             }
             .sidebar {
-                width: 200px; /* Cố định độ rộng cột menu thành 200px */
+                width: 250px;
                 background-color: #2c3e50;
                 color: white;
                 padding: 20px;
                 box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-                position: relative;
             }
             .sidebar-header {
                 text-align: center;
                 margin-bottom: 30px;
-            }
-            .profile-section {
-                text-align: center;
-                margin-bottom: 30px;
-            }
-            .profile-avatar {
-                width: 100px;
-                height: 100px;
-                border-radius: 50%; 
-                object-fit: cover;
-                border: 2px solid #3498db;
-            }
-            .profile-name {
-                margin: 10px 0;
-                font-size: 18px;
-                font-weight: 500;
-            }
-            .edit-profile-btn {
-                background-color: transparent;
-                border: none;
-                color: #3498db;
-                font-size: 16px;
-                cursor: pointer;
-                position: relative;
-                top: -58px;
-                left: 30px;
-                transition: color 0.3s ease;
-            }
-            .edit-profile-btn:hover {
-                color: #2980b9;
             }
             .sidebar-nav ul {
                 list-style-type: none;
@@ -70,7 +38,6 @@
             .sidebar-nav li {
                 margin-bottom: 10px;
                 border-radius: 5px;
-                transition: background-color 0.3s ease;
             }
             .sidebar-nav li:hover {
                 background-color: #34495e;
@@ -84,10 +51,6 @@
                 color: white;
                 text-decoration: none;
                 font-size: 16px;
-                transition: color 0.3s ease;
-            }
-            .sidebar-nav a:hover {
-                color: #ecf0f1;
             }
             .main-content {
                 flex-grow: 1;
@@ -103,22 +66,19 @@
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                 max-width: 600px;
                 margin: 0 auto;
-                overflow: hidden; /* Ngăn tràn nội dung */
             }
             .form-container label {
                 display: block;
                 margin-bottom: 5px;
-                font-weight: 500;
+                font-weight: bold;
             }
-            .form-container input,
-            .form-container select {
+            .form-container input, .form-container select {
                 width: 100%;
-                padding: 10px;
+                padding: 8px;
                 margin-bottom: 15px;
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 box-sizing: border-box;
-                font-size: 16px; /* Đảm bảo phông chữ đồng nhất */
             }
             .form-container button {
                 background-color: #2ecc71;
@@ -128,8 +88,6 @@
                 border-radius: 4px;
                 cursor: pointer;
                 font-weight: bold;
-                font-size: 16px;
-                transition: background-color 0.3s ease;
             }
             .form-container button:hover {
                 background-color: #27ae60;
@@ -145,33 +103,6 @@
                 color: red;
                 margin-bottom: 15px;
                 text-align: center;
-                padding: 10px;
-                background-color: #ffebee;
-                border-radius: 4px;
-            }
-            @media (max-width: 768px) {
-                .sidebar {
-                    width: 100px; /* Thu nhỏ sidebar trên mobile */
-                }
-                .sidebar-nav a {
-                    font-size: 14px;
-                    padding: 10px 15px;
-                }
-                .profile-avatar {
-                    width: 60px;
-                    height: 60px;
-                }
-                .profile-name {
-                    font-size: 14px;
-                }
-                .edit-profile-btn {
-                    top: -40px;
-                    left: 20px;
-                    font-size: 14px;
-                }
-                .form-container {
-                    padding: 15px;
-                }
             }
         </style>
     </head>
@@ -199,6 +130,9 @@
             </aside>
 
             <main class="main-content">
+                <header class="main-header">
+                    <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}" />!</h1>
+                </header>
                 <header class="main-header">
                     <h1>Update User</h1>
                 </header>
@@ -241,11 +175,11 @@
                             <option value="admin" <c:if test="${user.role == 'admin'}">selected</c:if>>Admin</option>
                             <option value="seller" <c:if test="${user.role == 'seller'}">selected</c:if>>Seller</option>
                             <option value="customer" <c:if test="${user.role == 'customer'}">selected</c:if>>Customer</option>
-                        </select>
+                            </select>
 
-                        <label for="accountStatus">Account Status</label>
-                        <select id="accountStatus" name="accountStatus" required>
-                            <option value="active" <c:if test="${user.accountStatus == 'active'}">selected</c:if>>Active</option>
+                            <label for="accountStatus">Account Status</label>
+                            <select id="accountStatus" name="accountStatus" required>
+                                <option value="active" <c:if test="${user.accountStatus == 'active'}">selected</c:if>>Active</option>
                             <option value="inactive" <c:if test="${user.accountStatus == 'inactive'}">selected</c:if>>Inactive</option>
                             <option value="suspended" <c:if test="${user.accountStatus == 'suspended'}">selected</c:if>>Suspended</option>
                         </select>
