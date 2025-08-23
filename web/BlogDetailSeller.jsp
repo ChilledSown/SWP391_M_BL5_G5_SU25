@@ -54,7 +54,6 @@
                 </tr>
             </table>
         </c:if>
-
     <a href="listBlogsSeller" class="btn btn-secondary">Back</a>
 </body>
 </html>

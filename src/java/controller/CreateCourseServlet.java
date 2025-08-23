@@ -27,7 +27,7 @@ public class CreateCourseServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
 
-        // Lấy user đăng nhập
+       
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
             session.setAttribute("error", "Please log in to create a course.");
@@ -35,7 +35,7 @@ public class CreateCourseServlet extends HttpServlet {
             return;
         }
 
-        // Lấy thông tin form
+      
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         String priceStr = request.getParameter("price");
@@ -43,7 +43,7 @@ public class CreateCourseServlet extends HttpServlet {
         String thumbnailUrl = request.getParameter("thumbnail_url");
         Part filePart = request.getPart("thumbnail");
 
-        // Validate form fields
+      
         boolean hasError = false;
         if (title == null || title.trim().isEmpty()) {
             session.setAttribute("titleError", "Please enter a course title.");
@@ -84,19 +84,19 @@ public class CreateCourseServlet extends HttpServlet {
             hasError = true;
         }
 
-        // If there are validation errors, redirect back to form
+     
         if (hasError) {
             response.sendRedirect("blog_course_form.jsp?type=course");
             return;
         }
 
-        // Xử lý ảnh thumbnail upload
+     
         if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String contentType = filePart.getContentType();
             long fileSize = filePart.getSize();
 
-            // Validate ảnh
+         
             if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
                 session.setAttribute("thumbnailError", "Only JPG, PNG, or GIF files are allowed.");
                 response.sendRedirect("blog_course_form.jsp?type=course");
@@ -108,24 +108,24 @@ public class CreateCourseServlet extends HttpServlet {
                 return;
             }
 
-            // Lưu file vào thư mục assets/img/uploads
+            
             String uploadPath = getServletContext().getRealPath("/") + "assets/img/uploads";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) uploadDir.mkdirs();
 
-            // Đảm bảo không ghi đè file trùng tên
+        
             String savedFileName = System.currentTimeMillis() + "_" + fileName;
             filePart.write(uploadPath + File.separator + savedFileName);
 
-            // Đường dẫn lưu vào DB
+          
             thumbnailUrl = "assets/img/uploads/" + savedFileName;
         }
 
-        // Kiểm tra trùng tiêu đề
+       
         CourseDAO dao = new CourseDAO();
         boolean isDuplicate = dao.isTitleExists(title);
 
-        // Thêm vào DB
+      
         Course course = new Course();
         course.setTitle(title);
         course.setDescription(description);
@@ -135,7 +135,7 @@ public class CreateCourseServlet extends HttpServlet {
         course.setTopic_id(Long.parseLong(topicIdStr));
         dao.insertCourse(course, currentUser.getUser_id());
 
-        // Nếu tiêu đề trùng, gửi cảnh báo
+       
         if (isDuplicate) {
             session.setAttribute("duplicateMessage", "Course title already exists. You may want to use a different title.");
         }

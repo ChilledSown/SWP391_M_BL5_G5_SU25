@@ -21,9 +21,9 @@ import model.Course;
  * @author Admin
  */
 // list , pagintion , search
-@WebServlet(name = "ListCouseraSeller", urlPatterns = {"/listCousera"})
+@WebServlet(name = "ListCouseraSeller", urlPatterns = {"/listCourses"})
 //@WebServlet(urlPatterns = {"/listCousera"})
-public class ListCouseraSeller extends HttpServlet {
+public class ListCoursesInstructor extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -129,7 +129,7 @@ public class ListCouseraSeller extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
 
-        request.getRequestDispatcher("seller.jsp").forward(request, response);
+        request.getRequestDispatcher("instructor_courses.jsp").forward(request, response);
 
     }
 

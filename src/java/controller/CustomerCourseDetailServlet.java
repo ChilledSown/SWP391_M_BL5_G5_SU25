@@ -47,31 +47,30 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             
             long courseId = Long.parseLong(courseIdStr);
             
-            // Get DAOs
+       
             CourseDAO courseDAO = new CourseDAO();
             LessonDAO lessonDAO = new LessonDAO();
             ReviewDAO reviewDAO = new ReviewDAO();
             CartDAO cartDAO = new CartDAO();
-            
-            // Get course details
+
             Course course = courseDAO.getCourseById(courseId);
             if (course == null) {
                 response.sendRedirect("courses");
                 return;
             }
             
-            // Get topic for this course
+       
             TopicDAO topicDAO = new TopicDAO();
             Topic topic = topicDAO.getTopicByCourseId(courseId);
             
-            // Get lessons for this course
+        
             List<Lesson> lessons = lessonDAO.getLessonsByCourseId(courseId);
             
-            // Get reviews for this course
+           
             List<Review> reviews = reviewDAO.getReviewsByCourseId(courseId);
-            // Map user info for each review
+        
             UserDAO userDAO = new UserDAO();
-            Map<Long, User> reviewUsersMap = new HashMap<>(); // key = user_id
+            Map<Long, User> reviewUsersMap = new HashMap<>(); 
             for (Review r : reviews) {
                 if (r != null && r.getReview_id() != null) {
                     User reviewUser = userDAO.getUserByReview(r.getReview_id());
@@ -81,7 +80,7 @@ public class CustomerCourseDetailServlet extends HttpServlet {
                 }
             }
             
-            // Get average rating and review count
+ 
             double averageRating = reviewDAO.getAverageRatingByCourseId(courseId);
             int reviewCount = reviewDAO.getReviewCountByCourseId(courseId);
             HttpSession session = request.getSession();
@@ -90,14 +89,12 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             Review userReview = null;
             Cart userCart = null;
             boolean isCourseInCart = false;
-            
-            // Get user's review for this course
+
             userReview = reviewDAO.getReviewByUserAndCourse(userId, courseId);
-            
-            // Check purchased status
+   
             boolean hasPurchased = courseDAO.hasUserPurchasedCourse(userId, courseId);
 
-            // Get user's cart
+ 
             userCart = cartDAO.getCartByUserId(userId);
             if (userCart != null) {
                 isCourseInCart = cartDAO.isCourseInCart(userCart.getCart_id(), courseId);
@@ -115,8 +112,7 @@ public class CustomerCourseDetailServlet extends HttpServlet {
             request.setAttribute("userCart", userCart);
             request.setAttribute("isCourseInCart", isCourseInCart);
             request.setAttribute("hasPurchased", hasPurchased);
-            
-            // Forward to JSP
+
             request.getRequestDispatcher("customer-course-detail.jsp").forward(request, response);
             
         } catch (Exception e) {

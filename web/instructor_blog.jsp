@@ -1,19 +1,13 @@
-<%@ page import="java.util.*" %>
-<%@ page import="model.*" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="dal.TopicDAO" %>
-<%@ page import="java.util.List" %>
-<%@ page import="model.Topic" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="model.Course" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Manage Courses | Seller Dashboard</title>
+        <title>Manage Blogs | Seller Dashboard</title>
         <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="manifest" href="site.webmanifest">
@@ -249,91 +243,71 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="seller.jsp" class="nav-link active">Courses</a></li>
-                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link active">Blogs</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Course Management</h2>
-                            <p>Manage your courses here.</p>
-                            <%
-                                TopicDAO topicDAO = new TopicDAO();
-                                List<Topic> topics = topicDAO.getAllTopics();
-                                Map<Long, String> topicMap = new HashMap<>();
-                                for (Topic t : topics) {
-                                    topicMap.put(t.getTopic_id(), t.getName());
-                                }
-                                request.setAttribute("topicMap", topicMap);
-                            %>
-                            <form action="listCousera" method="get" class="mb-4">
-                                <div class="row">
-                                    <div class="col-md-4 col-sm-12 form-group">
-                                        <label for="title" class="mr-2">Search Courses</label>
-                                        <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
+                            <h2>Blog Management</h2>
+                            <p>Manage your blogs here.</p>
+                            <a href="Add_EditSeller.jsp" class="btn btn-primary mb-3">
+                                <i class="fas fa-plus"></i> Create New Blog
+                            </a>
+                            <!-- Search -->
+                            <form method="get" action="listBlogsSeller" class="mb-4">
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
                                     </div>
-                                    <div class="col-md-4 col-sm-12 form-group">
-                                        <label for="createdDate" class="mr-2">Date:</label>
-                                        <input type="date" class="form-control" name="createdDate" id="createdDate" value="${param.createdDate}">
+                                    <div class="col-md-3">
+                                        <input type="date" name="createdDate" class="form-control" value="${param.createdDate}" />
                                     </div>
-                                    <div class="col-md-4 col-sm-12 form-group">
-                                        <label for="topicId" class="mr-2">Topic:</label>
-                                        <select name="topicId" id="topicId" class="form-control">
-                                            <option value="">All Topics</option>
-                                            <% for (Topic t : topics) {%>
-                                            <option value="<%= t.getTopic_id()%>" <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : ""%>>
-                                                <%= t.getName()%>
-                                            </option>
-                                            <% }%>
-                                        </select>
-                                    </div>
-                                    <div class="col-12 form-group mt-3">
-                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-primary w-100">Search</button>
                                     </div>
                                 </div>
-                                <input type="hidden" name="page" value="1" />
                             </form>
-                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-3">Create New Course</a>
+                            <!-- Blog Table -->
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Image</th>
+                                        <th>Thumbnail</th>
                                         <th>Title</th>
-                                        <th>Price</th>
-                                        <th>Create_At</th>
-                                        <th>Topic</th>
+                                        <th>Created At</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="course" items="${courses}">
+                                    <c:forEach var="blog" items="${blogs}">
                                         <tr>
                                             <td class="text-center">
-                                                <img src="${course.thumbnail_url}" alt="Thumbnail" style="width: 80px; border-radius: 8px;">
+                                                <img src="${blog.thumbnailUrl}" alt="Thumbnail" style="width: 80px; border-radius: 8px;">
                                             </td>
-                                            <td>${course.title}</td>
-                                            <td>${course.price}</td>
-                                            <td><fmt:formatDate value="${course.created_at}" pattern="yyyy-MM-dd" /></td>
-                                            <td>${topicMap[course.topic_id]}</td>
+                                            <td>${blog.title}</td>
                                             <td>
-                                                <a href="blog_course_form.jsp?type=course&action=update&courseId=${course.course_id}" class="btn-action" title="Edit">
+                                                <fmt:parseDate value="${blog.createdAt}" pattern="yyyy-MM-dd" var="parsedDate" />
+                                                <fmt:formatDate value="${parsedDate}" pattern="yyyy-MM-dd" />
+                                            </td>
+                                            <td>
+                                                <a href="Add_EditSeller.jsp?action=update&blogId=${blog.blogId}" class="btn-action" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="deleteCourse?courseId=${course.course_id}" class="btn-action" title="Delete" onclick="return confirm('Are you sure?');">
+                                                <a href="deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
-                                                <a href="courseDetail?courseId=${course.course_id}" class="btn-action" title="View">
+                                                <a href="blogDetailSeller?blogId=${blog.blogId}" class="btn-action" title="Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
                                         </tr>
                                     </c:forEach>
-                                    <c:if test="${empty courses}">
+                                    <c:if test="${empty blogs}">
                                         <tr>
-                                            <td colspan="6" class="text-center">No courses found.</td>
+                                            <td colspan="4" class="text-center">No blogs found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>

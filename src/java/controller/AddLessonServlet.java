@@ -17,9 +17,9 @@ import model.Lesson;
 
 @WebServlet(name = "AddLessonServlet", urlPatterns = {"/addLesson"})
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 100 * 1024 * 1024, // 100MB
-        maxRequestSize = 150 * 1024 * 1024 // 150MB
+        fileSizeThreshold = 1024 * 1024, 
+        maxFileSize = 100 * 1024 * 1024, 
+        maxRequestSize = 150 * 1024 * 1024 
 )
 public class AddLessonServlet extends HttpServlet {
 
@@ -33,7 +33,7 @@ public class AddLessonServlet extends HttpServlet {
         String courseIdParam = request.getParameter("courseId");
         Part videoFilePart = request.getPart("videoFile");
 
-        // Validate inputs
+       
         if (courseIdParam == null || courseIdParam.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Course ID is required.");
             request.setAttribute("title", title);
@@ -84,7 +84,7 @@ public class AddLessonServlet extends HttpServlet {
             return;
         }
 
-        // Validate duplicate title
+       
         LessonDAO dao = new LessonDAO();
         if (dao.isTitleDuplicate(title.trim(), courseId)) {
             request.setAttribute("errorMessage", "A lesson with this title already exists for the course.");
@@ -96,14 +96,14 @@ public class AddLessonServlet extends HttpServlet {
             return;
         }
 
-        // Handle video file upload
+        
         String finalVideoUrl = videoUrl != null ? videoUrl.trim() : "";
         if (videoFilePart != null && videoFilePart.getSize() > 0) {
             String fileName = Paths.get(videoFilePart.getSubmittedFileName()).getFileName().toString();
             String contentType = videoFilePart.getContentType();
             long fileSize = videoFilePart.getSize();
 
-            // Validate file
+           
             if (!(contentType.equals("video/mp4") || contentType.equals("video/webm") || contentType.equals("video/ogg"))) {
                 request.setAttribute("errorMessage", "Only MP4, WebM, or OGG video files are allowed.");
                 request.setAttribute("title", title);
@@ -123,7 +123,7 @@ public class AddLessonServlet extends HttpServlet {
                 return;
             }
 
-            // Save file
+          
             String uploadPath = getServletContext().getRealPath("/") + "assets/video/course";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
@@ -145,7 +145,7 @@ public class AddLessonServlet extends HttpServlet {
             }
         }
 
-        // Create lesson
+      
         Lesson lesson = new Lesson();
         lesson.setTitle(title.trim());
         lesson.setVideoUrl(finalVideoUrl);
@@ -164,7 +164,7 @@ public class AddLessonServlet extends HttpServlet {
             return;
         }
 
-        // Respond with success to trigger parent page reload
+      
         response.setContentType("text/plain");
         response.getWriter().write("success");
     }

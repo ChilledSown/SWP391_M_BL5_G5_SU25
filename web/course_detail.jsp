@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <html>
     <head>
         <title>Course Detail</title>
@@ -57,12 +59,13 @@
                     </tr>
                     <tr>
                         <td class="course-label">Created At:</td>
-                        <td>${course.created_at}</td>
+                        <td><fmt:formatDate value="${course.created_at}" pattern="yyyy-MM-dd"/></td>
                     </tr>
                     <tr>
                         <td class="course-label">Updated At:</td>
-                        <td>${course.updated_at}</td>
+                        <td><fmt:formatDate value="${course.updated_at}" pattern="yyyy-MM-dd"/></td>
                     </tr>
+
                     <tr>
                         <td class="course-label">Thumbnail:</td>
                         <td><img src="${course.thumbnail_url}" class="course-thumbnail" alt="Thumbnail" /></td>
