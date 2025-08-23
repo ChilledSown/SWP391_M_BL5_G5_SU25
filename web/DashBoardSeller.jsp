@@ -189,7 +189,7 @@
                                             <ul id="navigation">
                                                 <li><a href="index.jsp">Home</a></li>
                                                 <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
-                                                <li><a href="logout.jsp">Logout</a></li>
+                                                <li><a href="logout">Logout</a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -212,6 +212,7 @@
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="instructorvideoquiz.jsp" class="nav-link">Video Quiz</a></li>
                                 <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
