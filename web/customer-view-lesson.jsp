@@ -14,13 +14,12 @@
         <link rel="stylesheet" href="https://vjs.zencdn.net/8.10.0/video-js.css">
         <style>
             body { font-family: "Helvetica Neue", Arial, sans-serif; }
-            .lesson-layout { padding: 60px 0; background: #f7f9fc; }
+            .lesson-layout { padding: 40px 0; background: #f7f9fc; min-height: calc(100vh - 200px); }
             
             /* Coursera-style sidebar */
             .sidebar { 
                 background: #ffffff; 
                 border-radius: 8px; 
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
                 border: 1px solid #e1e5e9;
             }
             .sidebar .sidebar-title { 
@@ -104,7 +103,6 @@
             .quiz-box .btn-primary:hover {
                 background: #004085;
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
             }
             
             .quiz-box .btn-secondary {
@@ -123,7 +121,6 @@
             .player-card { 
                 background: #ffffff; 
                 border-radius: 8px; 
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
                 padding: 20px; 
                 border: 1px solid #e1e5e9;
             }
@@ -133,12 +130,26 @@
                 background: #000; 
                 border-radius: 8px; 
                 overflow: hidden; 
-                height: 480px; 
+                height: 480px;
             }
             
-            /* Ensure video fills the wrapper while keeping aspect ratio */
-            .video-js, #lessonVideo { width: 100% !important; height: 100% !important; }
-            .video-js .vjs-tech, #lessonVideo { object-fit: contain; background-color: #000; }
+            .video-js { 
+                 width: 100% !important; 
+                 height: 100% !important; 
+             }
+             
+             .video-js .vjs-loading-spinner {
+                 display: block !important;
+                 z-index: 10 !important;
+             }
+             
+             .video-js .vjs-big-play-button {
+                 z-index: 5 !important;
+             }
+             
+             .video-js .vjs-control-bar {
+                 z-index: 5 !important;
+             }
             
             /* Video Quiz Styles */
             .video-quiz-overlay {
@@ -161,7 +172,6 @@
                 width: 90%;
                 max-height: 80%;
                 overflow-y: auto;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             }
             
             .video-quiz-content {
@@ -246,9 +256,8 @@
         </style>
     </head>
     <body>
-        <!-- Combined Header Start (from purchased-courses) -->
         <style>
-            .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; }
             .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
             .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
             .page-header-content { padding: 40px 0; position: relative; z-index: 2; text-align: center; color: white; }
@@ -293,10 +302,10 @@
         </div>
 
         <main class="lesson-layout">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row g-4">
                     <!-- Sidebar lessons -->
-                    <div class="col-lg-3">
+                    <div class="col-lg-3 col-xl-2">
                         <div class="sidebar">
                             <div class="sidebar-title">Lessons</div>
                             <c:forEach items="${lessons}" var="lesson" varStatus="s">
@@ -309,7 +318,7 @@
                             <div class="quiz-box">
                                 <c:choose>
                                     <c:when test="${not empty quizzes}">
-                                        <a class="btn w-100 btn-primary" href="quizDetail?lessonId=${activeLesson.lessonId}&quizId=${quizzes[0].quizId}">Practice Quiz</a>
+                                        <a class="btn w-100 btn-primary" href="customer-quiz-preparation?courseId=${courseId}&lessonId=${activeLesson.lessonId}">Practice Quiz</a>
                                         <div class="quiz-info text-muted mt-2" style="font-size: 13px">${fn:length(quizzes)} questions available</div>
                                     </c:when>
                                     <c:otherwise>
@@ -321,7 +330,7 @@
                     </div>
 
                     <!-- Main content -->
-                    <div class="col-lg-9">
+                    <div class="col-lg-9 col-xl-10">
                         <div class="player-card">
                             <div class="video-wrapper">
                                 <c:choose>
@@ -337,13 +346,13 @@
                                                 <c:url value="/${activeLesson.videoUrl}" var="resolvedVideoUrl" />
                                             </c:otherwise>
                                         </c:choose>
-                                        <video id="lessonVideo" class="video-js vjs-default-skin" width="100%" height="480" controls data-setup='{}'>
-                                            <source src="${resolvedVideoUrl}" type="video/mp4">
-                                            Your browser does not support HTML5 video.
-                                        </video>
+                                                                                 <video id="lessonVideo" class="video-js vjs-default-skin" controls preload="auto" data-setup='{}'>
+                                             <source src="${resolvedVideoUrl}" type="video/mp4">
+                                             Your browser does not support HTML5 video.
+                                         </video>
                                     </c:when>
                                     <c:otherwise>
-                                        <div style="color:#fff;display:flex;align-items:center;justify-content:center;height:360px;">Ch? h? tr? phát video n?i b? (local). Vui lòng c?p nh?t URL video không ph?i YouTube.</div>
+                                        <div style="color:#fff;display:flex;align-items:center;justify-content:center;height:360px;">Ch? h? tr? phï¿½t video n?i b? (local). Vui lï¿½ng c?p nh?t URL video khï¿½ng ph?i YouTube.</div>
                                     </c:otherwise>
                                 </c:choose>
                                 
@@ -419,14 +428,11 @@
         <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
         
         <script>
-            // Video Quiz Variables
             let videoQuizzes = [];
             let currentQuiz = null;
             let selectedAnswer = null;
-            let videoElement = null; // HTML5 video element or video.js player instance
+            let videoElement = null;
             let quizCheckInterval = null;
-            
-            // Initialize video quiz functionality
             document.addEventListener('DOMContentLoaded', function() {
                 const lessonId = '${activeLesson.lessonId}';
                 if (lessonId) {
@@ -434,8 +440,6 @@
                     setupVideoTracking();
                 }
             });
-            
-            // Load video quizzes for the current lesson (parse QUIZ| lines)
             function loadVideoQuizzes(lessonId) {
                 fetch('video-quiz?action=get-quizzes&lessonId=' + lessonId)
                     .then(response => response.text())
@@ -461,54 +465,46 @@
                                 }
                             }
                         });
-                        console.log('Loaded video quizzes:', videoQuizzes);
                     })
                     .catch(error => {
                         console.error('Error loading video quizzes:', error);
                     });
             }
             
-            // Setup video tracking for quiz timing
-            function setupVideoTracking() {
-                const el = document.getElementById('lessonVideo');
-                if (!el) return;
-                
-                if (el.tagName === 'VIDEO') {
-                    // Initialize video.js for HTML5 video
-                    try {
-                        videoElement = videojs('lessonVideo');
-                        if (videoElement && typeof videoElement.ready === 'function') {
-                            videoElement.ready(function() {
-                                console.log('Quiz Timing: video.js ready');
-                                this.on('timeupdate', checkForQuizzes);
-                                this.on('loadedmetadata', function() {
-                                    console.log('Quiz Timing: metadata loaded, duration =', this.duration());
-                                });
-                            });
-                        } else {
-                            videoElement.on('timeupdate', checkForQuizzes);
-                        }
-                        // Fallback timer in case timeupdate fires sparsely
-                        quizCheckInterval = setInterval(checkForQuizzes, 1000);
-                    } catch (e) {
-                        // Fallback: native timeupdate
-                        videoElement = el;
-                        el.addEventListener('timeupdate', checkForQuizzes);
-                        quizCheckInterval = setInterval(checkForQuizzes, 1000);
-                    }
-                } else if (el.tagName === 'IFRAME') {
-                    // YouTube: we cannot read time reliably; use a simple 1s timer demo
-                    quizCheckInterval = setInterval(checkForQuizzes, 1000);
-                }
-            }
+                         function setupVideoTracking() {
+                 const el = document.getElementById('lessonVideo');
+                 if (!el) return;
+                 
+                 try {
+                     videoElement = videojs('lessonVideo', {
+                         controls: true,
+                         preload: 'auto',
+                         fluid: false,
+                         responsive: true
+                     });
+                     
+                     videoElement.ready(function() {
+                         this.on('timeupdate', checkForQuizzes);
+                         this.on('loadstart', function() {
+                         });
+                         this.on('loadeddata', function() {
+                             console.log('Video data loaded');
+                         });
+                     });
+                     
+                     quizCheckInterval = setInterval(checkForQuizzes, 1000);
+                 } catch (e) {
+                     videoElement = el;
+                     el.addEventListener('timeupdate', checkForQuizzes);
+                     quizCheckInterval = setInterval(checkForQuizzes, 1000);
+                 }
+             }
             
-            // Check if any quiz should be shown at current time
             function checkForQuizzes() {
                 if (videoQuizzes.length === 0) return;
                 
                 let currentTime = 0;
                 if (videoElement) {
-                    // video.js player has currentTime(); native video has currentTime property
                     try {
                         if (typeof videoElement.currentTime === 'function') {
                             currentTime = Math.floor(videoElement.currentTime());
@@ -517,39 +513,27 @@
                         }
                     } catch (_) {}
                 } else {
-                    // Fallback demo for iframe
                     currentTime = Math.floor(Date.now() / 1000) % 3600;
                 }
                 
-                // Debug log near next timestamp
                 const nextQuiz = videoQuizzes.find(q => q.isActive && !q.shown);
-                if (nextQuiz && Math.abs(nextQuiz.timestamp - currentTime) <= 2) {
-                    console.log('Quiz Timing: t=', currentTime, 'next=', nextQuiz.timestamp);
-                }
                 const quizToShow = videoQuizzes.find(q => q.isActive && !q.shown && currentTime >= q.timestamp);
                 if (quizToShow) {
-                    console.log('Quiz Timing: show quiz id=', quizToShow.videoQuizId, 'at t=', currentTime);
                     showVideoQuiz(quizToShow);
                     quizToShow.shown = true;
                 }
             }
-            
-            // Show video quiz overlay
             function showVideoQuiz(quiz) {
                 currentQuiz = quiz;
                 selectedAnswer = null;
                 
                 document.getElementById('quizQuestion').textContent = quiz.question;
-                
-                // Parse answerOptions (supports both "|" and ";" formats)
                 let options = [];
                 if (quiz.answerOptions.includes('|')) {
                     options = quiz.answerOptions.split('|');
                 } else {
                     options = quiz.answerOptions.split(';');
                 }
-                
-                // Normalize and render safely using DOM API (avoid HTML interpretation of tags like <a>, <form>)
                 var container = document.getElementById('quizOptions');
                 container.innerHTML = '';
                 options.map(function(option) { return option.trim(); })
@@ -564,11 +548,11 @@
                            input.type = 'radio';
                            input.name = 'quizAnswer';
                            input.id = optionId;
-                           input.value = option; // keep raw text for server comparison
+                           input.value = option; 
                            input.addEventListener('change', function() { selectOption(optionId, option); });
                            
                            var textNode = document.createElement('span');
-                           textNode.textContent = option; // safe display
+                           textNode.textContent = option; 
                            
                            label.appendChild(input);
                            label.appendChild(textNode);
@@ -577,7 +561,6 @@
                 
                 document.getElementById('videoQuizOverlay').style.display = 'flex';
                 
-                // Pause if possible
                 try {
                     if (videoElement && typeof videoElement.pause === 'function') {
                         videoElement.pause();
@@ -595,8 +578,6 @@
                 if (label) label.classList.add('selected');
                 selectedAnswer = val;
             }
-            
-            // Submit quiz answer
             function submitQuizAnswer() {
                 if (!selectedAnswer || !currentQuiz) {
                     alert('Please select an answer');
@@ -610,7 +591,6 @@
                 })
                 .then(r => r.text())
                 .then(text => {
-                    // Expect format: RESULT|CORRECT|<correct>|<explanation>
                     if (text.startsWith('RESULT|')) {
                         const p = text.split('|');
                         const result = { isCorrect: p[1] === 'CORRECT', correctAnswer: p[2] || '', explanation: p[3] || '' };
