@@ -3,8 +3,55 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Pull-SWP391/SWP391_M_BL5_G5_SU25/src/java/controller/ManageSliderServlet.java</file>
-            <file>file:/D:/Pull-SWP391/SWP391_M_BL5_G5_SU25/src/java/dal/SliderDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PaymentSuccessServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Review.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PurchasedCoursesServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/courses.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/checkout.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/VideoQuizDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ProcessCheckoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-course-detail.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/CartItemWithCourse.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/CourseDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/PasswordResetToken.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/blog_details.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Order.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Lesson.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/adduser.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/LogoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/CartItem.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CustomerViewLessonServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/DBContext.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/VideoQuiz.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-view-lesson.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/BlogDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/admin.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/seller_blog.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/blog.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CreateBlogServletSeller.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CartServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/manageuser.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/BlogDetailServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/VideoQuizServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/purchased-courses.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Blog.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/managelesson.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/BlogServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/EditBlogServletSeller.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ManageTopicServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/OrderDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/updateuser.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/QuizDAO.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CheckoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/pagination.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/index.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/cart.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/OrderDetail.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ManageUserServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/BlogDetailServletSeller.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/payment-success.jsp</file>
         </group>
     </open-files>
 </project-private>
