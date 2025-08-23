@@ -81,7 +81,6 @@
         .checkout-content {
             background: white;
             border-radius: 0 0 20px 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         
@@ -135,7 +134,6 @@
             border-radius: 10px;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .order-image img {
@@ -205,7 +203,6 @@
         .payment-method:hover {
             border-color: #667eea;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
         }
         
         .payment-method.selected {
@@ -262,7 +259,6 @@
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         }
         
         .price-row {
@@ -394,7 +390,6 @@
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             color: white;
             text-decoration: none;
         }
@@ -468,7 +463,7 @@
                 align-items: center;
             }
         }
-        .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; }
         .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
         .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
         .page-header-content { padding: 40px 0; position: relative; z-index: 2; text-align: center; color: white; }
@@ -497,7 +492,6 @@
     </div>
     <!-- Preloader Start -->
    
-    <!-- Combined Header Start (from purchased-courses) -->
     <div class="combined-header">
         <div class="header-top">
             <div class="container">
@@ -529,10 +523,8 @@
             </div>
         </div>
     </div>
-    <!-- Combined Header End -->
 
     <main>
-        <!-- Checkout Section -->
         <section class="checkout-section">
             <div class="container">
                 <div class="checkout-container">
@@ -582,11 +574,6 @@
                                                     <i class="fab fa-paypal"></i>
                                                     <h4>PayPal</h4>
                                                     <p>Fast & Secure Payment</p>
-                                                </div>
-                                                <div class="payment-method" onclick="selectPaymentMethod(this, 'card')">
-                                                    <i class="fas fa-credit-card"></i>
-                                                    <h4>Credit Card</h4>
-                                                    <p>Coming Soon</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -764,17 +751,12 @@
 <script src="assets/js/main.js"></script>
 
 <script>
-    // Payment method selection
     function selectPaymentMethod(element, method) {
-        // Remove selected class from all payment methods
         document.querySelectorAll('.payment-method').forEach(el => {
             el.classList.remove('selected');
         });
         
-        // Add selected class to clicked element
         element.classList.add('selected');
-        
-        // Handle payment method selection
         if (method === 'paypal') {
             document.getElementById('paypal-button-container').style.display = 'block';
         } else {
@@ -782,24 +764,17 @@
         }
     }
     
-    // Show loading overlay
     function showLoading() {
         document.getElementById('loadingOverlay').style.display = 'flex';
     }
-    
-    // Hide loading overlay
     function hideLoading() {
         document.getElementById('loadingOverlay').style.display = 'none';
     }
-    
-    // Initialize checkout page
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize payment method selection
         selectPaymentMethod(document.querySelector('.payment-method.selected'), 'paypal');
     });
 </script>
-
-<!-- PayPal JS SDK (Sandbox). Replace client-id with your Sandbox Client ID -->
 <script src="https://www.paypal.com/sdk/js?client-id=ATdH4OWCF17eQ5EJcvqaswbwhnxjceeobCVEzGY4qMrECabo_aAHhmGIbja5Cmy3ppxGUfRDRKc9z4xw&currency=USD"></script>
 <script>
     (function renderPaypalButton() {

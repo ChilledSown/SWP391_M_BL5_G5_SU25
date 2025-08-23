@@ -33,31 +33,21 @@ public class CheckoutServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            // Get user from session
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
             long userId = user.getUser_id();
-            
-            // Get DAOs
             CartDAO cartDAO = new CartDAO();
             CourseDAO courseDAO = new CourseDAO();
-            
-            // Get user's cart
             Cart userCart = cartDAO.getCartByUserId(userId);
             
             if (userCart != null) {
-                // Get cart items with course details
                 List<CartItem> cartItems = cartDAO.getCartItemsByCartId(userCart.getCart_id());
                 List<CartItemWithCourse> cartItemsWithCourse = new ArrayList<>();
-                
-                // Add course details to each cart item
                 for (CartItem cartItem : cartItems) {
                     Course course = courseDAO.getCourseById(cartItem.getCourse_id());
                     if (course != null) {
@@ -66,34 +56,23 @@ public class CheckoutServlet extends HttpServlet {
                     }
                 }
                 
-                // Check if cart has items
                 if (cartItemsWithCourse.isEmpty()) {
-                    // Redirect to cart if empty
                     response.sendRedirect("cart");
                     return;
                 }
-                
-                // Get cart total
                 double cartTotal = cartDAO.getCartTotal(userCart.getCart_id());
-                
-                // Set attributes for checkout page
                 request.setAttribute("cartItems", cartItemsWithCourse);
                 request.setAttribute("cartTotal", cartTotal);
                 request.setAttribute("userCart", userCart);
                 request.setAttribute("user", user);
-                
-                // Forward to checkout.jsp
                 request.getRequestDispatcher("checkout.jsp").forward(request, response);
                 
             } else {
-                // No cart found, redirect to cart
                 response.sendRedirect("cart");
             }
             
         } catch (Exception e) {
             e.printStackTrace();
-            // Log error and redirect to cart
-            response.sendRedirect("cart");
         }
     }
 
