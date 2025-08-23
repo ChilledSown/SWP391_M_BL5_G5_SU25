@@ -10,31 +10,7 @@ import model.Blog;
 public class BlogDAO extends DBContext {
 
     public List<Blog> getAllBlogs() {
-        List<Blog> blogs = new ArrayList<>();
-        String sql = "SELECT b.Blog_Id, b.Title, b.Content, b.Thumbnail_Url, b.Created_At, b.Updated_At, b.Created_By, " +
-                     "CONCAT(u.FirstName, ' ', u.MiddleName, ' ', u.LastName) AS CreatedByName " +
-                     "FROM Blog b " +
-                     "INNER JOIN Users u ON b.Created_By = u.UserID " +
-                     "ORDER BY b.Created_At DESC";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                blogs.add(new Blog(
-                    rs.getLong("Blog_Id"),
-                    rs.getString("Title"),
-                    rs.getString("Content"),
-                    rs.getString("Thumbnail_Url"),
-                    rs.getTimestamp("Created_At"),
-                    rs.getTimestamp("Updated_At"),
-                    rs.getInt("Created_By"),
-                    rs.getString("CreatedByName")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return blogs;
+        return getBlogs(1, Integer.MAX_VALUE, null); // Fallback to new method for all blogs
     }
 
     public Blog getBlogById(long blogId) {
@@ -64,98 +40,146 @@ public class BlogDAO extends DBContext {
         }
         return null;
     }
-}
 
-    public List<Blog> getBlogsByCreatorId(int createdBy, String title, String createdDate) {
+    public List<Blog> getBlogs(int page, int pageSize, String search) {
         List<Blog> blogs = new ArrayList<>();
-        String sql = "SELECT Blog_Id, Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By "
-                + "FROM Blog WHERE Created_By = ? AND Title LIKE ? AND CAST(Created_At AS DATE) LIKE ?";
+        String sql = "SELECT b.Blog_Id, b.Title, b.Content, b.Thumbnail_Url, b.Created_At, b.Updated_At, b.Created_By, " +
+                     "CONCAT(u.FirstName, ' ', u.MiddleName, ' ', u.LastName) AS CreatedByName " +
+                     "FROM Blog b " +
+                     "INNER JOIN Users u ON b.Created_By = u.UserID ";
+        if (search != null && !search.isEmpty()) {
+            sql += "WHERE b.Title LIKE ? ";
+        }
+        sql += "ORDER BY b.Created_At DESC " +
+               "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, createdBy);
-            stm.setString(2, "%" + (title != null ? title : "") + "%");
-            stm.setString(3, createdDate != null ? createdDate : "%");
-            ResultSet rs = stm.executeQuery();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            if (search != null && !search.isEmpty()) {
+                ps.setString(paramIndex++, "%" + search + "%");
+            }
+            int offset = (page - 1) * pageSize;
+            ps.setInt(paramIndex++, offset);
+            ps.setInt(paramIndex, pageSize);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 blogs.add(new Blog(
-                        rs.getLong("Blog_Id"),
-                        rs.getString("Title"),
-                        rs.getString("Content"),
-                        rs.getString("Thumbnail_Url"),
-                        rs.getDate("Created_At").toLocalDate(),
-                        rs.getDate("Updated_At").toLocalDate(),
-                        rs.getInt("Created_By") // Changed to getInt
+                    rs.getLong("Blog_Id"),
+                    rs.getString("Title"),
+                    rs.getString("Content"),
+                    rs.getString("Thumbnail_Url"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
+                    rs.getInt("Created_By"),
+                    rs.getString("CreatedByName")
                 ));
             }
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return blogs;
     }
 
-    public void createBlog(Blog blog) {
-        String sql = "INSERT INTO Blog (Title, Content, Thumbnail_Url, Created_At, Updated_At, Created_By) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setString(1, blog.getTitle());
-            stm.setString(2, blog.getContent());
-            stm.setString(3, blog.getThumbnailUrl());
-            stm.setDate(4, java.sql.Date.valueOf(blog.getCreatedAt()));
-            stm.setDate(5, java.sql.Date.valueOf(blog.getUpdatedAt()));
-            stm.setInt(6, blog.getCreatedBy()); // Changed to setInt
-            stm.executeUpdate();
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    public int getTotalBlogs(String search) {
+        String sql = "SELECT COUNT(*) FROM Blog b ";
+        if (search != null && !search.isEmpty()) {
+            sql += "WHERE b.Title LIKE ?";
         }
-    }
-
-    public void updateBlog(Blog blog) {
-        String sql = "UPDATE Blog SET Title = ?, Content = ?, Thumbnail_Url = ?, Updated_At = ? WHERE Blog_Id = ?";
         try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setString(1, blog.getTitle());
-            stm.setString(2, blog.getContent());
-            stm.setString(3, blog.getThumbnailUrl());
-            stm.setDate(4, java.sql.Date.valueOf(blog.getUpdatedAt()));
-            stm.setLong(5, blog.getBlogId());
-            stm.executeUpdate();
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-    }
-
-    public boolean isBlogTitleExists(String title, Long excludeBlogId) {
-        String sql = "SELECT COUNT(*) FROM Blog WHERE Title = ? AND (? IS NULL OR Blog_Id != ?)";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setString(1, title);
-            if (excludeBlogId != null) {
-                stm.setLong(2, excludeBlogId);
-                stm.setLong(3, excludeBlogId);
-            } else {
-                stm.setNull(2, Types.BIGINT);
-                stm.setNull(3, Types.BIGINT);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            if (search != null && !search.isEmpty()) {
+                ps.setString(1, "%" + search + "%");
             }
-            ResultSet rs = stm.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) > 0;
+                return rs.getInt(1);
             }
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return false;
+        return 0;
     }
 
-    public void deleteBlog(long blogId) {
-        String sql = "DELETE FROM Blog WHERE Blog_Id = ?";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setLong(1, blogId);
-            stm.executeUpdate();
-        } catch (SQLException ex) {
-            java.util.logging.Logger.getLogger(BlogDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    public List<Blog> getBlogsByTitle(String searchQuery, int page, int pageSize) {
+        List<Blog> blogs = new ArrayList<>();
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return getBlogs(page, pageSize, null);
         }
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
+        String[] keywords = searchQuery.split(" ");
+        if (keywords.length == 0) {
+            return getBlogs(page, pageSize, null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder(
+            "SELECT b.Blog_Id, b.Title, b.Content, b.Thumbnail_Url, b.Created_At, b.Updated_At, b.Created_By, " +
+            "CONCAT(u.FirstName, ' ', u.MiddleName, ' ', u.LastName) AS CreatedByName " +
+            "FROM Blog b " +
+            "INNER JOIN Users u ON b.Created_By = u.UserID WHERE ");
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sqlBuilder.append(" AND ");
+            }
+            sqlBuilder.append("(LOWER(b.Title) LIKE ?)");
+        }
+        sqlBuilder.append(" ORDER BY b.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        String sql = sqlBuilder.toString();
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            for (String keyword : keywords) {
+                ps.setString(paramIndex++, "%" + keyword.toLowerCase() + "%");
+            }
+            ps.setInt(paramIndex++, (page - 1) * pageSize);
+            ps.setInt(paramIndex, pageSize);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                blogs.add(new Blog(
+                    rs.getLong("Blog_Id"),
+                    rs.getString("Title"),
+                    rs.getString("Content"),
+                    rs.getString("Thumbnail_Url"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
+                    rs.getInt("Created_By"),
+                    rs.getString("CreatedByName")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return blogs;
+    }
+
+    public int getTotalBlogsByTitle(String searchQuery) {
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return getTotalBlogs(null);
+        }
+        searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
+        String[] keywords = searchQuery.split(" ");
+        if (keywords.length == 0) {
+            return getTotalBlogs(null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(*) FROM Blog b WHERE ");
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sqlBuilder.append(" AND ");
+            }
+            sqlBuilder.append("(LOWER(b.Title) LIKE ?)");
+        }
+        String sql = sqlBuilder.toString();
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            int paramIndex = 1;
+            for (String keyword : keywords) {
+                ps.setString(paramIndex++, "%" + keyword.toLowerCase() + "%");
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
-
