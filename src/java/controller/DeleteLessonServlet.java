@@ -23,7 +23,7 @@ public class DeleteLessonServlet extends HttpServlet {
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
 
-        // Validate inputs
+       
         if (lessonIdStr == null || lessonIdStr.trim().isEmpty() || courseIdStr == null || courseIdStr.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Lesson ID and Course ID are required.");
             request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
@@ -41,14 +41,14 @@ public class DeleteLessonServlet extends HttpServlet {
         }
 
         LessonDAO lessonDAO = new LessonDAO();
-        // Check if lesson exists
+       
         if (lessonDAO.getLessonById(lessonId) == null) {
             request.setAttribute("errorMessage", "Lesson not found for ID: " + lessonId);
             request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
             return;
         }
 
-        // Delete lesson (and associated quizzes via cascade)
+      
         lessonDAO.deleteLesson(lessonId);
         response.sendRedirect("manageLessonSeller?courseId=" + courseId);
     }

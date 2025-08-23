@@ -194,7 +194,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Placeholder for dynamic slider data -->
+                         
                             <tr>
                                 <td colspan="5">Slider data will be populated here.</td>
                             </tr>

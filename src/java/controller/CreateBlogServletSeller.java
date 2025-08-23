@@ -31,13 +31,12 @@ public class CreateBlogServletSeller extends HttpServlet {
             return;
         }
 
-        // Get form parameters
         String title = request.getParameter("title");
         String content = request.getParameter("content");
         String thumbnailUrl = request.getParameter("thumbnail_url");
         Part filePart = request.getPart("thumbnail");
 
-        // Validation
+    
         boolean hasError = false;
         if (title == null || title.trim().isEmpty()) {
             session.setAttribute("titleError", "Title is required.");
@@ -53,7 +52,6 @@ public class CreateBlogServletSeller extends HttpServlet {
             hasError = true;
         }
 
-        // Check for duplicate title
         BlogDAO blogDAO = new BlogDAO();
         if (blogDAO.isBlogTitleExists(title, null)) {
             session.setAttribute("duplicateMessage", "Blog title already exists.");

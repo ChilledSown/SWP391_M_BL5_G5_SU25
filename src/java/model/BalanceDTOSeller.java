@@ -15,7 +15,7 @@ public class BalanceDTOSeller {
     private String paymentStatus;
     private String paymentMethod;
 
-    // Constructor
+  
     public BalanceDTOSeller(int orderId, Timestamp orderDate, int courseId, String courseName, double amount, String paymentStatus, String paymentMethod) {
         this.orderId = orderId;
         this.orderDate = orderDate;
@@ -26,7 +26,6 @@ public class BalanceDTOSeller {
         this.paymentMethod = paymentMethod;
     }
 
-    // Getters and setters
     public int getOrderId() {
         return orderId;
     }
