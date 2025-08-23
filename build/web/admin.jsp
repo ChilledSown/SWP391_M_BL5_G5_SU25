@@ -42,7 +42,7 @@
             min-height: 100vh;
         }
         .sidebar {
-            width: 250px;
+            width: 238px;
             background-color: #2c3e50;
             color: white;
             padding: 20px;
@@ -245,7 +245,7 @@
                 font-size: 1rem;
             }
         }
-        /* Đảm bảo header và footer không bị đè */
+        /* Đảm bảo footer chạm sát aside */
         header.header-area {
             margin-left: 250px;
             width: calc(100% - 250px);
@@ -253,10 +253,11 @@
             z-index: 900;
         }
         footer {
-            margin-left: 250px;
-            width: calc(100% - 250px);
+            margin-left: 238px; /* Chính xác bằng độ rộng của sidebar */
+            width: calc(100% - 238px); /* Loại bỏ khoảng cách thừa */
             position: relative;
             z-index: 900;
+            background-color: #f4f7f9; /* Đảm bảo nền footer khớp với body */
         }
     </style>
 </head>
