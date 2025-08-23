@@ -43,18 +43,20 @@ public class CourseServlet extends HttpServlet {
                 }
             } catch (NumberFormatException ignored) {}
             if (page < 1) page = 1;
-            int offset = (page - 1) * size;
+            // Load More: luôn trả về danh sách tích lũy theo trang (6, 12, 18, ...)
+            int offset = 0;
+            int limit = page * size;
 
             // List of pagination courses
             List<Course> courses;
             int totalCount;
             if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
-                // Take all filtered courses with paginaation
-                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, 0, page * size);
+                // Khi có filter: áp dụng phân trang kiểu Load More (cộng dồn)
+                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, offset, limit);
                 totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, ratingFilter, topicFilter);
             } else {
-                // If no filter, take all courses with pagination
-                courses = courseDAO.getAllCoursePaged(0, page * size);
+                // Không filter: áp dụng phân trang kiểu Load More (cộng dồn)
+                courses = courseDAO.getAllCoursePaged(offset, limit);
                 totalCount = courseDAO.countAllCourses();
             }
             
