@@ -1,12 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Balance | Seller Dashboard</title>
+    <title>Seller Dashboard | Online Learning</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -62,70 +61,9 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .table {
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .table th {
-            background-color: #007bff;
-            color: #ffffff;
-            font-weight: 600;
-            padding: 15px;
-        }
-        .table td {
-            vertical-align: middle;
-            padding: 15px;
-            color: #343a40;
-        }
-        .table tbody tr:hover {
-            background-color: #f1f3f5;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-control {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            padding: 10px;
-            transition: border-color 0.3s ease;
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-            padding: 10px 20px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .btn-action {
-            background-color: #ff8243;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 6px 8px;
-            margin: 2px;
-            font-size: 14px;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s ease-in-out;
-        }
-        .btn-action:hover {
-            background-color: #e67030;
-        }
-        .btn-action i {
-            font-size: 16px;
+        .management-section {
+            margin-bottom: 40px;
+            display: none;
         }
         .dashboard-card {
             background: #ffffff;
@@ -148,6 +86,23 @@
             font-size: 1.5rem;
             font-weight: 700;
         }
+        .dashboard-card i {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
         #navigation a {
             color: #343a40 !important;
             font-weight: 500;
@@ -169,11 +124,6 @@
         .content p {
             color: #495057;
             font-size: 1.1rem;
-        }
-        .error-message {
-            color: #dc3545;
-            font-size: 1rem;
-            margin-bottom: 20px;
         }
         .footer-wrappper {
             background: #343a40;
@@ -202,17 +152,6 @@
             }
         }
         @media (max-width: 767px) {
-            .form-inline .form-group {
-                margin-bottom: 15px;
-                width: 100%;
-            }
-            .form-control {
-                width: 100%;
-            }
-            .btn-primary {
-                width: 100%;
-                text-align: center;
-            }
             .dashboard-card {
                 margin-bottom: 15px;
             }
@@ -271,56 +210,77 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance" class="nav-link active">Balance</a></li>
+                                <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                           
                             </ul>
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Balance Management</h2>
-                            <p>View your earnings and transaction history here.</p>
-                            <c:if test="${not empty errorMessage}">
-                                <div class="error-message">${errorMessage}</div>
-                            </c:if>
-                            <div class="dashboard-card">
-                                <h4>Current Balance</h4>
-                                <p><fmt:formatNumber value="${balance}" type="currency" currencySymbol="$" maxFractionDigits="2" /></p>
+                            <h2>Seller Dashboard</h2>
+                            <p>Welcome, [Seller Name]. Get an overview of your activities here.</p>
+                            <!-- Overview Section -->
+                            <div id="overview" class="management-section">
+                                <h3>Overview</h3>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <i class="fas fa-book"></i>
+                                            <h4>Total Courses</h4>
+                                            <p>0</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <i class="fas fa-blog"></i>
+                                            <h4>Total Blogs</h4>
+                                            <p>0</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="dashboard-card">
+                                            <i class="fas fa-chart-line"></i>
+                                            <h4>Performance</h4>
+                                            <p>0 Views</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="dashboard-card">
+                                            <h4>Recent Activity</h4>
+                                            <p>No recent activity available.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="dashboard-card">
+                                            <h4>Quick Actions</h4>
+                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
+                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
-                                        <th>Method</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="transaction" items="${transactions}">
-                                        <tr>
-                                            <td><fmt:formatDate value="${transaction.orderDate}" pattern="yyyy-MM-dd" /></td>
-                                            <td>${transaction.description}</td>
-                                            <td><fmt:formatNumber value="${transaction.amount}" type="currency" currencySymbol="$" maxFractionDigits="2" /></td>
-                                            <td>${transaction.paymentMethod}</td>
-                                            <td>
-                                                <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                    <c:if test="${empty transactions}">
-                                        <tr>
-                                            <td colspan="5" class="text-center">No transactions found.</td>
-                                        </tr>
-                                    </c:if>
-                                </tbody>
-                            </table>
-                            <jsp:include page="pagination.jsp" />
+                            <!-- Other Placeholder Sections -->
+                            <div id="communication" class="management-section" style="display: none;">
+                                <h3>Communication</h3>
+                                <p>Placeholder for communication features.</p>
+                            </div>
+                            <div id="performance" class="management-section" style="display: none;">
+                                <h3>Performance</h3>
+                                <p>Placeholder for performance analytics.</p>
+                            </div>
+                            <div id="tools" class="management-section" style="display: none;">
+                                <h3>Tools</h3>
+                                <p>Placeholder for tools section.</p>
+                            </div>
+                            <div id="resources" class="management-section" style="display: none;">
+                                <h3>Resources</h3>
+                                <p>Placeholder for resources section.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -436,5 +396,41 @@
             <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const navLinks = document.querySelectorAll('#sidebarNav .nav-link');
+                    const sections = document.querySelectorAll('.management-section');
+                    sections.forEach(section => section.style.display = 'none');
+                    navLinks.forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            const href = this.getAttribute('href');
+                            if (!href.startsWith('#')) return; // Allow navigation to external pages like listCousera, seller_blog.jsp, balance.jsp, reviews.jsp
+                            e.preventDefault();
+                            const targetId = href.substring(1);
+                            navLinks.forEach(l => l.classList.remove('active'));
+                            this.classList.add('active');
+                            sections.forEach(section => section.style.display = 'none');
+                            const section = document.getElementById(targetId);
+                            if (section) {
+                                section.style.display = 'block';
+                            }
+                            // Update URL with hash
+                            history.pushState({}, '', `#${targetId}`);
+                        });
+                    });
+                    const initialSection = window.location.hash;
+                    if (initialSection && document.querySelector(initialSection)) {
+                        const link = document.querySelector(`#sidebarNav a[href="${initialSection}"]`);
+                        const section = document.querySelector(initialSection);
+                        if (link && section) {
+                            link.classList.add('active');
+                            section.style.display = 'block';
+                        }
+                    } else {
+                        document.querySelector('#sidebarNav a[href="#overview"]').classList.add('active');
+                        document.getElementById('overview').style.display = 'block';
+                    }
+                });
+            </script>
 </body>
 </html>

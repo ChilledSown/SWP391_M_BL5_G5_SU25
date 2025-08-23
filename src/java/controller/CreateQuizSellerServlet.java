@@ -39,7 +39,7 @@ public class CreateQuizSellerServlet extends HttpServlet {
             String explanation = request.getParameter("explanation");
             String lessonIdParam = request.getParameter("lessonId");
 
-            // Validate inputs
+        
             if (question == null || question.trim().isEmpty()
                     || correctAnswer == null || correctAnswer.trim().isEmpty()
                     || explanation == null || explanation.trim().isEmpty()
@@ -49,7 +49,6 @@ public class CreateQuizSellerServlet extends HttpServlet {
                 return;
             }
 
-            // Validate answer options (at least two non-empty options)
             ArrayList<String> options = new ArrayList<>();
             if (answerOptionA != null && !answerOptionA.trim().isEmpty()) {
                 options.add(answerOptionA.trim());
@@ -71,7 +70,6 @@ public class CreateQuizSellerServlet extends HttpServlet {
 
             Long lessonId = Long.parseLong(lessonIdParam);
 
-            // Validate correct answer
             String correctAnswerUpper = correctAnswer.trim().toUpperCase();
             if (!correctAnswerUpper.matches("[A-D]")
                     || (correctAnswerUpper.equals("A") && (answerOptionA == null || answerOptionA.trim().isEmpty()))
@@ -83,7 +81,6 @@ public class CreateQuizSellerServlet extends HttpServlet {
                 return;
             }
 
-            // Validate duplicate question
             QuizDAO dao = new QuizDAO();
             if (dao.isQuestionDuplicate(question.trim(), lessonId)) {
                 request.setAttribute("errorMessage", "This question already exists for the specified lesson.");
@@ -91,7 +88,6 @@ public class CreateQuizSellerServlet extends HttpServlet {
                 return;
             }
 
-            // Combine answer options
             String answerOptions = String.join(";", options);
 
             Quiz quiz = new Quiz();

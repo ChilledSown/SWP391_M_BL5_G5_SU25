@@ -61,10 +61,32 @@ public class ManageLessonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        long courseId = Long.parseLong(request.getParameter("courseId"));
+        String courseIdParam = request.getParameter("courseId");
+
+        // Check if courseId is missing or empty
+        if (courseIdParam == null || courseIdParam.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Course ID is missing or invalid.");
+            request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
+            return;
+        }
+
+        long courseId;
+        try {
+            courseId = Long.parseLong(courseIdParam);
+            // Validate if courseId is positive
+            if (courseId <= 0) {
+                request.setAttribute("errorMessage", "Course ID must be a positive number.");
+                request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid Course ID format.");
+            request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
+            return;
+        }
+
         String title = request.getParameter("title");
         String createdDate = request.getParameter("createdDate");
-
         int page = 1;
         int pageSize = 2;
         String pageParam = request.getParameter("page");
@@ -77,7 +99,6 @@ public class ManageLessonServlet extends HttpServlet {
         int offset = (page - 1) * pageSize;
 
         LessonDAO dao = new LessonDAO();
-
         // Lấy dữ liệu phân trang
         List<Lesson> lessons = dao.getFilteredLessonsByCoursePaged(courseId, title, createdDate, offset, pageSize);
         int totalItems = dao.countFilteredLessonsByCourse(courseId, title, createdDate);
