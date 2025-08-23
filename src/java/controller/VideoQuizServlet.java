@@ -130,11 +130,7 @@ public class VideoQuizServlet extends HttpServlet {
                 response.getWriter().write("Quiz not found");
                 return;
             }
-            
-            // Check if answer is correct
             boolean isCorrect = quiz.getCorrectAnswer().equals(selectedAnswer);
-            
-            // Build response
             StringBuilder responseText = new StringBuilder();
             responseText.append("RESULT|")
                       .append(isCorrect ? "CORRECT" : "INCORRECT").append("|")
