@@ -341,7 +341,7 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-
+    
     public boolean updateUser(User user) {
         String sql = "UPDATE Users SET FirstName = ?, MiddleName = ?, LastName = ?, Avata_Url = ?, Phone = ?, Address = ?, Email = ?, PasswordHash = ?, Role = ?, Updated_At = GETDATE(), Account_Status = ? WHERE UserID = ?";
         try {
