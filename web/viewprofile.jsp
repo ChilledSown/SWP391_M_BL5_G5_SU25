@@ -158,7 +158,7 @@
                 initialPage = initialPage || '${pageContext.request.contextPath}/listCousera';
             } else if (role === 'admin') {
                 backText = "Back to Admin";
-                initialPage = initialPage || '${pageContext.request.contextPath}/admin';
+                initialPage = initialPage || '${pageContext.request.contextPath}/overviewadmin';
             }
 
             const backButton = document.querySelector('.back-btn');
