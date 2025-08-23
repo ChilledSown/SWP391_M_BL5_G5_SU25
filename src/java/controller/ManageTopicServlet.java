@@ -79,8 +79,8 @@ public class ManageTopicServlet extends HttpServlet {
                     }
                 } else {
                     CourseDAO cdao = new CourseDAO();
-//                    List<Course> courses = cdao.getCoursesByTopicId(tId);
-//                    request.setAttribute("courses", courses);
+                    List<Course> courses = cdao.getCoursesByTopicId(tId);
+                    request.setAttribute("courses", courses);
                 }
                 request.getRequestDispatcher("viewtopic.jsp").forward(request, response);
             } catch (NumberFormatException e) {

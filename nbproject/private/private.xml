@@ -3,15 +3,37 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/manageuser.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/updateuser.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/adduser.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/admin.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ManageUserServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/WEB-INF/web.xml</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/profile.jsp</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/src/java/controller/ProfileServlet.java</file>
-            <file>file:/D:/SU25/SWP391_M_BL5_G5_SU25/web/login.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/BlogDetailSeller.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/PasswordResetToken.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/PaymentDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/balance.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller_blog.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_form.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/quiz_detail.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/BalanceServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/DBContext.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/EditBlogServletSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteBlogServletSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/Add_EditSeller.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Blog.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/LoginServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/BlogDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/seller.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/Payment.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/User.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_details.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/model/BalanceDTOSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/BalanceDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/UserDAO.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/ListBlogsServletSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/CreateBlogServletSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/BlogDetailServletSeller.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/EditLessonServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/BalanceDetail.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/blog_course_form.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/web/DashBoardSeller.jsp</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/controller/DeleteReviewServlet.java</file>
+            <file>file:/C:/Users/letha/OneDrive/Documents/Ky5/SWP_BL5/SWP391_M_BL5_G5_SU25/src/java/dal/LessonDAO.java</file>
         </group>
     </open-files>
 </project-private>
