@@ -184,7 +184,7 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li class="active" data-section="overview">
-                        <a href="overviewadmin">Overview</a>
+                        <a href="admin">Overview</a>
                     </li>
                     <li data-section="courses">
                         <a href="managetopic">Manage Topic</a>
@@ -229,7 +229,7 @@
                 <thead>
                     <tr>
                         <th>Course ID</th>
-                        <th>Course Name</th>
+                        <th>Title</th>
                         <th>Enrollments</th>
                     </tr>
                 </thead>
