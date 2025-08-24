@@ -7,9 +7,11 @@
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Review.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PurchasedCoursesServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/courses.jsp</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CustomerQuizPreparationServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/checkout.jsp</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/VideoQuizDAO.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ProcessCheckoutServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CustomerListQuizServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-course-detail.jsp</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/CartItemWithCourse.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/CourseDAO.java</file>
@@ -22,7 +24,9 @@
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/LogoutServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/CartItem.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/CustomerViewLessonServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Quiz.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/DBContext.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/utils/GeminiUtil.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/VideoQuiz.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-view-lesson.jsp</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/BlogDAO.java</file>
@@ -40,6 +44,7 @@
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/BlogServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/EditBlogServletSeller.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ManageTopicServlet.java</file>
+            <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/customer-list-quiz.jsp</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/LoginServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/dal/OrderDAO.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/updateuser.jsp</file>

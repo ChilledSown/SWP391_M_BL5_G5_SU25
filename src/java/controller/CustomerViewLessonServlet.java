@@ -30,10 +30,10 @@ public class CustomerViewLessonServlet extends HttpServlet {
             Long courseId = null;
             Long lessonId = null;
             if (courseIdRaw != null && !courseIdRaw.isEmpty()) {
-                courseId = Long.parseLong(courseIdRaw);
+                courseId = Long.valueOf(courseIdRaw);
             }
             if (lessonIdRaw != null && !lessonIdRaw.isEmpty()) {
-                lessonId = Long.parseLong(lessonIdRaw);
+                lessonId = Long.valueOf(lessonIdRaw);
             }
 
             LessonDAO lessonDAO = new LessonDAO();
@@ -53,7 +53,6 @@ public class CustomerViewLessonServlet extends HttpServlet {
 
             if (lessons == null || lessons.isEmpty()) {
                 request.setAttribute("courseId", courseId);
-                request.setAttribute("course", course);
                 request.setAttribute("lessons", lessons);
                 request.setAttribute("activeLesson", null);
                 request.setAttribute("quizzes", null);
