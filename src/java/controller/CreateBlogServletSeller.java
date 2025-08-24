@@ -92,6 +92,6 @@ public class CreateBlogServletSeller extends HttpServlet {
         session.removeAttribute("thumbnailError");
         session.removeAttribute("duplicateMessage");
 
-        response.sendRedirect("listBlogsSeller");
+        response.sendRedirect("listBlogsInstructor");
     }
 }

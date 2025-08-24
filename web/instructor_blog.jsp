@@ -258,7 +258,7 @@
                                 <i class="fas fa-plus"></i> Create New Blog
                             </a>
                             <!-- Search -->
-                            <form method="get" action="listBlogsSeller" class="mb-4">
+                            <form method="get" action="listBlogsInstructor" class="mb-4">
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />

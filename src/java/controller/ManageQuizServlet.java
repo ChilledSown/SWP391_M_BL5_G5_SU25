@@ -1,109 +1,124 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
+import dal.LessonDAO;
 import dal.QuizDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.Lesson;
 import model.Quiz;
 
-/**
- *
- * @author Admin
- */
-@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuizSeller"})
+@WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuizInstructor"})
 public class ManageQuizServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ManageQuizServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ManageQuizServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String lessonIdRaw = request.getParameter("lessonId");
+        String courseIdRaw = request.getParameter("courseId");
+
+        // Kiểm tra lessonId
+        if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Missing lessonId parameter.");
+            request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
+            return;
         }
+
+        // Kiểm tra courseId
+        if (courseIdRaw == null || courseIdRaw.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Missing courseId parameter.");
+            request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
+            return;
+        }
+
+        long lessonId, courseId;
+        try {
+            lessonId = Long.parseLong(lessonIdRaw);
+            courseId = Long.parseLong(courseIdRaw);
+            if (lessonId <= 0 || courseId <= 0) {
+                request.setAttribute("errorMessage", "Invalid Lesson ID or Course ID.");
+                request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid Lesson ID or Course ID format.");
+            request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
+            return;
+        }
+
+        // Xác minh lesson thuộc course
+        LessonDAO lessonDAO = new LessonDAO();
+        Lesson lesson = lessonDAO.getLessonById(lessonId);
+        if (lesson == null || lesson.getCourseId() != courseId) {
+            request.setAttribute("errorMessage", "Lesson does not belong to the specified course.");
+            request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
+            return;
+        }
+
+        // Lấy tham số tìm kiếm và phân trang
+        String question = request.getParameter("question");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        int page = 1;
+        int pageSize = 5; // Số lượng quiz mỗi trang
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Math.max(1, Integer.parseInt(pageParam));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        int offset = (page - 1) * pageSize;
+
+        QuizDAO dao = new QuizDAO();
+        List<Quiz> quizzes = dao.getFilteredQuizzesByLessonPaged(lessonId, question, startDate, endDate, offset, pageSize);
+        int totalItems = dao.countFilteredQuizzesByLesson(lessonId, question, startDate, endDate);
+        int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
+
+        // Truyền attribute
+        request.setAttribute("lessonId", lessonId);
+        request.setAttribute("courseId", courseId);
+        request.setAttribute("quizzes", quizzes);
+        request.setAttribute("question", question);
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+
+        // Tạo baseUrl để phân trang giữ lại filter
+        StringBuilder baseUrl = new StringBuilder("manageQuizInstructor?lessonId=" + lessonId + "&courseId=" + courseId);
+        if (question != null && !question.isEmpty()) {
+            baseUrl.append("&question=").append(java.net.URLEncoder.encode(question, java.nio.charset.StandardCharsets.UTF_8));
+        }
+        if (startDate != null && !startDate.isEmpty()) {
+            baseUrl.append("&startDate=").append(startDate);
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            baseUrl.append("&endDate=").append(endDate);
+        }
+        request.setAttribute("baseUrl", baseUrl.toString());
+
+        request.getRequestDispatcher("manageQuizInstructor.jsp").forward(request, response);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-  @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
-    String lessonIdRaw = request.getParameter("lessonId");
-
-    if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing lessonId parameter.");
-        return;
-    }
-
-    long lessonId = Long.parseLong(lessonIdRaw);
-
-    QuizDAO dao = new QuizDAO();
-    List<Quiz> quizzes = dao.getQuizzesByLessonId(lessonId);
-
-    // Gửi dữ liệu sang JSP
-    request.setAttribute("lessonId", lessonId);
-    request.setAttribute("quizzes", quizzes);
-
-    request.getRequestDispatcher("manageQuizSeller.jsp").forward(request, response);
-}
-
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Manages quizzes for a specific lesson.";
+    }
 }
-

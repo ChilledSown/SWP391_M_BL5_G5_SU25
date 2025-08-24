@@ -70,7 +70,7 @@ public class DeleteCourseServlet extends HttpServlet {
             }
         }
 
-        response.sendRedirect("listCousera"); 
+        response.sendRedirect("listCourses"); 
     }
 
     /**

@@ -26,7 +26,7 @@ public class DeleteLessonServlet extends HttpServlet {
        
         if (lessonIdStr == null || lessonIdStr.trim().isEmpty() || courseIdStr == null || courseIdStr.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Lesson ID and Course ID are required.");
-            request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
+            request.getRequestDispatcher("manageLessonInstructor.jsp").forward(request, response);
             return;
         }
 
@@ -36,7 +36,7 @@ public class DeleteLessonServlet extends HttpServlet {
             courseId = Long.parseLong(courseIdStr);
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "Invalid lesson ID or course ID format.");
-            request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
+            request.getRequestDispatcher("manageLessonInstructor.jsp").forward(request, response);
             return;
         }
 
@@ -44,13 +44,13 @@ public class DeleteLessonServlet extends HttpServlet {
        
         if (lessonDAO.getLessonById(lessonId) == null) {
             request.setAttribute("errorMessage", "Lesson not found for ID: " + lessonId);
-            request.getRequestDispatcher("manageLessonSeller.jsp").forward(request, response);
+            request.getRequestDispatcher("manageLessonInstructor.jsp").forward(request, response);
             return;
         }
 
       
         lessonDAO.deleteLesson(lessonId);
-        response.sendRedirect("manageLessonSeller?courseId=" + courseId);
+        response.sendRedirect("manageLessonInstructor?courseId=" + courseId);
     }
 
     @Override
