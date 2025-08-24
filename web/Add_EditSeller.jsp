@@ -101,7 +101,7 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">
-                                                <li><a href="listBlogsSeller">Back to Blog Management</a></li>
+                                                <li><a href="listBlogsInstructor">Back to Blog Management</a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -205,7 +205,7 @@
                             </div>
                             <div class="btn-group">
                                 <button type="submit" class="btn btn-primary"><%= btnText %></button>
-                                <a href="listBlogsSeller" class="btn btn-secondary">Cancel</a>
+                                <a href="listBlogsInstructor" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
                     </div>

@@ -50,7 +50,7 @@ public class BalanceServlet extends HttpServlet {
         request.setAttribute("totalPages", (int) Math.ceil((double) totalTransactions / pageSize));
 
         // Forward to balance.jsp
-        request.getRequestDispatcher("/balance.jsp").forward(request, response);
+        request.getRequestDispatcher("/instructor_balance.jsp").forward(request, response);
     }
 
     @Override

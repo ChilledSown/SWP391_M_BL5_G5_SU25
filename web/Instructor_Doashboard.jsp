@@ -212,8 +212,8 @@
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                            
                             </ul>

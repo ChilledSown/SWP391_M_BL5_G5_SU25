@@ -139,6 +139,6 @@ public class CreateCourseServlet extends HttpServlet {
         if (isDuplicate) {
             session.setAttribute("duplicateMessage", "Course title already exists. You may want to use a different title.");
         }
-        response.sendRedirect("listCousera");
+        response.sendRedirect("listCourses");
     }
 }

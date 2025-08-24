@@ -242,11 +242,11 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link active">Reviews</a></li>
+                                <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link active">Reviews</a></li>
                                
                             </ul>
                         </div>
