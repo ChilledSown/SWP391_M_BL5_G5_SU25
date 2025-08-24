@@ -6,7 +6,6 @@ import java.sql.Timestamp;
  * Represents a balance transaction for a seller.
  */
 public class BalanceDTOSeller {
-
     private int orderId;
     private Timestamp orderDate;
     private int courseId;
@@ -15,7 +14,6 @@ public class BalanceDTOSeller {
     private String paymentStatus;
     private String paymentMethod;
 
-  
     public BalanceDTOSeller(int orderId, Timestamp orderDate, int courseId, String courseName, double amount, String paymentStatus, String paymentMethod) {
         this.orderId = orderId;
         this.orderDate = orderDate;
@@ -82,7 +80,6 @@ public class BalanceDTOSeller {
         this.paymentMethod = paymentMethod;
     }
 
-    // Added for description in balance.jsp
     public String getDescription() {
         return "Course Sale: " + courseName + " (Order #" + orderId + ")";
     }
