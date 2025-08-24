@@ -29,6 +29,7 @@ public class QuizDAO extends DBContext {
                 quiz.setQuestion(rs.getString("Question"));
                 quiz.setAnswerOptions(rs.getString("Answer_Options"));
                 quiz.setCorrectAnswer(rs.getString("Correct_Answer"));
+                quiz.setExplanation(rs.getString("Explanation"));
                 quiz.setCreatedAt(rs.getTimestamp("Created_At"));
                 quiz.setUpdatedAt(rs.getTimestamp("Updated_At"));
                 quiz.setLessonId(rs.getLong("Lesson_Id"));
@@ -159,5 +160,58 @@ public class QuizDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    public List<Quiz> getQuizzesByCourseId(long courseId) {
+        List<Quiz> quizzes = new ArrayList<>();
+        String sql = "SELECT q.*, l.Title AS LessonTitle, c.Title AS CourseTitle "
+                + "FROM Quiz q "
+                + "JOIN Lesson l ON q.Lesson_Id = l.Lesson_Id "
+                + "JOIN Course c ON l.Course_Id = c.Course_Id "
+                + "WHERE l.Course_Id = ? "
+                + "ORDER BY l.Lesson_Id, q.Quiz_Id";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, courseId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Quiz quiz = new Quiz();
+                quiz.setQuizId(rs.getLong("Quiz_Id"));
+                quiz.setQuestion(rs.getString("Question"));
+                quiz.setAnswerOptions(rs.getString("Answer_Options"));
+                quiz.setCorrectAnswer(rs.getString("Correct_Answer"));
+                quiz.setCreatedAt(rs.getTimestamp("Created_At"));
+                quiz.setUpdatedAt(rs.getTimestamp("Updated_At"));
+                quiz.setLessonId(rs.getLong("Lesson_Id"));
+                quiz.setExplanation(rs.getString("Explanation"));
+                quiz.setLessonTitle(rs.getString("LessonTitle"));
+                quiz.setCourseTitle(rs.getString("CourseTitle"));
+                quizzes.add(quiz);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return quizzes;
+    }
+
+    public int countQuizzesByCourseId(long courseId) {
+        String sql = "SELECT COUNT(*) FROM Quiz q "
+                + "JOIN Lesson l ON q.Lesson_Id = l.Lesson_Id "
+                + "WHERE l.Course_Id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, courseId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public static void main(String[] args) {
+        QuizDAO q = new QuizDAO();
+        List<Quiz> lq = q.getQuizzesByCourseId(1);
+        System.out.println(lq);
     }
 }
