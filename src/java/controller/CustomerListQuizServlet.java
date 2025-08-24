@@ -16,7 +16,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name="CustomerListQuizServlet", urlPatterns={"/customer-list-quiz"})
 public class CustomerListQuizServlet extends HttpServlet {
@@ -94,31 +97,120 @@ public class CustomerListQuizServlet extends HttpServlet {
             List<Quiz> allQuizzes = quizDAO.getQuizzesByCourseId(courseId);
             int totalQuestions = allQuizzes.size();
             int correctAnswers = 0;
+            int answeredQuestions = 0;
+            
+            // Map để lưu kết quả chi tiết của từng câu hỏi
+            Map<Long, QuizResult> quizResults = new HashMap<>();
             
             for (Quiz quiz : allQuizzes) {
                 String userAnswer = request.getParameter("answer_" + quiz.getQuizId());
-                if (userAnswer != null && userAnswer.equals(quiz.getCorrectAnswer())) {
-                    correctAnswers++;
+                boolean isCorrect = false;
+                boolean isAnswered = false;
+                
+                if (userAnswer != null && !userAnswer.trim().isEmpty()) {
+                    isAnswered = true;
+                    answeredQuestions++;
+                    if (userAnswer.equals(quiz.getCorrectAnswer())) {
+                        isCorrect = true;
+                        correctAnswers++;
+                    }
                 }
+                
+                // Lưu kết quả chi tiết
+                QuizResult result = new QuizResult();
+                result.setQuizId(quiz.getQuizId());
+                result.setUserAnswer(userAnswer);
+                result.setCorrectAnswer(quiz.getCorrectAnswer());
+                result.setCorrect(isCorrect);
+                result.setAnswered(isAnswered);
+                result.setQuestion(quiz.getQuestion());
+                result.setExplanation(quiz.getExplanation());
+                quizResults.put(quiz.getQuizId(), result);
             }
             
+            // Tính điểm
             double score = totalQuestions > 0 ? (double) correctAnswers / totalQuestions * 100 : 0;
-
-            int totalCourseQuizzes = quizDAO.countQuizzesByCourseId(courseId);
+            double answeredPercentage = totalQuestions > 0 ? (double) answeredQuestions / totalQuestions * 100 : 0;
+            
+            // Xác định trạng thái đạt/không đạt
+            boolean isPassed = score >= 100; // Yêu cầu 100% để pass
+            String grade = getGrade(score);
+            
+            int totalCourseQuizzes = allQuizzes.size();
+            
+            // Lấy thông tin course và lesson để hiển thị
+            CourseDAO courseDAO = new CourseDAO();
+            LessonDAO lessonDAO = new LessonDAO();
+            Course course = courseDAO.getCourseById(courseId);
+            Lesson lesson = lessonDAO.getLessonById(lessonId);
             
             request.setAttribute("quizzes", allQuizzes);
+            request.setAttribute("quizResults", quizResults);
             request.setAttribute("totalQuestions", totalQuestions);
             request.setAttribute("correctAnswers", correctAnswers);
-            request.setAttribute("score", score);
+            request.setAttribute("answeredQuestions", answeredQuestions);
+            request.setAttribute("score", Math.round(score * 100.0) / 100.0); // Làm tròn 2 chữ số thập phân
+            request.setAttribute("answeredPercentage", Math.round(answeredPercentage * 100.0) / 100.0);
+            request.setAttribute("isPassed", isPassed);
+            request.setAttribute("grade", grade);
             request.setAttribute("showResults", true);
             request.setAttribute("courseId", courseId);
             request.setAttribute("lessonId", lessonId);
             request.setAttribute("totalCourseQuizzes", totalCourseQuizzes);
+            request.setAttribute("course", course);
+            request.setAttribute("lesson", lesson);
             
             request.getRequestDispatcher("customer-list-quiz.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
             response.sendRedirect("purchased-courses");
         }
+    }
+    
+    /**
+     * Xác định grade dựa trên điểm số
+     */
+    private String getGrade(double score) {
+        if (score >= 100) return "A+ (Excellent)";
+        else if (score >= 90) return "A (Very Good)";
+        else if (score >= 80) return "B (Good)";
+        else if (score >= 70) return "C (Average)";
+        else if (score >= 60) return "D (Below Average)";
+        else return "F (Fail)";
+    }
+    
+    /**
+     * Inner class để lưu kết quả chi tiết của từng câu hỏi
+     */
+    public static class QuizResult {
+        private Long quizId;
+        private String userAnswer;
+        private String correctAnswer;
+        private boolean isCorrect;
+        private boolean isAnswered;
+        private String question;
+        private String explanation;
+        
+        // Getters and Setters
+        public Long getQuizId() { return quizId; }
+        public void setQuizId(Long quizId) { this.quizId = quizId; }
+        
+        public String getUserAnswer() { return userAnswer; }
+        public void setUserAnswer(String userAnswer) { this.userAnswer = userAnswer; }
+        
+        public String getCorrectAnswer() { return correctAnswer; }
+        public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
+        
+        public boolean isCorrect() { return isCorrect; }
+        public void setCorrect(boolean correct) { isCorrect = correct; }
+        
+        public boolean isAnswered() { return isAnswered; }
+        public void setAnswered(boolean answered) { isAnswered = answered; }
+        
+        public String getQuestion() { return question; }
+        public void setQuestion(String question) { this.question = question; }
+        
+        public String getExplanation() { return explanation; }
+        public void setExplanation(String explanation) { this.explanation = explanation; }
     }
 }
