@@ -89,7 +89,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         color: white !important;
         background: transparent !important;
         transform: none !important;
-        box-shadow: none !important;
         backdrop-filter: none !important;
       }
       #navigation li a:not(.btn):hover::after {
@@ -102,41 +101,74 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
       /* Main Layout */
       .main-container {
         display: flex;
-        min-height: calc(100vh - 200px);
-        padding: 40px 0;
+        height: calc(100vh - 80px);
+        background: #f7f9fc;
       }
 
       /* Sidebar */
       .sidebar {
-        width: 300px;
+        width: 320px;
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        margin-right: 30px;
+        border-right: 1px solid #e1e5e9;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
       }
 
       .sidebar-header {
-        padding: 20px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e1e5e9;
         background: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .course-title {
+        font-size: 16px;
         font-weight: 600;
-        color: #495057;
+        color: #1f1f1f;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: #6a6f73;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+
+      .close-btn:hover {
+        background: #e1e5e9;
+        color: #1f1f1f;
       }
 
       .lesson-list {
+        flex: 1;
+        overflow-y: auto;
         list-style: none;
         margin: 0;
         padding: 0;
       }
 
       .lesson-item {
-        padding: 16px 20px;
-        border-bottom: 1px solid #f1f3f4;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        border-bottom: 1px solid #f0f2f5;
+        transition: all 0.2s ease;
+      }
+
+      .lesson-item a {
         display: flex;
         align-items: center;
+        padding: 16px 24px;
+        color: #1f1f1f;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        position: relative;
       }
 
       .lesson-item:hover {
@@ -144,10 +176,13 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
       }
 
       .lesson-item.active {
-        background: #e3f2fd;
-        color: #1976d2;
+        background: #e8f4fd;
+        border-left: 4px solid #0056b3;
+      }
+
+      .lesson-item.active a {
+        color: #0056b3;
         font-weight: 600;
-        border-left: 4px solid #1976d2;
       }
 
       .lesson-number {
@@ -165,14 +200,32 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
       }
 
       .lesson-item.active .lesson-number {
-        background: #1976d2;
+        background: #0056b3;
         color: white;
+      }
+
+      .lesson-content {
+        flex: 1;
+      }
+
+      .lesson-title {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
       }
 
       .quiz-item {
         background: #fff3cd;
+      }
+
+      .quiz-item .lesson-title {
         color: #856404;
         font-weight: 600;
+      }
+
+      .quiz-item .lesson-number {
+        background: #ffc107;
+        color: #856404;
       }
 
       /* Main Content */
@@ -180,7 +233,9 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        background: white;
+        padding: 30px;
+        overflow-y: auto;
       }
 
       /* AI Coaching Section */
@@ -188,7 +243,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         background: white;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       }
 
       .section-title {
@@ -218,7 +272,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
       .help-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
       }
 
       /* Coach Response Section */
@@ -226,7 +279,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         background: white;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         display: none;
       }
 
@@ -275,7 +327,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         background: white;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       }
 
       .assignment-info {
@@ -299,8 +350,9 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
       .start-quiz-btn:hover {
         background: #218838;
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
       }
+
+
 
       /* Footer - Consistent with other customer pages */
       .footer-wrappper {
@@ -410,23 +462,31 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
     </div>
 
     <!-- Main Container -->
-    <div class="container">
-      <div class="main-container">
+    <div class="main-container">
         <!-- Sidebar -->
         <div class="sidebar">
-          <div class="sidebar-header">Course Content</div>
+          <div class="sidebar-header">
+            <h3 class="course-title">${course.title}</h3>
+            <button class="close-btn" onclick="window.history.back()">&times;</button>
+          </div>
           <ul class="lesson-list">
             <c:forEach var="lessonItem" items="${lessons}" varStatus="status">
-              <li
-                class="lesson-item ${lessonItem.lessonId == lesson.lessonId ? 'active' : ''}"
-              >
-                <div class="lesson-number">${status.index + 1}</div>
-                <span>${lessonItem.title}</span>
+              <li class="lesson-item ${lessonItem.lessonId == lesson.lessonId ? 'active' : ''}">
+                <a href="customer-view-lesson?courseId=${courseId}&lessonId=${lessonItem.lessonId}">
+                  <div class="lesson-number">${status.index + 1}</div>
+                  <div class="lesson-content">
+                    <div class="lesson-title">${lessonItem.title}</div>
+                  </div>
+                </a>
               </li>
             </c:forEach>
             <li class="lesson-item quiz-item active">
-              <div class="lesson-number">Q</div>
-              <span>Practice Quiz</span>
+              <a href="customer-quiz-preparation?courseId=${courseId}&lessonId=${lesson.lessonId}">
+                <div class="lesson-number">Q</div>
+                <div class="lesson-content">
+                  <div class="lesson-title">Practice Quiz</div>
+                </div>
+              </a>
             </li>
           </ul>
         </div>
@@ -456,17 +516,19 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
                 <p>AI Assistant</p>
               </div>
             </div>
-                         <div class="loading" id="loading">
-               <div class="spinner"></div>
-               <p>Generating response...</p>
-             </div>
+            <div class="loading" id="loading">
+              <div class="spinner"></div>
+              <p>Generating response...</p>
+            </div>
             <div class="coach-response" id="aiResponse"></div>
           </div>
 
           <!-- Assignment Detail Section -->
           <div class="assignment-section">
             <h2 class="section-title">Assignment detail</h2>
-            <p class="assignment-info">Total question: 10 questions</p>
+            <div class="assignment-info">
+              <p><strong>Total Course Questions:</strong> ${totalCourseQuizzes} questions</p>
+            </div>
             <button class="start-quiz-btn" onclick="startQuiz()">
               Start practice quiz
             </button>
@@ -474,7 +536,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Footer -->
     <footer>
@@ -544,38 +605,38 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         loading.style.display = "block";
         aiResponse.style.display = "none";
 
-                 // Call AJAX to get response from AI
-         fetch("customer-quiz-preparation", {
-           method: "POST",
-           headers: {
-             "Content-Type": "application/x-www-form-urlencoded",
-           },
-           body: new URLSearchParams({
-             courseId: "${course.course_id}",
-             lessonId: "${lesson.lessonId}",
-           }),
-         })
+        // Call AJAX to get response from AI
+        fetch("customer-quiz-preparation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            courseId: "${course.course_id}",
+            lessonId: "${lesson.lessonId}",
+          }),
+        })
           .then((response) => response.text())
-                     .then((data) => {
-             // Hide loading and show response
-             loading.style.display = "none";
-             aiResponse.style.display = "block";
-             aiResponse.textContent = data;
-           })
-           .catch((error) => {
-             loading.style.display = "none";
-             aiResponse.style.display = "block";
-             aiResponse.textContent =
-               "An error occurred while generating the response. Please try again.";
-             console.error("Error:", error);
-           });
+          .then((data) => {
+            // Hide loading and show response
+            loading.style.display = "none";
+            aiResponse.style.display = "block";
+            aiResponse.textContent = data;
+          })
+          .catch((error) => {
+            loading.style.display = "none";
+            aiResponse.style.display = "block";
+            aiResponse.textContent =
+              "An error occurred while generating the response. Please try again.";
+            console.error("Error:", error);
+          });
       }
 
-             function startQuiz() {
-         // Redirect to quiz page
-         window.location.href =
-           "video-quiz?courseId=${course.course_id}&lessonId=${lesson.lessonId}";
-       }
+      function startQuiz() {
+        // Redirect to quiz page
+        window.location.href =
+          "customer-list-quiz?courseId=${course.course_id}&lessonId=${lesson.lessonId}";
+      }
     </script>
   </body>
 </html>

@@ -12,12 +12,13 @@ public class Quiz {
     private Date updatedAt;
     private Long lessonId;
     private String lessonTitle;
+    private String courseTitle;
     private String explanation;
 
     public Quiz() {
     }
 
-    public Quiz(Long quizId, String question, String answerOptions, String correctAnswer, Date createdAt, Date updatedAt, Long lessonId, String lessonTitle, String explanation) {
+    public Quiz(Long quizId, String question, String answerOptions, String correctAnswer, Date createdAt, Date updatedAt, Long lessonId, String lessonTitle, String courseTitle, String explanation) {
         this.quizId = quizId;
         this.question = question;
         this.answerOptions = answerOptions;
@@ -26,6 +27,7 @@ public class Quiz {
         this.updatedAt = updatedAt;
         this.lessonId = lessonId;
         this.lessonTitle = lessonTitle;
+        this.courseTitle = courseTitle;
         this.explanation = explanation;
     }
 
@@ -45,6 +47,14 @@ public class Quiz {
 
     public void setLessonTitle(String lessonTitle) {
         this.lessonTitle = lessonTitle;
+    }
+
+    public String getCourseTitle() {
+        return courseTitle;
+    }
+
+    public void setCourseTitle(String courseTitle) {
+        this.courseTitle = courseTitle;
     }
 
     // Getter & Setter
@@ -103,4 +113,10 @@ public class Quiz {
     public void setLessonId(Long lessonId) {
         this.lessonId = lessonId;
     }
+
+    @Override
+    public String toString() {
+        return "Quiz{" + "quizId=" + quizId + ", question=" + question + ", answerOptions=" + answerOptions + ", correctAnswer=" + correctAnswer + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", lessonId=" + lessonId + ", lessonTitle=" + lessonTitle + ", courseTitle=" + courseTitle + ", explanation=" + explanation + '}';
+    }
+    
 }
