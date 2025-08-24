@@ -74,10 +74,10 @@
             </c:if>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="listCousera" class="btn btn-outline-secondary">
+                <a href="listCourses" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
-                <a href="manageLessonSeller?courseId=${course.course_id}" class="btn btn-primary">
+                <a href="manageLessonInstructor?courseId=${course.course_id}" class="btn btn-primary">
                     <i class="bi bi-journal-code"></i> Manage Lessons
                 </a>
             </div>

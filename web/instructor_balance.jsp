@@ -273,12 +273,12 @@
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link active">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
-                        <!-- Main Content -->
+                       
                         <div class="col-lg-9 col-md-8 content">
                             <h2>Balance Management</h2>
                             <p>View your earnings and transaction history here.</p>

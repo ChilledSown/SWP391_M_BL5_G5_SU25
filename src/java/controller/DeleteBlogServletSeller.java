@@ -74,18 +74,18 @@ public class DeleteBlogServletSeller extends HttpServlet {
                 model.Blog blog = blogDAO.getBlogById(Long.parseLong(blogId));
                 if (blog != null && blog.getCreatedBy() == user.getUser_id().intValue()) {
                     blogDAO.deleteBlog(Long.parseLong(blogId));
-                    response.sendRedirect("seller_blog.jsp");
+                    response.sendRedirect("listBlogsInstructor");
                 } else {
                     session.setAttribute("errorMessage", "Blog not found or you do not have permission to delete it.");
-                    response.sendRedirect("seller_blog.jsp");
+                    response.sendRedirect("listBlogsInstructor");
                 }
             } catch (NumberFormatException e) {
                 session.setAttribute("errorMessage", "Invalid blog ID.");
-                response.sendRedirect("seller_blog.jsp");
+                response.sendRedirect("listBlogsInstructor");
             }
         } else {
             session.setAttribute("errorMessage", "Blog ID is missing.");
-            response.sendRedirect("seller_blog.jsp");
+            response.sendRedirect("listBlogsInstructor");
         }
     }
 
