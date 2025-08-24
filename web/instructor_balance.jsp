@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Balance | Seller Dashboard</title>
+    <title>Manage Balance | Instructor Dashboard</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -175,6 +175,11 @@
             font-size: 1rem;
             margin-bottom: 20px;
         }
+        .success-message {
+            color: #28a745;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
         .footer-wrappper {
             background: #343a40;
         }
@@ -189,6 +194,23 @@
         .footer-social a:hover {
             color: #007bff;
         }
+        .status-form {
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Reduced gap for better alignment */
+        }
+        .status-select {
+            width: 100px; /* Adjusted width for better fit */
+            margin: 0;
+            padding: 5px;
+        }
+        .action-cell {
+            white-space: nowrap; /* Prevent wrapping */
+        }
+        .clearfix {
+            clear: both;
+            margin-bottom: 20px;
+        }
         @media (max-width: 991px) {
             .sidebar {
                 min-height: auto;
@@ -199,6 +221,9 @@
             }
             .content {
                 padding: 20px;
+            }
+            .status-select {
+                width: 80px; /* Smaller width for mobile */
             }
         }
         @media (max-width: 767px) {
@@ -216,11 +241,20 @@
             .dashboard-card {
                 margin-bottom: 15px;
             }
+            .status-form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .action-cell {
+                display: block; /* Stack elements on mobile */
+            }
+            .status-select {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Preloader Start -->
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
             <div class="preloader-inner position-relative">
@@ -231,7 +265,6 @@
             </div>
         </div>
     </div>
-    <!-- Preloader End -->
     <header>
         <div class="header-area header-transparent">
             <div class="main-header">
@@ -268,7 +301,6 @@
             <section class="dashboard-area section-padding40">
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
@@ -278,12 +310,14 @@
                                 <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
-                       
                         <div class="col-lg-9 col-md-8 content">
                             <h2>Balance Management</h2>
                             <p>View your earnings and transaction history here.</p>
                             <c:if test="${not empty errorMessage}">
                                 <div class="error-message">${errorMessage}</div>
+                            </c:if>
+                            <c:if test="${not empty message}">
+                                <div class="success-message">${message}</div>
                             </c:if>
                             <div class="dashboard-card">
                                 <h4>Current Balance</h4>
@@ -296,6 +330,7 @@
                                         <th>Description</th>
                                         <th>Amount</th>
                                         <th>Method</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -307,19 +342,36 @@
                                             <td><fmt:formatNumber value="${transaction.amount}" type="currency" currencySymbol="$" maxFractionDigits="2" /></td>
                                             <td>${transaction.paymentMethod}</td>
                                             <td>
+                                                <c:choose>
+                                                    <c:when test="${transaction.paymentStatus == 'pending'}">Pending</c:when>
+                                                    <c:when test="${transaction.paymentStatus == 'completed'}">Completed</c:when>
+                                                    <c:when test="${transaction.paymentStatus == 'cancelled'}">Cancelled</c:when>
+                                                    <c:otherwise>${transaction.paymentStatus}</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="action-cell">
                                                 <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
+                                                <form action="${pageContext.request.contextPath}/balance" method="post" class="status-form">
+                                                    <input type="hidden" name="action" value="updateStatus">
+                                                    <input type="hidden" name="orderId" value="${transaction.orderId}">
+                                                    <select name="status" class="form-control status-select" onchange="this.form.submit()">
+                                                        <option value="completed" ${transaction.paymentStatus == 'completed' ? 'selected' : ''}>Completed</option>
+                                                        <option value="cancelled" ${transaction.paymentStatus == 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                                    </select>
+                                                </form>
                                             </td>
                                         </tr>
                                     </c:forEach>
                                     <c:if test="${empty transactions}">
                                         <tr>
-                                            <td colspan="5" class="text-center">No transactions found.</td>
+                                            <td colspan="6" class="text-center">No transactions found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>
                             </table>
+                            <div class="clearfix"></div> <!-- Ensures pagination is below the table -->
                             <jsp:include page="pagination.jsp" />
                         </div>
                     </div>
@@ -410,7 +462,6 @@
             <div id="back-top">
                 <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
             </div>
-            <!-- JS here -->
             <script src="${pageContext.request.contextPath}/assets/js/vendor/modernizr-3.5.0.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/vendor/jquery-1.12.4.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>

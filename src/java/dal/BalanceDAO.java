@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BalanceDAO extends DBContext {
-
     public double getBalance(int createdBy) {
-        String sql = "SELECT SUM(p.Amount) as TotalBalance " +
+        String sql = "SELECT SUM(CAST(p.Amount AS FLOAT)) as TotalBalance " +
                      "FROM [Order] o " +
                      "JOIN Payment p ON o.Order_Id = p.Order_Id " +
                      "JOIN Order_Detail od ON o.Order_Id = od.Order_Id " +
@@ -39,25 +38,20 @@ public class BalanceDAO extends DBContext {
             "JOIN Course c ON od.Course_Id = c.Course_Id " +
             "WHERE c.Created_By = ?"
         );
-
         List<Object> parameters = new ArrayList<>();
         parameters.add(createdBy);
-
         if (status != null && !status.trim().isEmpty() && !status.equals("all")) {
             sql.append(" AND p.Payment_Status = ?");
             parameters.add(status);
         }
-
         sql.append(" ORDER BY CASE WHEN p.Payment_Status = 'cancelled' THEN 1 ELSE 0 END, o.Created_At DESC");
         sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 stm.setObject(i + 1, parameters.get(i));
             }
             stm.setInt(parameters.size() + 1, (page - 1) * pageSize);
             stm.setInt(parameters.size() + 2, pageSize);
-
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 transactions.add(new BalanceDTOSeller(
@@ -85,15 +79,12 @@ public class BalanceDAO extends DBContext {
             "JOIN Course c ON od.Course_Id = c.Course_Id " +
             "WHERE c.Created_By = ?"
         );
-
         List<Object> parameters = new ArrayList<>();
         parameters.add(createdBy);
-
         if (status != null && !status.trim().isEmpty() && !status.equals("all")) {
             sql.append(" AND p.Payment_Status = ?");
             parameters.add(status);
         }
-
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
                 stm.setObject(i + 1, parameters.get(i));
@@ -150,15 +141,15 @@ public class BalanceDAO extends DBContext {
                     rs.getString("FirstName"),
                     rs.getString("MiddleName"),
                     rs.getString("LastName"),
-                    null, // Avata_Url
+                    null,
                     rs.getString("Phone"),
                     rs.getString("Address"),
                     rs.getString("Email"),
-                    null, // PasswordHash
-                    null, // Role
-                    null, // Created_At
-                    null, // Updated_At
-                    null  // Account_Status
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
                 );
             }
         } catch (SQLException ex) {
@@ -168,6 +159,10 @@ public class BalanceDAO extends DBContext {
     }
 
     public boolean updatePaymentStatus(long orderId, String status) {
+        // Restrict to 'completed' or 'cancelled' to avoid CHECK constraint
+        if (!status.equals("completed") && !status.equals("cancelled")) {
+            return false;
+        }
         String sql = "UPDATE Payment SET Payment_Status = ?, Payment_Date = GETDATE() WHERE Order_Id = ?;" +
                      "UPDATE [Order] SET Status = ? WHERE Order_Id = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
@@ -185,11 +180,11 @@ public class BalanceDAO extends DBContext {
 
     public List<String> getPaymentStatuses() {
         List<String> statuses = new ArrayList<>();
-        String sql = "SELECT DISTINCT Status FROM [Order] WHERE Status IS NOT NULL ORDER BY Status";
+        String sql = "SELECT DISTINCT Payment_Status FROM Payment WHERE Payment_Status IS NOT NULL ORDER BY Payment_Status";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                statuses.add(rs.getString("Status"));
+                statuses.add(rs.getString("Payment_Status"));
             }
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(BalanceDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);

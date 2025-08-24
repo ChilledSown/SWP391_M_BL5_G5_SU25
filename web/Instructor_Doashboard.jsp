@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Seller Dashboard | Online Learning</title>
+    <title>Instructor Dashboard | Online Learning</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">

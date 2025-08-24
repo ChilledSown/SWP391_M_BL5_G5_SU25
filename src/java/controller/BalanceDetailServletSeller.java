@@ -21,7 +21,6 @@ public class BalanceDetailServletSeller extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-
         String orderId = request.getParameter("orderId");
         if (orderId != null && !orderId.isEmpty()) {
             try {
@@ -31,6 +30,14 @@ public class BalanceDetailServletSeller extends HttpServlet {
                     User buyer = balanceDAO.getBuyerByOrderId(Long.parseLong(orderId));
                     request.setAttribute("transaction", transaction);
                     request.setAttribute("buyer", buyer);
+                    String message = request.getParameter("message");
+                    String errorMessage = request.getParameter("errorMessage");
+                    if (message != null) {
+                        request.setAttribute("message", message);
+                    }
+                    if (errorMessage != null) {
+                        request.setAttribute("errorMessage", errorMessage);
+                    }
                 } else {
                     request.setAttribute("errorMessage", "Transaction not found or you do not have permission to view it.");
                 }
@@ -40,7 +47,11 @@ public class BalanceDetailServletSeller extends HttpServlet {
         } else {
             request.setAttribute("errorMessage", "Order ID is missing.");
         }
-
         request.getRequestDispatcher("/BalanceDetail.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response); // Status updates are handled by BalanceServlet
     }
 }
