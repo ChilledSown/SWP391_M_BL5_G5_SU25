@@ -1,0 +1,614 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!doctype html>
+<html class="no-js" lang="zxx">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Edit Video Quiz | Seller Dashboard</title>
+    <meta name="description" content="Seller dashboard for editing video quizzes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.ico">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <style>
+        body {
+            background: linear-gradient(120deg, #7F7FD5, #E86ED0);
+            font-family: 'Roboto', sans-serif;
+        }
+        .sidebar {
+            background: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .sidebar .nav-link {
+            color: #343a40;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            transform: translateX(5px);
+        }
+        .content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 400;
+            height: 48px;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        .form-control::placeholder {
+            color: #6c757d;
+            font-weight: 400;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-radius: 6px 0 0 6px;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-back {
+            background-color: #ff8243;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .btn-back:hover {
+            background-color: #e67030;
+        }
+        #navigation a {
+            color: #343a40 !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        #navigation a:hover {
+            color: #007bff !important;
+        }
+        .content h2 {
+            color: #007bff;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .content p {
+            color: #495057;
+            font-size: 1.1rem;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .form-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        @media (max-width: 991px) {
+            .sidebar {
+                min-height: auto;
+                margin-bottom: 20px;
+            }
+            .sidebar .nav-link {
+                padding: 10px;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+        @media (max-width: 767px) {
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .form-control {
+                font-size: 0.9rem;
+            }
+            .btn-primary, .btn-back {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <c:if test="${empty sessionScope.user}">
+        <c:redirect url="login"/>
+    </c:if>
+    <header>
+        <div class="header-area header-transparent">
+            <div class="main-header">
+                <div class="header-bottom header-sticky">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-xl-2 col-lg-2">
+                                <div class="logo">
+                                    <a href="index.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo.png" alt="Logo"></a>
+                                </div>
+                            </div>
+                            <div class="col-xl-10 col-lg-10">
+                                <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                    <div class="main-menu d-none d-lg-block">
+                                        <nav>
+                                            <ul id="navigation">
+                                                <li><a href="index.jsp">Home</a></li>
+                                                <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
+                                                <li><a href="logout">Logout</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mobile_menu d-block d-lg-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main>
+            <section class="dashboard-area section-padding40">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 sidebar">
+                            <ul class="nav flex-column" id="sidebarNav">
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-9 col-md-8 content">
+                            <h2>Edit Video Quiz</h2>
+                            <p>Update the details of the video quiz. Leave answer options empty to keep existing ones.</p>
+                            <c:if test="${not empty message}">
+                                <div class="alert alert-success">${fn:escapeXml(message)}</div>
+                            </c:if>
+                            <c:if test="${not empty error}">
+                                <div class="alert alert-danger">${fn:escapeXml(error)}</div>
+                            </c:if>
+                            <c:choose>
+                                <c:when test="${not empty videoQuiz}">
+                                    <c:set var="options" value="${fn:split(videoQuiz.answerOptions, ' ; ')}" />
+                                    <c:set var="optionA" value="${fn:length(options) > 0 && fn:startsWith(options[0], 'A.') ? fn:substringAfter(options[0], 'A. ') : ''}" />
+                                    <c:set var="optionB" value="${fn:length(options) > 1 && fn:startsWith(options[1], 'B.') ? fn:substringAfter(options[1], 'B. ') : ''}" />
+                                    <c:set var="optionC" value="${fn:length(options) > 2 && fn:startsWith(options[2], 'C.') ? fn:substringAfter(options[2], 'C. ') : ''}" />
+                                    <c:set var="optionD" value="${fn:length(options) > 3 && fn:startsWith(options[3], 'D.') ? fn:substringAfter(options[3], 'D. ') : ''}" />
+                                    <form action="instructorvideoquiz?action=edit" method="post" id="editForm">
+                                        <input type="hidden" name="videoQuizId" value="${fn:escapeXml(videoQuiz.videoQuizId)}">
+                                        <input type="hidden" name="answerOptions" id="answerOptions" value="${fn:escapeXml(videoQuiz.answerOptions)}">
+                                        <input type="hidden" name="correctAnswer" id="correctAnswer" value="${fn:escapeXml(videoQuiz.correctAnswer)}">
+                                        <input type="hidden" id="originalOptionA" value="${fn:escapeXml(optionA)}">
+                                        <input type="hidden" id="originalOptionB" value="${fn:escapeXml(optionB)}">
+                                        <input type="hidden" id="originalOptionC" value="${fn:escapeXml(optionC)}">
+                                        <input type="hidden" id="originalOptionD" value="${fn:escapeXml(optionD)}">
+                                        <input type="hidden" id="originalCorrectAnswer" value="${fn:escapeXml(videoQuiz.correctAnswer)}">
+                                        <input type="hidden" id="originalAnswerOptions" value="${fn:escapeXml(videoQuiz.answerOptions)}">
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label for="lessonId" class="mb-2">Lesson</label>
+                                                <select name="lessonId" id="lessonId" class="form-control" required>
+                                                    <option value="" disabled>Select Lesson</option>
+                                                    <c:forEach var="lesson" items="${lessons}">
+                                                        <option value="${lesson.lessonId}" ${lesson.lessonId == (submittedLessonId != null ? submittedLessonId : videoQuiz.lessonId) ? 'selected' : ''}>
+                                                            ${fn:escapeXml(lesson.title)}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                                <div class="error-message" id="lessonIdError"></div>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="timestamp" class="mb-2">Timestamp (seconds)</label>
+                                                <input type="number" class="form-control" name="timestamp" id="timestamp" min="0" step="1" value="${submittedTimestamp != null ? submittedTimestamp : videoQuiz.timestamp}" required placeholder="Enter timestamp in seconds">
+                                                <div class="error-message" id="timestampError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label for="question" class="mb-2">Question</label>
+                                                <input type="text" class="form-control" name="question" id="question" value="${fn:escapeXml(submittedQuestion != null ? submittedQuestion : videoQuiz.question)}" required placeholder="Enter the quiz question" maxlength="500">
+                                                <div class="error-message" id="questionError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label class="mb-2">Answer Options (leave empty to keep original; at least two required if modified)</label>
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text">A</span>
+                                                    <input type="text" class="form-control" name="answerOptionA" id="answerOptionA" value="${fn:escapeXml(submittedAnswerOptionA != null ? submittedAnswerOptionA : '')}" placeholder="Enter new option A (leave empty to keep original)" maxlength="250">
+                                                </div>
+                                                <div class="error-message" id="answerOptionAError"></div>
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text">B</span>
+                                                    <input type="text" class="form-control" name="answerOptionB" id="answerOptionB" value="${fn:escapeXml(submittedAnswerOptionB != null ? submittedAnswerOptionB : '')}" placeholder="Enter new option B (leave empty to keep original)" maxlength="250">
+                                                </div>
+                                                <div class="error-message" id="answerOptionBError"></div>
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text">C</span>
+                                                    <input type="text" class="form-control" name="answerOptionC" id="answerOptionC" value="${fn:escapeXml(submittedAnswerOptionC != null ? submittedAnswerOptionC : '')}" placeholder="Enter new option C (leave empty to keep original)" maxlength="250">
+                                                </div>
+                                                <div class="error-message" id="answerOptionCError"></div>
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text">D</span>
+                                                    <input type="text" class="form-control" name="answerOptionD" id="answerOptionD" value="${fn:escapeXml(submittedAnswerOptionD != null ? submittedAnswerOptionD : '')}" placeholder="Enter new option D (leave empty to keep original)" maxlength="250">
+                                                </div>
+                                                <div class="error-message" id="answerOptionDError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label for="correctAnswerLetter" class="mb-2">Correct Answer</label>
+                                                <select name="correctAnswerLetter" id="correctAnswerLetter" class="form-control" disabled>
+                                                    <option value="" disabled>Select correct answer</option>
+                                                    <option value="A" ${correctAnswerLetter == 'A' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'A.')) ? 'selected' : ''}>A</option>
+                                                    <option value="B" ${correctAnswerLetter == 'B' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'B.')) ? 'selected' : ''}>B</option>
+                                                    <option value="C" ${correctAnswerLetter == 'C' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'C.')) ? 'selected' : ''}>C</option>
+                                                    <option value="D" ${correctAnswerLetter == 'D' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'D.')) ? 'selected' : ''}>D</option>
+                                                </select>
+                                                <div class="form-text">Select the letter corresponding to the correct answer (e.g., A for Option A). Enabled only when answer options are modified.</div>
+                                                <div class="error-message" id="correctAnswerLetterError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label for="explanation" class="mb-2">Explanation (optional)</label>
+                                                <textarea class="form-control" name="explanation" id="explanation" rows="3" placeholder="Enter explanation" maxlength="1000">${fn:escapeXml(submittedExplanation != null ? submittedExplanation : videoQuiz.explanation)}</textarea>
+                                                <div class="error-message" id="explanationError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" name="isActive" id="isActive" ${submittedIsActive != null ? (submittedIsActive == 'true' ? 'checked' : '') : (videoQuiz.isActive ? 'checked' : '')}>
+                                                    <label class="form-check-label" for="isActive">Is Active</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <button type="submit" class="btn-primary">Update Quiz</button>
+                                                <a href="instructorvideoquiz" class="btn-back" title="Back to List">
+                                                    <i class="fas fa-arrow-left"></i> Back
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <p>No quiz details available to edit.</p>
+                                    <a href="instructorvideoquiz" class="btn-back" title="Back to List">
+                                        <i class="fas fa-arrow-left"></i> Back
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <div class="footer-wrapper footer-bg">
+                <div class="footer-area footer-padding">
+                    <div class="container">
+                        <div class="row justify-content-between">
+                            <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
+                                <div class="single-footer-caption mb-50">
+                                    <div class="footer-logo mb-25">
+                                        <a href="index.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo2_footer.png" alt="Footer Logo"></a>
+                                    </div>
+                                    <div class="footer-tittle">
+                                        <div class="footer-pera">
+                                            <p>The automated process starts as soon as your clothes go into the machine.</p>
+                                        </div>
+                                    </div>
+                                    <div class="footer-social">
+                                        <a href="#"><i class="fab fa-twitter"></i></a>
+                                        <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
+                                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5">
+                                <div class="single-footer-caption mb-50">
+                                    <div class="footer-tittle">
+                                        <h4>Our solutions</h4>
+                                        <ul>
+                                            <li><a href="#">Design & creatives</a></li>
+                                            <li><a href="#">Telecommunication</a></li>
+                                            <li><a href="#">Restaurant</a></li>
+                                            <li><a href="#">Programing</a></li>
+                                            <li><a href="#">Architecture</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+                                <div class="single-footer-caption mb-50">
+                                    <div class="footer-tittle">
+                                        <h4>Support</h4>
+                                        <ul>
+                                            <li><a href="#">Design & creatives</a></li>
+                                            <li><a href="#">Telecommunication</a></li>
+                                            <li><a href="#">Restaurant</a></li>
+                                            <li><a href="#">Programing</a></li>
+                                            <li><a href="#">Architecture</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                                <div class="single-footer-caption mb-50">
+                                    <div class="footer-tittle">
+                                        <h4>Company</h4>
+                                        <ul>
+                                            <li><a href="#">Design & creatives</a></li>
+                                            <li><a href="#">Telecommunication</a></li>
+                                            <li><a href="#">Restaurant</a></li>
+                                            <li><a href="#">Programing</a></li>
+                                            <li><a href="#">Architecture</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom-area">
+                    <div class="container">
+                        <div class="footer-border">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-xl-12">
+                                    <div class="footer-copy-right text-center">
+                                        <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <div id="back-top">
+                <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
+            </div>
+            <script src="${pageContext.request.contextPath}/assets/js/vendor/jquery-1.12.4.min.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/js/jquery.validate.min.js"></script>
+            <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+            <script>
+                $(document).ready(function() {
+                    // Redirect on success message
+                    const message = $('.alert-success').text();
+                    if (message && message.trim() !== '') {
+                        setTimeout(function() {
+                            window.location.href = 'instructorvideoquiz';
+                        }, 2000);
+                    }
+
+                    // Enable/disable correctAnswerLetter based on answer option inputs
+                    function updateCorrectAnswerOptions() {
+                        const optionA = $('#answerOptionA').val().trim() || $('#originalOptionA').val().trim();
+                        const optionB = $('#answerOptionB').val().trim() || $('#originalOptionB').val().trim();
+                        const optionC = $('#answerOptionC').val().trim() || $('#originalOptionC').val().trim();
+                        const optionD = $('#answerOptionD').val().trim() || $('#originalOptionD').val().trim();
+                        const optionsModified = [
+                            $('#answerOptionA').val().trim(),
+                            $('#answerOptionB').val().trim(),
+                            $('#answerOptionC').val().trim(),
+                            $('#answerOptionD').val().trim()
+                        ].some(opt => opt !== '');
+                        $('#correctAnswerLetter').prop('disabled', !optionsModified);
+                        $('#correctAnswerLetter option[value="A"]').prop('disabled', !optionA);
+                        $('#correctAnswerLetter option[value="B"]').prop('disabled', !optionB);
+                        $('#correctAnswerLetter option[value="C"]').prop('disabled', !optionC);
+                        $('#correctAnswerLetter option[value="D"]').prop('disabled', !optionD);
+                    }
+
+                    // Update options on input change
+                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectAnswerOptions);
+                    updateCorrectAnswerOptions(); // Initial check
+
+                    $('#editForm').validate({
+                        rules: {
+                            lessonId: { required: true },
+                            timestamp: { required: true, number: true, min: 0 },
+                            question: { required: true, maxlength: 500 },
+                            answerOptionA: { maxlength: 250 },
+                            answerOptionB: { maxlength: 250 },
+                            answerOptionC: { maxlength: 250 },
+                            answerOptionD: { maxlength: 250 },
+                            correctAnswerLetter: { 
+                                required: function() {
+                                    return [
+                                        $('#answerOptionA').val().trim(),
+                                        $('#answerOptionB').val().trim(),
+                                        $('#answerOptionC').val().trim(),
+                                        $('#answerOptionD').val().trim()
+                                    ].some(opt => opt !== '');
+                                },
+                                validCorrectAnswerLetter: true
+                            },
+                            explanation: { maxlength: 1000 },
+                            isActive: { required: false }
+                        },
+                        messages: {
+                            lessonId: { required: "Please select a lesson." },
+                            timestamp: {
+                                required: "Timestamp is required.",
+                                number: "Timestamp must be a number.",
+                                min: "Timestamp must be non-negative."
+                            },
+                            question: {
+                                required: "Question is required.",
+                                maxlength: "Question cannot exceed 500 characters."
+                            },
+                            answerOptionA: { maxlength: "Option A cannot exceed 250 characters." },
+                            answerOptionB: { maxlength: "Option B cannot exceed 250 characters." },
+                            answerOptionC: { maxlength: "Option C cannot exceed 250 characters." },
+                            answerOptionD: { maxlength: "Option D cannot exceed 250 characters." },
+                            correctAnswerLetter: {
+                                required: "Correct answer is required when modifying answer options.",
+                                validCorrectAnswerLetter: "Please select a valid correct answer corresponding to a non-empty option."
+                            },
+                            explanation: { maxlength: "Explanation cannot exceed 1000 characters." }
+                        },
+                        errorElement: 'div',
+                        errorClass: 'error-message show',
+                        errorPlacement: function(error, element) {
+                            error.insertAfter(element);
+                        },
+                        highlight: function(element) {
+                            $(element).addClass('is-invalid').removeClass('is-valid');
+                            $(element).nextAll('.error-message').addClass('show');
+                        },
+                        unhighlight: function(element) {
+                            $(element).removeClass('is-invalid').addClass('is-valid');
+                            $(element).nextAll('.error-message').removeClass('show').empty();
+                        },
+                        submitHandler: function(form) {
+                            // Construct answerOptions using user input or original values
+                            var optionA = $('#answerOptionA').val().trim() || $('#originalOptionA').val().trim();
+                            var optionB = $('#answerOptionB').val().trim() || $('#originalOptionB').val().trim();
+                            var optionC = $('#answerOptionC').val().trim() || $('#originalOptionC').val().trim();
+                            var optionD = $('#answerOptionD').val().trim() || $('#originalOptionD').val().trim();
+                            var optionsModified = [
+                                $('#answerOptionA').val().trim(),
+                                $('#answerOptionB').val().trim(),
+                                $('#answerOptionC').val().trim(),
+                                $('#answerOptionD').val().trim()
+                            ].some(opt => opt !== '');
+
+                            var answerOptions;
+                            var correctAnswer;
+                            if (!optionsModified) {
+                                // Use original answer options and correct answer if not modified
+                                answerOptions = $('#originalAnswerOptions').val();
+                                correctAnswer = $('#originalCorrectAnswer').val();
+                            } else {
+                                // Construct new answer options
+                                answerOptions = ['A. ' + optionA, 'B. ' + optionB];
+                                if (optionC) answerOptions.push('C. ' + optionC);
+                                if (optionD) answerOptions.push('D. ' + optionD);
+                                answerOptions = answerOptions.join(' ; ');
+
+                                // Construct new correct answer based on current selection
+                                var currentCorrectLetter = $('#correctAnswerLetter').val();
+                                if (currentCorrectLetter === 'A') correctAnswer = 'A. ' + optionA;
+                                else if (currentCorrectLetter === 'B') correctAnswer = 'B. ' + optionB;
+                                else if (currentCorrectLetter === 'C') correctAnswer = 'C. ' + optionC;
+                                else if (currentCorrectLetter === 'D') correctAnswer = 'D. ' + optionD;
+                            }
+                            $('#answerOptions').val(answerOptions);
+                            $('#correctAnswer').val(correctAnswer);
+
+                            // Validate at least two options only if options are modified
+                            if (optionsModified && (!optionA || !optionB)) {
+                                $('#answerOptionAError').text('At least two options (A and B) are required when modifying answers.').addClass('show');
+                                return;
+                            }
+                            // Validate correct answer only if options are modified
+                            if (optionsModified && !correctAnswer) {
+                                $('#correctAnswerLetterError').text('Correct answer cannot be empty when modifying answer options.').addClass('show');
+                                return;
+                            }
+
+                            // Submit form via AJAX
+                            $.ajax({
+                                url: form.action,
+                                type: form.method,
+                                data: $(form).serialize(),
+                                success: function(response) {
+                                    if (response.startsWith('success:')) {
+                                        $('#editForm').prepend(
+                                            '<div class="alert alert-success">' + response.substring(8) + '</div>'
+                                        );
+                                        setTimeout(function() {
+                                            window.location.href = 'instructorvideoquiz';
+                                        }, 2000);
+                                    } else if (response.startsWith('error:')) {
+                                        $('#editForm').prepend(
+                                            '<div class="alert alert-danger">' + response.substring(6) + '</div>'
+                                        );
+                                    } else {
+                                        $('#editForm').prepend(
+                                            '<div class="alert alert-danger">Unexpected server response. Please try again.</div>'
+                                        );
+                                    }
+                                },
+                                error: function(xhr) {
+                                    let errorMessage = 'Failed to update quiz. Please try again.';
+                                    if (xhr.responseText && xhr.responseText.startsWith('error:')) {
+                                        errorMessage = xhr.responseText.substring(6);
+                                    }
+                                    $('#editForm').prepend(
+                                        '<div class="alert alert-danger">' + errorMessage + '</div>'
+                                    );
+                                }
+                            });
+                        }
+                    });
+
+                    // Custom validator for correctAnswerLetter
+                    $.validator.addMethod('validCorrectAnswerLetter', function(value, element) {
+                        var optionA = $('#answerOptionA').val().trim() || $('#originalOptionA').val().trim();
+                        var optionB = $('#answerOptionB').val().trim() || $('#originalOptionB').val().trim();
+                        var optionC = $('#answerOptionC').val().trim() || $('#originalOptionC').val().trim();
+                        var optionD = $('#answerOptionD').val().trim() || $('#originalOptionD').val().trim();
+                        var optionsModified = [
+                            $('#answerOptionA').val().trim(),
+                            $('#answerOptionB').val().trim(),
+                            $('#answerOptionC').val().trim(),
+                            $('#answerOptionD').val().trim()
+                        ].some(opt => opt !== '');
+                        // If no options are modified, skip validation (original correct answer will be used)
+                        if (!optionsModified) {
+                            return true;
+                        }
+                        // If options are modified, validate against current non-empty options
+                        if (value === 'A' && !optionA) return false;
+                        if (value === 'B' && !optionB) return false;
+                        if (value === 'C' && !optionC) return false;
+                        if (value === 'D' && !optionD) return false;
+                        return ['A', 'B', 'C', 'D'].includes(value);
+                    }, 'Please select a valid correct answer corresponding to a non-empty option.');
+                });
+            </script>
+        </body>
+</html>
