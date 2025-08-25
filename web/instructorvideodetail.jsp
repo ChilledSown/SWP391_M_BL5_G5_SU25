@@ -1,37 +1,24 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!doctype html>
 <html class="no-js" lang="zxx">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Balance | Seller Dashboard</title>
-    <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
+    <title>Video Quiz Detail | Seller Dashboard</title>
+    <meta name="description" content="Seller dashboard for viewing video quiz details">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.ico">
-    <!-- CSS here -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/slicknav.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/flaticon.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/progressbar_barfiller.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/gijgo.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animate.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/animated-headline.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/fontawesome-all.min.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/themify-icons.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/slick.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/nice-select.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <style>
         body {
             background: linear-gradient(120deg, #7F7FD5, #E86ED0);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             font-family: 'Roboto', sans-serif;
         }
         .sidebar {
@@ -62,91 +49,52 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .table {
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .table th {
-            background-color: #007bff;
-            color: #ffffff;
-            font-weight: 600;
-            padding: 15px;
-        }
-        .table td {
-            vertical-align: middle;
-            padding: 15px;
-            color: #343a40;
-        }
-        .table tbody tr:hover {
-            background-color: #f1f3f5;
-        }
-        .form-group {
+        .quiz-detail-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-bottom: 20px;
-        }
-        .form-control {
-            border-radius: 6px;
+            background: #fff;
             border: 1px solid #ced4da;
-            padding: 10px;
-            transition: border-color 0.3s ease;
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-            padding: 10px 20px;
             border-radius: 6px;
-            transition: all 0.3s ease;
         }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-            transform: translateY(-2px);
+        .quiz-detail-table th, .quiz-detail-table td {
+            padding: 12px;
+            border: 1px solid #ced4da;
+            text-align: left;
+            font-size: 1rem;
+            color: #495057;
         }
-        .btn-action {
+        .quiz-detail-table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            width: 30%;
+        }
+        .quiz-detail-table td {
+            vertical-align: top;
+            word-break: break-word;
+        }
+        .btn-back, .btn-action {
             background-color: #ff8243;
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 6px 8px;
-            margin: 2px;
+            padding: 10px 20px;
             font-size: 14px;
-            width: 32px;
-            height: 32px;
+            transition: background-color 0.2s ease-in-out;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s ease-in-out;
+            margin: 5px;
         }
-        .btn-action:hover {
+        .btn-action {
+            width: 40px;
+            height: 40px;
+        }
+        .btn-back:hover, .btn-action:hover {
             background-color: #e67030;
         }
-        .btn-action i {
+        .btn-back i, .btn-action i {
             font-size: 16px;
-        }
-        .dashboard-card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-        }
-        .dashboard-card h4 {
-            color: #007bff;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .dashboard-card p {
-            color: #343a40;
-            font-size: 1.5rem;
-            font-weight: 700;
         }
         #navigation a {
             color: #343a40 !important;
@@ -161,33 +109,12 @@
             font-weight: 700;
             margin-bottom: 20px;
         }
-        .content h3 {
-            color: #343a40;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
         .content p {
             color: #495057;
             font-size: 1.1rem;
         }
-        .error-message {
-            color: #dc3545;
-            font-size: 1rem;
+        .alert {
             margin-bottom: 20px;
-        }
-        .footer-wrappper {
-            background: #343a40;
-        }
-        .footer-tittle h4, .footer-pera p {
-            color: #ffffff;
-        }
-        .footer-social a {
-            color: #ffffff;
-            margin-right: 15px;
-            transition: color 0.3s ease;
-        }
-        .footer-social a:hover {
-            color: #007bff;
         }
         @media (max-width: 991px) {
             .sidebar {
@@ -202,36 +129,25 @@
             }
         }
         @media (max-width: 767px) {
-            .form-inline .form-group {
-                margin-bottom: 15px;
-                width: 100%;
+            .quiz-detail-table th, .quiz-detail-table td {
+                font-size: 0.9rem;
+                padding: 8px;
             }
-            .form-control {
-                width: 100%;
-            }
-            .btn-primary {
+            .btn-back, .btn-action {
                 width: 100%;
                 text-align: center;
             }
-            .dashboard-card {
-                margin-bottom: 15px;
+            .btn-action {
+                width: 36px;
+                height: 36px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Preloader Start -->
-    <div id="preloader-active">
-        <div class="preloader d-flex align-items-center justify-content-center">
-            <div class="preloader-inner position-relative">
-                <div class="preloader-circle"></div>
-                <div class="preloader-img pere-text">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/loder.png" alt="Preloader">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Preloader End -->
+    <c:if test="${empty sessionScope.user}">
+        <c:redirect url="login"/>
+    </c:if>
     <header>
         <div class="header-area header-transparent">
             <div class="main-header">
@@ -268,67 +184,91 @@
             <section class="dashboard-area section-padding40">
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
+                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance" class="nav-link active">Balance</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
-                        <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Balance Management</h2>
-                            <p>View your earnings and transaction history here.</p>
-                            <c:if test="${not empty errorMessage}">
-                                <div class="error-message">${errorMessage}</div>
+                            <h2>Video Quiz Detail</h2>
+                            <p>View the details of the selected video quiz.</p>
+                            <c:if test="${not empty message}">
+                                <div class="alert alert-success" role="alert">${fn:escapeXml(message)}</div>
                             </c:if>
-                            <div class="dashboard-card">
-                                <h4>Current Balance</h4>
-                                <p><fmt:formatNumber value="${balance}" type="currency" currencySymbol="$" maxFractionDigits="2" /></p>
-                            </div>
-                            <table class="table table-striped">
-                                <thead>
+                            <c:if test="${not empty error}">
+                                <div class="alert alert-danger" role="alert">${fn:escapeXml(error)}</div>
+                            </c:if>
+                            <c:if test="${not empty videoQuiz}">
+                                <table class="quiz-detail-table">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Amount</th>
-                                        <th>Method</th>
-                                        <th>Action</th>
+                                        <th>Video Quiz ID</th>
+                                        <td>${videoQuiz.videoQuizId}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="transaction" items="${transactions}">
-                                        <tr>
-                                            <td><fmt:formatDate value="${transaction.orderDate}" pattern="yyyy-MM-dd" /></td>
-                                            <td>${transaction.description}</td>
-                                            <td><fmt:formatNumber value="${transaction.amount}" type="currency" currencySymbol="$" maxFractionDigits="2" /></td>
-                                            <td>${transaction.paymentMethod}</td>
-                                            <td>
-                                                <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                    <c:if test="${empty transactions}">
-                                        <tr>
-                                            <td colspan="5" class="text-center">No transactions found.</td>
-                                        </tr>
-                                    </c:if>
-                                </tbody>
-                            </table>
-                            <jsp:include page="pagination.jsp" />
+                                    <tr>
+                                        <th>Lesson</th>
+                                        <td>${fn:escapeXml(videoQuiz.lessonTitle)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Timestamp (seconds)</th>
+                                        <td>${videoQuiz.timestamp}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Question</th>
+                                        <td>${fn:escapeXml(videoQuiz.question)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Answer Options</th>
+                                        <td>${fn:escapeXml(videoQuiz.answerOptions)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Correct Answer</th>
+                                        <td>${fn:escapeXml(videoQuiz.correctAnswer)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Explanation</th>
+                                        <td>${fn:escapeXml(videoQuiz.explanation)}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Active</th>
+                                        <td>${videoQuiz.isActive ? 'Yes' : 'No'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Created At</th>
+                                        <td><fmt:formatDate value="${videoQuiz.createdAt}" pattern="yyyy-MM-dd"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Updated At</th>
+                                        <td><fmt:formatDate value="${videoQuiz.updatedAt}" pattern="yyyy-MM-dd"/></td>
+                                    </tr>
+                                </table>
+                                <a href="instructorvideoquiz?action=edit&videoQuizId=${videoQuiz.videoQuizId}" class="btn-action" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="instructorvideoquiz?action=delete&videoQuizId=${videoQuiz.videoQuizId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this quiz?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                                <a href="instructorvideoquiz" class="btn-back" title="Back to List">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </a>
+                            </c:if>
+                            <c:if test="${empty videoQuiz}">
+                                <p>No quiz details available.</p>
+                                <a href="instructorvideoquiz" class="btn-back" title="Back to List">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </a>
+                            </c:if>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
         <footer>
-            <div class="footer-wrappper footer-bg">
+            <div class="footer-wrapper footer-bg">
                 <div class="footer-area footer-padding">
                     <div class="container">
                         <div class="row justify-content-between">
@@ -393,14 +333,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="footer-bottom-area">
-                        <div class="container">
-                            <div class="footer-border">
-                                <div class="row d-flex align-items-center">
-                                    <div class="col-xl-12">
-                                        <div class="footer-copy-right text-center">
-                                            <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
-                                        </div>
+                </div>
+                <div class="footer-bottom-area">
+                    <div class="container">
+                        <div class="footer-border">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-xl-12">
+                                    <div class="footer-copy-right text-center">
+                                        <p>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -411,31 +351,14 @@
             <div id="back-top">
                 <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
             </div>
-            <!-- JS here -->
-            <script src="${pageContext.request.contextPath}/assets/js/vendor/modernizr-3.5.0.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/vendor/jquery-1.12.4.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/bootstrap.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.slicknav.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/owl.carousel.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/slick.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/wow.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/animated.headline.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/gijgo.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.nice-select.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.sticky.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.barfiller.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.counterup.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/waypoints.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.countdown.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/hover-direction-snake.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/contact.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.form.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/jquery.validate.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/mail-script.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
-            <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-</body>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('instructorvideodetail.jsp loaded');
+                });
+            </script>
+        </body>
 </html>
