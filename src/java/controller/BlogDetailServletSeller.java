@@ -3,7 +3,6 @@ package controller;
 import dal.BlogDAO;
 import model.Blog;
 import model.User;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,15 +10,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@WebServlet(name = "BlogDetailServlet", urlPatterns = {"/blogDetail"})
+@WebServlet(name = "BlogDetailServletSeller", urlPatterns = {"/blogDetailSeller"})
 public class BlogDetailServletSeller extends HttpServlet {
+    private static final Logger LOGGER = Logger.getLogger(BlogDetailServletSeller.class.getName());
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
-            response.sendRedirect("login.jsp");
+        if (user == null || user.getUser_id() == null || !"seller".equalsIgnoreCase(user.getRole())) {
+            LOGGER.warning("Unauthorized access attempt to /blogDetail");
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
@@ -30,18 +34,17 @@ public class BlogDetailServletSeller extends HttpServlet {
                 Blog blog = blogDAO.getBlogById(Long.parseLong(blogId));
                 if (blog != null && blog.getCreatedBy() == user.getUser_id().intValue()) {
                     request.setAttribute("blog", blog);
-                    request.getRequestDispatcher("BlogDetailSeller.jsp").forward(request, response);
                 } else {
                     request.setAttribute("errorMessage", "Blog not found or you do not have permission to view it.");
-                    request.getRequestDispatcher("BlogDetailSeller.jsp").forward(request, response);
                 }
             } catch (NumberFormatException e) {
+                LOGGER.log(Level.SEVERE, "Invalid blog ID: " + blogId, e);
                 request.setAttribute("errorMessage", "Invalid blog ID.");
-                request.getRequestDispatcher("BlogDetailSeller.jsp").forward(request, response);
             }
         } else {
             request.setAttribute("errorMessage", "Blog ID is missing.");
-            request.getRequestDispatcher("BlogDetailSeller.jsp").forward(request, response);
         }
+
+        request.getRequestDispatcher("/BlogDetailSeller.jsp").forward(request, response);
     }
 }

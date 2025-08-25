@@ -257,7 +257,7 @@
                         </div>
                         <div class="btn-group">
                             <button type="submit" class="btn btn-primary"><%= btnText%></button>
-                            <a href="listCousera" class="btn btn-secondary">Cancel</a>
+                            <a href="listCourses" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
