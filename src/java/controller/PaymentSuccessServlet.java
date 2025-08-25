@@ -79,7 +79,6 @@ public class PaymentSuccessServlet extends HttpServlet {
         CartDAO cartDAO = new CartDAO();
         CourseDAO courseDAO = new CourseDAO();
         boolean orderUpdated = orderDAO.updateOrderStatus(finalOrderId, "completed");
-
         if (!orderUpdated) {
             response.sendRedirect("cart");
             return;
