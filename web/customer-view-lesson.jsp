@@ -289,56 +289,7 @@
                 100% { transform: rotate(360deg); }
             }
 
-            /* Video Controls */
-            .video-controls {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: rgba(0, 0, 0, 0.7);
-                padding: 10px 20px;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                color: white;
-                font-size: 14px;
-            }
-
-            .control-btn {
-                background: none;
-                border: none;
-                color: white;
-                cursor: pointer;
-                padding: 8px;
-                border-radius: 4px;
-                transition: all 0.2s ease;
-            }
-
-            .control-btn:hover {
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            .time-display {
-                font-family: monospace;
-                font-size: 13px;
-            }
-
-            .progress-bar {
-                flex: 1;
-                height: 4px;
-                background: rgba(255, 255, 255, 0.3);
-                border-radius: 2px;
-                position: relative;
-                cursor: pointer;
-            }
-
-            .progress-fill {
-                height: 100%;
-                background: #667eea;
-                border-radius: 2px;
-                width: 0%;
-                transition: width 0.1s ease;
-            }
+            /* Remove custom controls to avoid overlap with Video.js native controls */
 
 
 
@@ -579,8 +530,7 @@
                                         <c:url value="/${activeLesson.videoUrl}" var="resolvedVideoUrl" />
                                     </c:otherwise>
                                 </c:choose>
-                                <video id="lessonVideo" class="video-js vjs-default-skin" controls preload="auto" data-setup='{}'>
-                                    <source src="${resolvedVideoUrl}" type="video/mp4">
+                                <video id="lessonVideo" class="video-js vjs-default-skin" controls preload="auto" src="${resolvedVideoUrl}" playsinline>
                                     Your browser does not support HTML5 video.
                                 </video>
                             </c:when>
@@ -592,36 +542,7 @@
                             </c:otherwise>
                         </c:choose>
 
-                        <!-- Video Controls Overlay -->
-                        <div class="video-controls">
-                            <button class="control-btn" onclick="togglePlay()">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="control-btn" onclick="toggleMute()">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                            <button class="control-btn" onclick="rewind10()">
-                                <i class="fas fa-backward"></i>
-                            </button>
-                            <div class="time-display">
-                                <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
-                            </div>
-                            <div class="progress-bar" onclick="seekTo(event)">
-                                <div class="progress-fill" id="progressFill"></div>
-                            </div>
-                            <button class="control-btn" onclick="forward10()">
-                                <i class="fas fa-forward"></i>
-                            </button>
-                            <button class="control-btn">
-                                <span>1x</span>
-                            </button>
-                            <button class="control-btn">
-                                <i class="fas fa-cog"></i>
-                            </button>
-                            <button class="control-btn" onclick="toggleFullscreen()">
-                                <i class="fas fa-expand"></i>
-                            </button>
-                        </div>
+                        
 
 
 
@@ -708,53 +629,7 @@
                 }
             });
 
-            function togglePlay() {
-                if (videoElement) {
-                    if (videoElement.paused()) {
-                        videoElement.play();
-                    } else {
-                        videoElement.pause();
-                    }
-                }
-            }
-
-            function toggleMute() {
-                if (videoElement) {
-                    videoElement.muted(!videoElement.muted());
-                }
-            }
-
-            function rewind10() {
-                if (videoElement) {
-                    videoElement.currentTime(Math.max(0, videoElement.currentTime() - 10));
-                }
-            }
-
-            function forward10() {
-                if (videoElement) {
-                    videoElement.currentTime(videoElement.currentTime() + 10);
-                }
-            }
-
-            function seekTo(event) {
-                if (videoElement) {
-                    const rect = event.target.getBoundingClientRect();
-                    const x = event.clientX - rect.left;
-                    const width = rect.width;
-                    const percentage = x / width;
-                    videoElement.currentTime(percentage * videoElement.duration());
-                }
-            }
-
-            function toggleFullscreen() {
-                if (videoElement) {
-                    if (videoElement.isFullscreen()) {
-                        videoElement.exitFullscreen();
-                    } else {
-                        videoElement.requestFullscreen();
-                    }
-                }
-            }
+            // Custom control handlers removed to rely on Video.js built-in UI
 
             function loadVideoQuizzes(lessonId) {
                 fetch('video-quiz?action=get-quizzes&lessonId=' + lessonId)
@@ -790,7 +665,14 @@
             function setupVideoTracking() {
                 const el = document.getElementById('lessonVideo');
                 if (!el) return;
-                
+                // Ensure any existing Video.js instance is disposed to prevent nested players
+                try {
+                    const existing = videojs.getPlayer('lessonVideo');
+                    if (existing && !existing.isDisposed()) {
+                        existing.dispose();
+                    }
+                } catch (_) {}
+
                 try {
                     videoElement = videojs('lessonVideo', {
                         controls: true,
@@ -798,6 +680,13 @@
                         fluid: false,
                         responsive: true
                     });
+
+                    // Ensure the source is applied explicitly in case Video.js missed initial src
+                    try {
+                        if (videoElement && typeof videoElement.src === 'function') {
+                            videoElement.src({ src: '${resolvedVideoUrl}', type: 'video/mp4' });
+                        }
+                    } catch (_) {}
                     
                     videoElement.ready(function() {
                         this.on('timeupdate', function() {
@@ -813,6 +702,7 @@
                         });
                     });
                     
+                    if (quizCheckInterval) { clearInterval(quizCheckInterval); quizCheckInterval = null; }
                     quizCheckInterval = setInterval(checkForQuizzes, 1000);
                 } catch (e) {
                     videoElement = el;
@@ -821,6 +711,7 @@
                         updateTimeDisplay();
                         updateProgress();
                     });
+                    if (quizCheckInterval) { clearInterval(quizCheckInterval); quizCheckInterval = null; }
                     quizCheckInterval = setInterval(checkForQuizzes, 1000);
                 }
             }
@@ -981,6 +872,10 @@
             
             window.addEventListener('beforeunload', function() {
                 if (quizCheckInterval) clearInterval(quizCheckInterval);
+                try {
+                    const p = videojs.getPlayer('lessonVideo');
+                    if (p && !p.isDisposed()) p.dispose();
+                } catch (_) {}
             });
         </script>
     </body>
