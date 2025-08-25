@@ -73,6 +73,8 @@
             background-color: #f8f9fa;
             border-radius: 6px 0 0 6px;
             font-weight: 500;
+            width: 50px;
+            justify-content: center;
         }
         .btn-primary {
             background-color: #007bff;
@@ -131,6 +133,21 @@
             font-size: 0.9rem;
             color: #6c757d;
             margin-top: 5px;
+        }
+        .answer-option-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .answer-option-group .form-control {
+            padding-left: 60px;
+        }
+        .answer-option-group .input-group-text {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 48px;
+            line-height: 48px;
+            z-index: 3;
         }
         @media (max-width: 991px) {
             .sidebar {
@@ -200,17 +217,17 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
                             <h2>Edit Video Quiz</h2>
-                            <p>Update the details of the video quiz. Leave answer options empty to keep existing ones.</p>
+                            <p>Update the details of the video quiz. Enter at least two answer options and select the correct answer.</p>
                             <c:if test="${not empty message}">
                                 <div class="alert alert-success">${fn:escapeXml(message)}</div>
                             </c:if>
@@ -219,21 +236,17 @@
                             </c:if>
                             <c:choose>
                                 <c:when test="${not empty videoQuiz}">
-                                    <c:set var="options" value="${fn:split(videoQuiz.answerOptions, ' ; ')}" />
-                                    <c:set var="optionA" value="${fn:length(options) > 0 && fn:startsWith(options[0], 'A.') ? fn:substringAfter(options[0], 'A. ') : ''}" />
-                                    <c:set var="optionB" value="${fn:length(options) > 1 && fn:startsWith(options[1], 'B.') ? fn:substringAfter(options[1], 'B. ') : ''}" />
-                                    <c:set var="optionC" value="${fn:length(options) > 2 && fn:startsWith(options[2], 'C.') ? fn:substringAfter(options[2], 'C. ') : ''}" />
-                                    <c:set var="optionD" value="${fn:length(options) > 3 && fn:startsWith(options[3], 'D.') ? fn:substringAfter(options[3], 'D. ') : ''}" />
+                                    <!-- Parse Answer_Options -->
+                                    <c:set var="options" value="${fn:split(videoQuiz.answerOptions, ';')}" />
+                                    <c:set var="optionA" value="${fn:length(options) > 0 ? fn:trim(fn:substringAfter(options[0], 'A.')) : ''}" />
+                                    <c:set var="optionB" value="${fn:length(options) > 1 ? fn:trim(fn:substringAfter(options[1], 'B.')) : ''}" />
+                                    <c:set var="optionC" value="${fn:length(options) > 2 ? fn:trim(fn:substringAfter(options[2], 'C.')) : ''}" />
+                                    <c:set var="optionD" value="${fn:length(options) > 3 ? fn:trim(fn:substringAfter(options[3], 'D.')) : ''}" />
+                                    <c:set var="correctLetter" value="${fn:substringBefore(videoQuiz.correctAnswer, '.')}" />
                                     <form action="instructorvideoquiz?action=edit" method="post" id="editForm">
                                         <input type="hidden" name="videoQuizId" value="${fn:escapeXml(videoQuiz.videoQuizId)}">
-                                        <input type="hidden" name="answerOptions" id="answerOptions" value="${fn:escapeXml(videoQuiz.answerOptions)}">
-                                        <input type="hidden" name="correctAnswer" id="correctAnswer" value="${fn:escapeXml(videoQuiz.correctAnswer)}">
-                                        <input type="hidden" id="originalOptionA" value="${fn:escapeXml(optionA)}">
-                                        <input type="hidden" id="originalOptionB" value="${fn:escapeXml(optionB)}">
-                                        <input type="hidden" id="originalOptionC" value="${fn:escapeXml(optionC)}">
-                                        <input type="hidden" id="originalOptionD" value="${fn:escapeXml(optionD)}">
-                                        <input type="hidden" id="originalCorrectAnswer" value="${fn:escapeXml(videoQuiz.correctAnswer)}">
-                                        <input type="hidden" id="originalAnswerOptions" value="${fn:escapeXml(videoQuiz.answerOptions)}">
+                                        <input type="hidden" name="answerOptions" id="answerOptions">
+                                        <input type="hidden" name="correctAnswer" id="correctAnswer">
                                         <div class="row">
                                             <div class="col-md-6 form-group">
                                                 <label for="lessonId" class="mb-2">Lesson</label>
@@ -258,50 +271,44 @@
                                                 <div class="error-message" id="questionError"></div>
                                             </div>
                                             <div class="col-12 form-group">
-                                                <label class="mb-2">Answer Options (leave empty to keep original; at least two required if modified)</label>
-                                                <div class="input-group mb-2">
+                                                <label class="mb-2">Answer Options (at least two required)</label>
+                                                <div class="answer-option-group">
                                                     <span class="input-group-text">A</span>
-                                                    <input type="text" class="form-control" name="answerOptionA" id="answerOptionA" value="${fn:escapeXml(submittedAnswerOptionA != null ? submittedAnswerOptionA : '')}" placeholder="Enter new option A (leave empty to keep original)" maxlength="250">
+                                                    <input type="text" class="form-control answer-option" name="answerOptionA" id="answerOptionA" value="${fn:escapeXml(optionA)}" placeholder="Enter option A" maxlength="250">
+                                                    <div class="error-message" id="answerOptionAError"></div>
                                                 </div>
-                                                <div class="error-message" id="answerOptionAError"></div>
-                                                <div class="input-group mb-2">
+                                                <div class="answer-option-group">
                                                     <span class="input-group-text">B</span>
-                                                    <input type="text" class="form-control" name="answerOptionB" id="answerOptionB" value="${fn:escapeXml(submittedAnswerOptionB != null ? submittedAnswerOptionB : '')}" placeholder="Enter new option B (leave empty to keep original)" maxlength="250">
+                                                    <input type="text" class="form-control answer-option" name="answerOptionB" id="answerOptionB" value="${fn:escapeXml(optionB)}" placeholder="Enter option B" maxlength="250">
+                                                    <div class="error-message" id="answerOptionBError"></div>
                                                 </div>
-                                                <div class="error-message" id="answerOptionBError"></div>
-                                                <div class="input-group mb-2">
+                                                <div class="answer-option-group">
                                                     <span class="input-group-text">C</span>
-                                                    <input type="text" class="form-control" name="answerOptionC" id="answerOptionC" value="${fn:escapeXml(submittedAnswerOptionC != null ? submittedAnswerOptionC : '')}" placeholder="Enter new option C (leave empty to keep original)" maxlength="250">
+                                                    <input type="text" class="form-control answer-option" name="answerOptionC" id="answerOptionC" value="${fn:escapeXml(optionC)}" placeholder="Enter option C" maxlength="250">
+                                                    <div class="error-message" id="answerOptionCError"></div>
                                                 </div>
-                                                <div class="error-message" id="answerOptionCError"></div>
-                                                <div class="input-group mb-2">
+                                                <div class="answer-option-group">
                                                     <span class="input-group-text">D</span>
-                                                    <input type="text" class="form-control" name="answerOptionD" id="answerOptionD" value="${fn:escapeXml(submittedAnswerOptionD != null ? submittedAnswerOptionD : '')}" placeholder="Enter new option D (leave empty to keep original)" maxlength="250">
+                                                    <input type="text" class="form-control answer-option" name="answerOptionD" id="answerOptionD" value="${fn:escapeXml(optionD)}" placeholder="Enter option D" maxlength="250">
+                                                    <div class="error-message" id="answerOptionDError"></div>
                                                 </div>
-                                                <div class="error-message" id="answerOptionDError"></div>
                                             </div>
                                             <div class="col-12 form-group">
                                                 <label for="correctAnswerLetter" class="mb-2">Correct Answer</label>
-                                                <select name="correctAnswerLetter" id="correctAnswerLetter" class="form-control" disabled>
+                                                <select name="correctAnswerLetter" id="correctAnswerLetter" class="form-control" required>
                                                     <option value="" disabled>Select correct answer</option>
-                                                    <option value="A" ${correctAnswerLetter == 'A' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'A.')) ? 'selected' : ''}>A</option>
-                                                    <option value="B" ${correctAnswerLetter == 'B' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'B.')) ? 'selected' : ''}>B</option>
-                                                    <option value="C" ${correctAnswerLetter == 'C' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'C.')) ? 'selected' : ''}>C</option>
-                                                    <option value="D" ${correctAnswerLetter == 'D' || (correctAnswerLetter == null && fn:startsWith(videoQuiz.correctAnswer, 'D.')) ? 'selected' : ''}>D</option>
+                                                    <option value="A" ${correctLetter == 'A' ? 'selected' : ''}>A</option>
+                                                    <option value="B" ${correctLetter == 'B' ? 'selected' : ''}>B</option>
+                                                    <option value="C" ${correctLetter == 'C' ? 'selected' : ''}>C</option>
+                                                    <option value="D" ${correctLetter == 'D' ? 'selected' : ''}>D</option>
                                                 </select>
-                                                <div class="form-text">Select the letter corresponding to the correct answer (e.g., A for Option A). Enabled only when answer options are modified.</div>
+                                                <div class="form-text">Select the letter corresponding to the correct answer (e.g., A for Option A).</div>
                                                 <div class="error-message" id="correctAnswerLetterError"></div>
                                             </div>
                                             <div class="col-12 form-group">
                                                 <label for="explanation" class="mb-2">Explanation (optional)</label>
                                                 <textarea class="form-control" name="explanation" id="explanation" rows="3" placeholder="Enter explanation" maxlength="1000">${fn:escapeXml(submittedExplanation != null ? submittedExplanation : videoQuiz.explanation)}</textarea>
                                                 <div class="error-message" id="explanationError"></div>
-                                            </div>
-                                            <div class="col-12 form-group">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="isActive" id="isActive" ${submittedIsActive != null ? (submittedIsActive == 'true' ? 'checked' : '') : (videoQuiz.isActive ? 'checked' : '')}>
-                                                    <label class="form-check-label" for="isActive">Is Active</label>
-                                                </div>
                                             </div>
                                             <div class="col-12 form-group">
                                                 <button type="submit" class="btn-primary">Update Quiz</button>
@@ -422,23 +429,38 @@
                         }, 2000);
                     }
 
-                    // Enable/disable correctAnswerLetter based on answer option inputs
+                    // Update correct answer dropdown based on input
                     function updateCorrectAnswerOptions() {
-                        const optionA = $('#answerOptionA').val().trim() || $('#originalOptionA').val().trim();
-                        const optionB = $('#answerOptionB').val().trim() || $('#originalOptionB').val().trim();
-                        const optionC = $('#answerOptionC').val().trim() || $('#originalOptionC').val().trim();
-                        const optionD = $('#answerOptionD').val().trim() || $('#originalOptionD').val().trim();
-                        const optionsModified = [
-                            $('#answerOptionA').val().trim(),
-                            $('#answerOptionB').val().trim(),
-                            $('#answerOptionC').val().trim(),
-                            $('#answerOptionD').val().trim()
-                        ].some(opt => opt !== '');
-                        $('#correctAnswerLetter').prop('disabled', !optionsModified);
+                        const optionA = $('#answerOptionA').val().trim();
+                        const optionB = $('#answerOptionB').val().trim();
+                        const optionC = $('#answerOptionC').val().trim();
+                        const optionD = $('#answerOptionD').val().trim();
+
+                        // Enable/disable options based on whether they are filled
                         $('#correctAnswerLetter option[value="A"]').prop('disabled', !optionA);
                         $('#correctAnswerLetter option[value="B"]').prop('disabled', !optionB);
                         $('#correctAnswerLetter option[value="C"]').prop('disabled', !optionC);
                         $('#correctAnswerLetter option[value="D"]').prop('disabled', !optionD);
+
+                        // If the currently selected option is disabled, reset to a valid option
+                        if ($('#correctAnswerLetter').val() && $('#correctAnswerLetter option:selected').prop('disabled')) {
+                            const validOptions = ['A', 'B', 'C', 'D'].filter(letter => {
+                                if (letter === 'A' && optionA) return true;
+                                if (letter === 'B' && optionB) return true;
+                                if (letter === 'C' && optionC) return true;
+                                if (letter === 'D' && optionD) return true;
+                                return false;
+                            });
+                            $('#correctAnswerLetter').val(validOptions.length > 0 ? validOptions[0] : '');
+                        }
+
+                        // Show error if no valid options are available
+                        const validOptionCount = [optionA, optionB, optionC, optionD].filter(opt => opt).length;
+                        if (validOptionCount < 2) {
+                            $('#correctAnswerLetterError').text('At least two options are required.').addClass('show');
+                        } else {
+                            $('#correctAnswerLetterError').removeClass('show').empty();
+                        }
                     }
 
                     // Update options on input change
@@ -450,23 +472,15 @@
                             lessonId: { required: true },
                             timestamp: { required: true, number: true, min: 0 },
                             question: { required: true, maxlength: 500 },
-                            answerOptionA: { maxlength: 250 },
-                            answerOptionB: { maxlength: 250 },
+                            answerOptionA: { required: true, maxlength: 250 },
+                            answerOptionB: { required: true, maxlength: 250 },
                             answerOptionC: { maxlength: 250 },
                             answerOptionD: { maxlength: 250 },
                             correctAnswerLetter: { 
-                                required: function() {
-                                    return [
-                                        $('#answerOptionA').val().trim(),
-                                        $('#answerOptionB').val().trim(),
-                                        $('#answerOptionC').val().trim(),
-                                        $('#answerOptionD').val().trim()
-                                    ].some(opt => opt !== '');
-                                },
+                                required: true,
                                 validCorrectAnswerLetter: true
                             },
-                            explanation: { maxlength: 1000 },
-                            isActive: { required: false }
+                            explanation: { maxlength: 1000 }
                         },
                         messages: {
                             lessonId: { required: "Please select a lesson." },
@@ -479,12 +493,18 @@
                                 required: "Question is required.",
                                 maxlength: "Question cannot exceed 500 characters."
                             },
-                            answerOptionA: { maxlength: "Option A cannot exceed 250 characters." },
-                            answerOptionB: { maxlength: "Option B cannot exceed 250 characters." },
+                            answerOptionA: { 
+                                required: "Option A is required.",
+                                maxlength: "Option A cannot exceed 250 characters."
+                            },
+                            answerOptionB: { 
+                                required: "Option B is required.",
+                                maxlength: "Option B cannot exceed 250 characters."
+                            },
                             answerOptionC: { maxlength: "Option C cannot exceed 250 characters." },
                             answerOptionD: { maxlength: "Option D cannot exceed 250 characters." },
                             correctAnswerLetter: {
-                                required: "Correct answer is required when modifying answer options.",
+                                required: "Correct answer is required.",
                                 validCorrectAnswerLetter: "Please select a valid correct answer corresponding to a non-empty option."
                             },
                             explanation: { maxlength: "Explanation cannot exceed 1000 characters." }
@@ -492,7 +512,7 @@
                         errorElement: 'div',
                         errorClass: 'error-message show',
                         errorPlacement: function(error, element) {
-                            error.insertAfter(element);
+                            error.insertAfter(element.closest('.answer-option-group'));
                         },
                         highlight: function(element) {
                             $(element).addClass('is-invalid').removeClass('is-valid');
@@ -503,49 +523,37 @@
                             $(element).nextAll('.error-message').removeClass('show').empty();
                         },
                         submitHandler: function(form) {
-                            // Construct answerOptions using user input or original values
-                            var optionA = $('#answerOptionA').val().trim() || $('#originalOptionA').val().trim();
-                            var optionB = $('#answerOptionB').val().trim() || $('#originalOptionB').val().trim();
-                            var optionC = $('#answerOptionC').val().trim() || $('#originalOptionC').val().trim();
-                            var optionD = $('#answerOptionD').val().trim() || $('#originalOptionD').val().trim();
-                            var optionsModified = [
-                                $('#answerOptionA').val().trim(),
-                                $('#answerOptionB').val().trim(),
-                                $('#answerOptionC').val().trim(),
-                                $('#answerOptionD').val().trim()
-                            ].some(opt => opt !== '');
+                            // Construct answerOptions
+                            const optionA = $('#answerOptionA').val().trim();
+                            const optionB = $('#answerOptionB').val().trim();
+                            const optionC = $('#answerOptionC').val().trim();
+                            const optionD = $('#answerOptionD').val().trim();
+                            const answerOptionsArray = [];
+                            if (optionA) answerOptionsArray.push('A. ' + optionA);
+                            if (optionB) answerOptionsArray.push('B. ' + optionB);
+                            if (optionC) answerOptionsArray.push('C. ' + optionC);
+                            if (optionD) answerOptionsArray.push('D. ' + optionD);
+                            const answerOptions = answerOptionsArray.join(';');
 
-                            var answerOptions;
-                            var correctAnswer;
-                            if (!optionsModified) {
-                                // Use original answer options and correct answer if not modified
-                                answerOptions = $('#originalAnswerOptions').val();
-                                correctAnswer = $('#originalCorrectAnswer').val();
-                            } else {
-                                // Construct new answer options
-                                answerOptions = ['A. ' + optionA, 'B. ' + optionB];
-                                if (optionC) answerOptions.push('C. ' + optionC);
-                                if (optionD) answerOptions.push('D. ' + optionD);
-                                answerOptions = answerOptions.join(' ; ');
+                            // Construct correctAnswer
+                            const correctLetter = $('#correctAnswerLetter').val();
+                            let correctAnswer = '';
+                            if (correctLetter === 'A' && optionA) correctAnswer = 'A. ' + optionA;
+                            else if (correctLetter === 'B' && optionB) correctAnswer = 'B. ' + optionB;
+                            else if (correctLetter === 'C' && optionC) correctAnswer = 'C. ' + optionC;
+                            else if (correctLetter === 'D' && optionD) correctAnswer = 'D. ' + optionD;
 
-                                // Construct new correct answer based on current selection
-                                var currentCorrectLetter = $('#correctAnswerLetter').val();
-                                if (currentCorrectLetter === 'A') correctAnswer = 'A. ' + optionA;
-                                else if (currentCorrectLetter === 'B') correctAnswer = 'B. ' + optionB;
-                                else if (currentCorrectLetter === 'C') correctAnswer = 'C. ' + optionC;
-                                else if (currentCorrectLetter === 'D') correctAnswer = 'D. ' + optionD;
-                            }
                             $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
 
-                            // Validate at least two options only if options are modified
-                            if (optionsModified && (!optionA || !optionB)) {
-                                $('#answerOptionAError').text('At least two options (A and B) are required when modifying answers.').addClass('show');
+                            // Validate at least two options
+                            if (answerOptionsArray.length < 2) {
+                                $('#answerOptionAError').text('At least two options are required.').addClass('show');
                                 return;
                             }
-                            // Validate correct answer only if options are modified
-                            if (optionsModified && !correctAnswer) {
-                                $('#correctAnswerLetterError').text('Correct answer cannot be empty when modifying answer options.').addClass('show');
+                            // Validate correct answer
+                            if (!correctAnswer) {
+                                $('#correctAnswerLetterError').text('Please select a valid correct answer corresponding to a non-empty option.').addClass('show');
                                 return;
                             }
 
@@ -587,21 +595,10 @@
 
                     // Custom validator for correctAnswerLetter
                     $.validator.addMethod('validCorrectAnswerLetter', function(value, element) {
-                        var optionA = $('#answerOptionA').val().trim() || $('#originalOptionA').val().trim();
-                        var optionB = $('#answerOptionB').val().trim() || $('#originalOptionB').val().trim();
-                        var optionC = $('#answerOptionC').val().trim() || $('#originalOptionC').val().trim();
-                        var optionD = $('#answerOptionD').val().trim() || $('#originalOptionD').val().trim();
-                        var optionsModified = [
-                            $('#answerOptionA').val().trim(),
-                            $('#answerOptionB').val().trim(),
-                            $('#answerOptionC').val().trim(),
-                            $('#answerOptionD').val().trim()
-                        ].some(opt => opt !== '');
-                        // If no options are modified, skip validation (original correct answer will be used)
-                        if (!optionsModified) {
-                            return true;
-                        }
-                        // If options are modified, validate against current non-empty options
+                        const optionA = $('#answerOptionA').val().trim();
+                        const optionB = $('#answerOptionB').val().trim();
+                        const optionC = $('#answerOptionC').val().trim();
+                        const optionD = $('#answerOptionD').val().trim();
                         if (value === 'A' && !optionA) return false;
                         if (value === 'B' && !optionB) return false;
                         if (value === 'C' && !optionC) return false;

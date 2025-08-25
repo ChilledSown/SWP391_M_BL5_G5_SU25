@@ -41,7 +41,7 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                             ? correctAnswer.substring(0, 1) : "";
                         request.setAttribute("correctAnswerLetter", correctAnswerLetter);
                         request.setAttribute("videoQuiz", videoQuiz);
-                        request.getRequestDispatcher("instructorvideoedit.jsp").forward(request, response);
+                        request.getRequestDispatcher("instructorvideoquizedit.jsp").forward(request, response);
                     } else {
                         request.setAttribute("error", "Video quiz not found.");
                         request.getRequestDispatcher("instructorvideoquiz.jsp").forward(request, response);
@@ -52,14 +52,14 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     System.out.println("View action: videoQuizId=" + videoQuizId + ", videoQuiz=" + (videoQuiz != null ? videoQuiz : "null"));
                     if (videoQuiz != null) {
                         request.setAttribute("videoQuiz", videoQuiz);
-                        request.getRequestDispatcher("instructorvideodetail.jsp").forward(request, response);
+                        request.getRequestDispatcher("instructorvideoquizdetail.jsp").forward(request, response);
                     } else {
                         request.setAttribute("error", "Video quiz not found.");
                         request.getRequestDispatcher("instructorvideoquiz.jsp").forward(request, response);
                     }
                     return;
                 } else if ("create".equals(action)) {
-                    request.getRequestDispatcher("instructorvideocreate.jsp").forward(request, response);
+                    request.getRequestDispatcher("instructorvideoquizcreate.jsp").forward(request, response);
                     return;
                 } else if ("delete".equals(action) && videoQuizId != null) {
                     System.out.println("Delete action: videoQuizId=" + videoQuizId);
@@ -114,19 +114,18 @@ public class InstructorVideoQuizServlet extends HttpServlet {
             String answerOptionC = request.getParameter("answerOptionC");
             String answerOptionD = request.getParameter("answerOptionD");
             String explanation = request.getParameter("explanation");
-            String isActiveStr = request.getParameter("isActive");
 
             // Validate required fields
             if (lessonIdStr == null || lessonIdStr.trim().isEmpty()) {
-                handleValidationError(request, response, action, "Lesson ID is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                handleValidationError(request, response, action, "Lesson ID is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                 return;
             }
             if (timestampStr == null || timestampStr.trim().isEmpty()) {
-                handleValidationError(request, response, action, "Timestamp is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                handleValidationError(request, response, action, "Timestamp is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                 return;
             }
             if (question == null || question.trim().isEmpty()) {
-                handleValidationError(request, response, action, "Question is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                handleValidationError(request, response, action, "Question is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                 return;
             }
 
@@ -137,7 +136,7 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 lessonId = Long.parseLong(lessonIdStr.trim());
                 timestamp = Integer.parseInt(timestampStr.trim());
             } catch (NumberFormatException e) {
-                handleValidationError(request, response, action, "Invalid number format for lesson ID or timestamp.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                handleValidationError(request, response, action, "Invalid number format for lesson ID or timestamp.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                 return;
             }
 
@@ -155,38 +154,38 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 try {
                     videoQuizId = Long.parseLong(videoQuizIdStr.trim());
                 } catch (NumberFormatException e) {
-                    handleValidationError(request, response, action, "Invalid video quiz ID format.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Invalid video quiz ID format.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
                 VideoQuiz existingQuiz = dao.getVideoQuizById(videoQuizId);
                 if (existingQuiz == null) {
-                    handleValidationError(request, response, action, "Video quiz not found.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Video quiz not found.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
 
                 if (optionsModified) {
                     // Validate modified answer options
                     if (normalizedAnswerOptions.isEmpty()) {
-                        handleValidationError(request, response, action, "Answer options are required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                        handleValidationError(request, response, action, "Answer options are required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                         return;
                     }
                     if (correctAnswerLetter == null || correctAnswerLetter.trim().isEmpty()) {
-                        handleValidationError(request, response, action, "Correct answer letter is required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                        handleValidationError(request, response, action, "Correct answer letter is required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                         return;
                     }
                     if (normalizedCorrectAnswer.isEmpty()) {
-                        handleValidationError(request, response, action, "Correct answer is required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                        handleValidationError(request, response, action, "Correct answer is required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                         return;
                     }
 
                     List<String> options = Arrays.asList(normalizedAnswerOptions.split("; "));
                     if (options.size() < 2) {
-                        handleValidationError(request, response, action, "At least two answer options are required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                        handleValidationError(request, response, action, "At least two answer options are required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                         return;
                     }
                     String normalizedCorrectAnswerLetter = correctAnswerLetter.trim().toUpperCase();
                     if (!Arrays.asList("A", "B", "C", "D").contains(normalizedCorrectAnswerLetter)) {
-                        handleValidationError(request, response, action, "Correct answer letter must be A, B, C, or D.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                        handleValidationError(request, response, action, "Correct answer letter must be A, B, C, or D.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                         return;
                     }
                     boolean validCorrectAnswer = false;
@@ -197,7 +196,7 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                         }
                     }
                     if (!validCorrectAnswer) {
-                        handleValidationError(request, response, action, "Correct answer does not match any provided option.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                        handleValidationError(request, response, action, "Correct answer does not match any provided option.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                         return;
                     }
                 } else {
@@ -206,8 +205,8 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     normalizedCorrectAnswer = existingQuiz.getCorrectAnswer();
                 }
 
-                // Parse isActive
-                Boolean isActive = "true".equalsIgnoreCase(isActiveStr) || (isActiveStr != null && isActiveStr.equalsIgnoreCase("on"));
+                // Always set isActive to true
+                boolean isActive = true;
 
                 // Create VideoQuiz object
                 VideoQuiz quiz = new VideoQuiz(videoQuizId, lessonId, timestamp, question.trim(), normalizedAnswerOptions, normalizedCorrectAnswer, explanation != null ? explanation.trim() : null, isActive, null, null);
@@ -217,30 +216,30 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().write("success:Video quiz updated successfully.");
                 } else {
-                    handleValidationError(request, response, action, "Failed to update video quiz.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Failed to update video quiz.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                 }
             } else if ("create".equals(action)) {
                 // For create action, validate all fields as before
                 if (normalizedAnswerOptions.isEmpty()) {
-                    handleValidationError(request, response, action, "Answer options are required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Answer options are required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
                 if (correctAnswerLetter == null || correctAnswerLetter.trim().isEmpty()) {
-                    handleValidationError(request, response, action, "Correct answer letter is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Correct answer letter is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
                 if (normalizedCorrectAnswer.isEmpty()) {
-                    handleValidationError(request, response, action, "Correct answer is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Correct answer is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
                 List<String> options = Arrays.asList(normalizedAnswerOptions.split("; "));
                 if (options.size() < 2) {
-                    handleValidationError(request, response, action, "At least two answer options are required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "At least two answer options are required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
                 String normalizedCorrectAnswerLetter = correctAnswerLetter.trim().toUpperCase();
                 if (!Arrays.asList("A", "B", "C", "D").contains(normalizedCorrectAnswerLetter)) {
-                    handleValidationError(request, response, action, "Correct answer letter must be A, B, C, or D.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Correct answer letter must be A, B, C, or D.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
                 boolean validCorrectAnswer = false;
@@ -251,12 +250,12 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     }
                 }
                 if (!validCorrectAnswer) {
-                    handleValidationError(request, response, action, "Correct answer does not match any provided option.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                    handleValidationError(request, response, action, "Correct answer does not match any provided option.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
                     return;
                 }
 
-                // Parse isActive
-                Boolean isActive = "true".equalsIgnoreCase(isActiveStr) || (isActiveStr != null && isActiveStr.equalsIgnoreCase("on"));
+                // Always set isActive to true
+                boolean isActive = true;
 
                 // Create VideoQuiz object
                 VideoQuiz quiz = new VideoQuiz(null, lessonId, timestamp, question.trim(), normalizedAnswerOptions, normalizedCorrectAnswer, explanation != null ? explanation.trim() : null, isActive, null, null);
@@ -270,7 +269,7 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     response.getWriter().write("error:Failed to create video quiz.");
                 }
             } else {
-                handleValidationError(request, response, action, "Invalid action.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation, isActiveStr);
+                handleValidationError(request, response, action, "Invalid action.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, correctAnswerLetter, explanation);
             }
         } catch (Exception e) {
             System.err.println("Error in doPost: " + e.getMessage());
@@ -280,14 +279,14 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 request.getParameter("lessonId"), request.getParameter("timestamp"), request.getParameter("question"), 
                 request.getParameter("answerOptions"), request.getParameter("answerOptionA"), request.getParameter("answerOptionB"), 
                 request.getParameter("answerOptionC"), request.getParameter("answerOptionD"), request.getParameter("correctAnswerLetter"), 
-                request.getParameter("explanation"), request.getParameter("isActive"));
+                request.getParameter("explanation"));
         }
     }
 
     private void handleValidationError(HttpServletRequest request, HttpServletResponse response, String action, 
             String errorMessage, String lessonId, String timestamp, String question, String answerOptions, 
             String answerOptionA, String answerOptionB, String answerOptionC, String answerOptionD, 
-            String correctAnswerLetter, String explanation, String isActive) 
+            String correctAnswerLetter, String explanation) 
             throws ServletException, IOException {
         List<Lesson> lessons = new InstructorVideoDAO().getAllLessons();
         request.setAttribute("lessons", lessons);
@@ -302,7 +301,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
         request.setAttribute("submittedAnswerOptionD", answerOptionD != null && !answerOptionD.trim().isEmpty() ? answerOptionD : null);
         request.setAttribute("correctAnswerLetter", correctAnswerLetter);
         request.setAttribute("submittedExplanation", explanation);
-        request.setAttribute("submittedIsActive", isActive);
 
         if ("edit".equals(action)) {
             String videoQuizIdStr = request.getParameter("videoQuizId");
@@ -318,9 +316,9 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     request.setAttribute("error", "Invalid video quiz ID format.");
                 }
             }
-            request.getRequestDispatcher("instructorvideoedit.jsp").forward(request, response);
+            request.getRequestDispatcher("instructorvideoquizedit.jsp").forward(request, response);
         } else {
-            request.getRequestDispatcher("instructorvideocreate.jsp").forward(request, response);
+            request.getRequestDispatcher("instructorvideoquizcreate.jsp").forward(request, response);
         }
     }
 }
