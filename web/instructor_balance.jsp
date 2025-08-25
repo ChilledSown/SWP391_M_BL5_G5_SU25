@@ -194,15 +194,19 @@
         .footer-social a:hover {
             color: #007bff;
         }
-        .status-form {
+        .filter-form {
+            margin-bottom: 20px;
             display: flex;
-            align-items: center;
-            gap: 5px; /* Reduced gap for better alignment */
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-form {
+            display: inline-block;
         }
         .status-select {
-            width: 100px; /* Adjusted width for better fit */
-            margin: 0;
+            width: 120px;
             padding: 5px;
+            margin: 0;
         }
         .action-cell {
             white-space: nowrap; /* Prevent wrapping */
@@ -222,8 +226,11 @@
             .content {
                 padding: 20px;
             }
+            .filter-form {
+                flex-direction: column;
+            }
             .status-select {
-                width: 80px; /* Smaller width for mobile */
+                width: 100px; /* Adjusted for smaller screens */
             }
         }
         @media (max-width: 767px) {
@@ -241,15 +248,14 @@
             .dashboard-card {
                 margin-bottom: 15px;
             }
-            .status-form {
-                flex-direction: column;
-                align-items: flex-start;
-            }
             .action-cell {
                 display: block; /* Stack elements on mobile */
             }
             .status-select {
                 width: 100%;
+            }
+            .filter-form {
+                flex-direction: column;
             }
         }
     </style>
@@ -307,7 +313,7 @@
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link active">Balance</a></li>
-                                <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -323,6 +329,21 @@
                                 <h4>Current Balance</h4>
                                 <p><fmt:formatNumber value="${balance}" type="currency" currencySymbol="$" maxFractionDigits="2" /></p>
                             </div>
+                            <form action="${pageContext.request.contextPath}/balance" method="get" class="filter-form">
+                                <div class="form-group">
+                                    <label for="fromDate">From Date:</label>
+                                    <input type="date" name="fromDate" id="fromDate" class="form-control" value="${fromDate}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="toDate">To Date:</label>
+                                    <input type="date" name="toDate" id="toDate" class="form-control" value="${toDate}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="searchTerm">Search:</label>
+                                    <input type="text" name="searchTerm" id="searchTerm" class="form-control" value="${searchTerm}" placeholder="Enter description...">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -342,25 +363,22 @@
                                             <td><fmt:formatNumber value="${transaction.amount}" type="currency" currencySymbol="$" maxFractionDigits="2" /></td>
                                             <td>${transaction.paymentMethod}</td>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${transaction.paymentStatus == 'pending'}">Pending</c:when>
-                                                    <c:when test="${transaction.paymentStatus == 'completed'}">Completed</c:when>
-                                                    <c:when test="${transaction.paymentStatus == 'cancelled'}">Cancelled</c:when>
-                                                    <c:otherwise>${transaction.paymentStatus}</c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td class="action-cell">
-                                                <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
                                                 <form action="${pageContext.request.contextPath}/balance" method="post" class="status-form">
                                                     <input type="hidden" name="action" value="updateStatus">
                                                     <input type="hidden" name="orderId" value="${transaction.orderId}">
+                                                    <input type="hidden" name="fromDate" value="${fromDate}">
+                                                    <input type="hidden" name="toDate" value="${toDate}">
+                                                    <input type="hidden" name="searchTerm" value="${searchTerm}">
                                                     <select name="status" class="form-control status-select" onchange="this.form.submit()">
                                                         <option value="completed" ${transaction.paymentStatus == 'completed' ? 'selected' : ''}>Completed</option>
                                                         <option value="cancelled" ${transaction.paymentStatus == 'cancelled' ? 'selected' : ''}>Cancelled</option>
                                                     </select>
                                                 </form>
+                                            </td>
+                                            <td class="action-cell">
+                                                <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -487,5 +505,5 @@
             <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-</body>
+        </body>
 </html>

@@ -214,7 +214,7 @@
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                            
                             </ul>
                         </div>
@@ -257,9 +257,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="dashboard-card">
-                                            <h4>Quick Actions</h4>
-                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
-                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>
+<!--                                            <h4>Quick Actions</h4>-->
+<!--                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
+                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>-->
                                         </div>
                                     </div>
                                 </div>

@@ -28,10 +28,10 @@ public class BalanceDAO extends DBContext {
         return 0.0;
     }
 
-    public List<BalanceDTOSeller> getTransactions(int createdBy, String status, int page, int pageSize) {
+    public List<BalanceDTOSeller> getTransactions(int createdBy, String status, String fromDate, String toDate, String searchTerm, int page, int pageSize) {
         List<BalanceDTOSeller> transactions = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-            "SELECT o.Order_Id, o.Created_At AS OrderDate, c.Course_Id, c.Title AS CourseName, p.Amount, p.Payment_Status, p.Payment_Method " +
+            "SELECT o.Order_Id, o.Created_At AS OrderDate, c.Course_Id, c.Title AS CourseName, p.Amount, o.Status AS Payment_Status, p.Payment_Method " +
             "FROM [Order] o " +
             "JOIN Payment p ON o.Order_Id = p.Order_Id " +
             "JOIN Order_Detail od ON o.Order_Id = od.Order_Id " +
@@ -40,11 +40,24 @@ public class BalanceDAO extends DBContext {
         );
         List<Object> parameters = new ArrayList<>();
         parameters.add(createdBy);
+
         if (status != null && !status.trim().isEmpty() && !status.equals("all")) {
-            sql.append(" AND p.Payment_Status = ?");
+            sql.append(" AND o.Status = ?");
             parameters.add(status);
         }
-        sql.append(" ORDER BY CASE WHEN p.Payment_Status = 'cancelled' THEN 1 ELSE 0 END, o.Created_At DESC");
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql.append(" AND o.Created_At >= ?");
+            parameters.add(fromDate + " 00:00:00");
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql.append(" AND o.Created_At <= ?");
+            parameters.add(toDate + " 23:59:59");
+        }
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            sql.append(" AND ('Course Sale: ' + c.Title + ' (Order #' + CAST(o.Order_Id AS NVARCHAR(10)) + ')') LIKE ?");
+            parameters.add("%" + searchTerm + "%");
+        }
+        sql.append(" ORDER BY CASE WHEN o.Status = 'cancelled' THEN 1 ELSE 0 END, o.Created_At DESC");
         sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
@@ -70,7 +83,7 @@ public class BalanceDAO extends DBContext {
         return transactions;
     }
 
-    public int getTransactionCount(int createdBy, String status) {
+    public int getTransactionCount(int createdBy, String status, String fromDate, String toDate, String searchTerm) {
         StringBuilder sql = new StringBuilder(
             "SELECT COUNT(*) AS Total " +
             "FROM [Order] o " +
@@ -81,9 +94,22 @@ public class BalanceDAO extends DBContext {
         );
         List<Object> parameters = new ArrayList<>();
         parameters.add(createdBy);
+
         if (status != null && !status.trim().isEmpty() && !status.equals("all")) {
-            sql.append(" AND p.Payment_Status = ?");
+            sql.append(" AND o.Status = ?");
             parameters.add(status);
+        }
+        if (fromDate != null && !fromDate.isEmpty()) {
+            sql.append(" AND o.Created_At >= ?");
+            parameters.add(fromDate + " 00:00:00");
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            sql.append(" AND o.Created_At <= ?");
+            parameters.add(toDate + " 23:59:59");
+        }
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            sql.append(" AND ('Course Sale: ' + c.Title + ' (Order #' + CAST(o.Order_Id AS NVARCHAR(10)) + ')') LIKE ?");
+            parameters.add("%" + searchTerm + "%");
         }
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
@@ -100,7 +126,7 @@ public class BalanceDAO extends DBContext {
     }
 
     public BalanceDTOSeller getTransactionByOrderId(long orderId, int createdBy) {
-        String sql = "SELECT o.Order_Id, o.Created_At AS OrderDate, c.Course_Id, c.Title AS CourseName, p.Amount, p.Payment_Status, p.Payment_Method " +
+        String sql = "SELECT o.Order_Id, o.Created_At AS OrderDate, c.Course_Id, c.Title AS CourseName, p.Amount, o.Status AS Payment_Status, p.Payment_Method " +
                      "FROM [Order] o " +
                      "JOIN Payment p ON o.Order_Id = p.Order_Id " +
                      "JOIN Order_Detail od ON o.Order_Id = od.Order_Id " +
@@ -180,11 +206,11 @@ public class BalanceDAO extends DBContext {
 
     public List<String> getPaymentStatuses() {
         List<String> statuses = new ArrayList<>();
-        String sql = "SELECT DISTINCT Payment_Status FROM Payment WHERE Payment_Status IS NOT NULL ORDER BY Payment_Status";
+        String sql = "SELECT DISTINCT Status FROM [Order] WHERE Status IS NOT NULL ORDER BY Status";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                statuses.add(rs.getString("Payment_Status"));
+                statuses.add(rs.getString("Status"));
             }
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(BalanceDAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
