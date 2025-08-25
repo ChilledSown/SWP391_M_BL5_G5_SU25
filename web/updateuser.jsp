@@ -221,8 +221,8 @@
                         <label for="lastName">Last Name</label>
                         <input type="text" id="lastName" name="lastName" value="${user.lastName}" required>
 
-                        <label for="avataUrl">Avatar URL</label>
-                        <input type="text" id="avataUrl" name="avataUrl" value="${user.avataUrl}">
+                        <label for="avataUrl">Avatar </label>
+                        <input type="file" id="avataUrl" name="avataUrl" value="${user.avataUrl}">
 
                         <label for="phone">Phone</label>
                         <input type="text" id="phone" name="phone" value="${user.phone}" required>

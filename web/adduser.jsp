@@ -39,7 +39,7 @@
             .profile-avatar {
                 width: 100px;
                 height: 100px;
-                border-radius: 50%; 
+                border-radius: 50%;
                 object-fit: cover;
                 border: 2px solid #3498db;
             }
@@ -211,41 +211,41 @@
                         <input type="hidden" name="action" value="add">
 
                         <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" name="firstName" required>
+                        <input type="text" id="firstName" name="firstName" value="${not empty requestScope.user ? requestScope.user.firstName : ''}" required>
 
                         <label for="middleName">Middle Name</label>
-                        <input type="text" id="middleName" name="middleName" required>
+                        <input type="text" id="middleName" name="middleName" value="${not empty requestScope.user ? requestScope.user.middleName : ''}" required>
 
                         <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" name="lastName"  required>
+                        <input type="text" id="lastName" name="lastName" value="${not empty requestScope.user ? requestScope.user.lastName : ''}" required>
 
-                        <label for="avataUrl">Avatar URL</label>
-                        <input type="text" id="avataUrl" name="avataUrl" >
+                        <label for="avataUrl">Avatar </label>
+                        <input type="file" id="avataUrl" name="avataUrl">
 
                         <label for="phone">Phone</label>
-                        <input type="text" id="phone" name="phone" required>
+                        <input type="text" id="phone" name="phone" value="${not empty requestScope.user ? requestScope.user.phone : ''}" required>
 
                         <label for="address">Address</label>
-                        <input type="text" id="address" name="address"  required>
+                        <input type="text" id="address" name="address" value="${not empty requestScope.user ? requestScope.user.address : ''}" required>
 
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email"  required>
+                        <input type="email" id="email" name="email" value="${not empty requestScope.user ? requestScope.user.email : ''}" required>
 
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <input type="password" id="password" name="password" value="${not empty requestScope.user ? requestScope.user.passwordHash : ''}" required>
 
                         <label for="role">Role</label>
                         <select id="role" name="role" required>
-                            <option value="admin" <c:if test="${user.role == 'admin'}">selected</c:if>>Admin</option>
-                            <option value="seller" <c:if test="${user.role == 'seller'}">selected</c:if>>Seller</option>
-                            <option value="customer" <c:if test="${user.role == 'customer'}">selected</c:if>>Customer</option>
+                            <option value="customer" <c:if test="${not empty requestScope.user and requestScope.user.role == 'customer'}">selected</c:if>>Customer</option>
+                            <option value="admin" <c:if test="${not empty requestScope.user and requestScope.user.role == 'admin'}">selected</c:if>>Admin</option>
+                            <option value="seller" <c:if test="${not empty requestScope.user and requestScope.user.role == 'seller'}">selected</c:if>>Seller</option>                        
                         </select>
 
                         <label for="accountStatus">Account Status</label>
                         <select id="accountStatus" name="accountStatus" required>
-                            <option value="active" <c:if test="${user.accountStatus == 'active'}">selected</c:if>>Active</option>
-                            <option value="inactive" <c:if test="${user.accountStatus == 'inactive'}">selected</c:if>>Inactive</option>
-                            <option value="suspended" <c:if test="${user.accountStatus == 'suspended'}">selected</c:if>>Suspended</option>
+                            <option value="active" <c:if test="${not empty requestScope.user and requestScope.user.accountStatus == 'active'}">selected</c:if>>Active</option>
+                            <option value="inactive" <c:if test="${not empty requestScope.user and requestScope.user.accountStatus == 'inactive'}">selected</c:if>>Inactive</option>
+                            <option value="suspended" <c:if test="${not empty requestScope.user and requestScope.user.accountStatus == 'suspended'}">selected</c:if>>Suspended</option>
                         </select>
 
                         <button type="submit">Add User</button>
