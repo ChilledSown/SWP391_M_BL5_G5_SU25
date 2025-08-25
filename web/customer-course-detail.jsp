@@ -19,7 +19,7 @@
         <!-- Custom CSS for Course Detail -->
         <style>
             /* Combined Header Styling (from purchased-courses) */
-            .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: none; }
             .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
             .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
             .page-header-content { padding: 60px 0; position: relative; z-index: 2; text-align: center; color: white; }
@@ -43,7 +43,8 @@
             .course-image {
                 border-radius: 15px;
                 overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: none;
+                width: 100%;
             }
 
             .course-image img {
@@ -56,7 +57,8 @@
                 padding: 30px;
                 background: white;
                 border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: none;
+                width: 100%;
             }
 
             .course-title {
@@ -129,7 +131,7 @@
 
             .btn-purchase:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+                box-shadow: none;
                 color: white;
             }
 
@@ -146,7 +148,7 @@
 
             .btn-cart:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+                box-shadow: none;
                 color: white;
             }
 
@@ -180,13 +182,14 @@
                 background: white;
                 border-radius: 10px;
                 margin-bottom: 15px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                box-shadow: none;
                 transition: all 0.3s ease;
+                width: 100%;
             }
 
             .lesson-item:hover {
                 transform: translateX(5px);
-                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                box-shadow: none;
             }
 
             .lesson-number {
@@ -217,7 +220,8 @@
                 border-radius: 15px;
                 padding: 25px;
                 margin-bottom: 20px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+                box-shadow: none;
+                width: 100%;
             }
 
             .review-header {
@@ -271,7 +275,7 @@
                 background: white;
                 border: 1px solid #e1e8ed;
                 border-radius: 10px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                box-shadow: none;
                 padding: 10px 0;
                 min-width: 120px;
                 visibility: hidden;
@@ -329,7 +333,8 @@
                 background: white;
                 border-radius: 15px;
                 padding: 25px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+                box-shadow: none;
+                width: 100%;
             }
 
             .review-form {
@@ -368,7 +373,7 @@
 
             .btn-send-review:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+                box-shadow: none;
             }
 
             /* Modal styles */
@@ -390,7 +395,7 @@
                 border-radius: 15px;
                 width: 90%;
                 max-width: 500px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                box-shadow: none;
             }
 
             .modal-header {
@@ -689,15 +694,14 @@
                                             <a href="customer-view-lesson?courseId=${course.course_id}" class="btn-purchase" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">Start Learning</a>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="checkout?courseId=${course.course_id}" class="btn-purchase">Purchase now</a>
                                             <c:choose>
                                                 <c:when test="${isCourseInCart}">
-                                                    <button class="btn-cart in-cart" disabled>In Cart</button>
+                                                    <button class="btn-purchase in-cart" disabled>In Cart</button>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <form action="add-to-cart" method="POST" style="display: inline;">
                                                         <input type="hidden" name="courseId" value="${course.course_id}">
-                                                        <button type="submit" class="btn-cart">Add to cart</button>
+                                                        <button type="submit" class="btn-purchase">Purchase now</button>
                                                     </form>
                                                 </c:otherwise>
                                             </c:choose>
