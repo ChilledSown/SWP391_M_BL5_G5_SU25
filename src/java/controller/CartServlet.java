@@ -33,53 +33,35 @@ public class CartServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            // For testing, use a fixed user ID
-            // Get user from session
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
             long userId = user.getUser_id();
-            
-            // Get DAOs
             CartDAO cartDAO = new CartDAO();
             CourseDAO courseDAO = new CourseDAO();
-            
-            // Get user's cart
             Cart userCart = cartDAO.getCartByUserId(userId);
             
             if (userCart != null) {
-                // Get cart items with course details
                 List<CartItem> cartItems = cartDAO.getCartItemsByCartId(userCart.getCart_id());
                 List<CartItemWithCourse> cartItemsWithCourse = new ArrayList<>();
-                
-                // Add course details to each cart item
                 for (CartItem cartItem : cartItems) {
                     Course course = courseDAO.getCourseById(cartItem.getCourse_id());
                     CartItemWithCourse cartItemWithCourse = new CartItemWithCourse(cartItem, course);
                     cartItemsWithCourse.add(cartItemWithCourse);
                 }
-                
-                // Get cart total
                 double cartTotal = cartDAO.getCartTotal(userCart.getCart_id());
-                
-                // Set attributes
                 request.setAttribute("cartItems", cartItemsWithCourse);
                 request.setAttribute("cartTotal", cartTotal);
                 request.setAttribute("userCart", userCart);
             }
-            
-            // Forward to cart.jsp
             request.getRequestDispatcher("cart.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("courses");
         }
     }
 

@@ -3,6 +3,7 @@
  */
 package controller;
 
+import dal.CourseDAO;
 import dal.LessonDAO;
 import dal.QuizDAO;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import model.Course;
 import model.Lesson;
 import model.Quiz;
 
@@ -27,19 +29,14 @@ public class CustomerViewLessonServlet extends HttpServlet {
 
             Long courseId = null;
             Long lessonId = null;
-
-            // If courseId is present, parse it
             if (courseIdRaw != null && !courseIdRaw.isEmpty()) {
-                courseId = Long.parseLong(courseIdRaw);
+                courseId = Long.valueOf(courseIdRaw);
             }
-            // If lessonId is present, parse it
             if (lessonIdRaw != null && !lessonIdRaw.isEmpty()) {
-                lessonId = Long.parseLong(lessonIdRaw);
+                lessonId = Long.valueOf(lessonIdRaw);
             }
 
             LessonDAO lessonDAO = new LessonDAO();
-
-            // Derive courseId from lessonId if needed
             if (courseId == null && lessonId != null) {
                 Lesson lesson = lessonDAO.getLessonById(lessonId);
                 if (lesson != null) {
@@ -51,17 +48,10 @@ public class CustomerViewLessonServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing courseId");
                 return;
             }
-
-            System.out.println("CustomerViewLessonServlet: Loading lessons for courseId = " + courseId);
-
             List<Lesson> lessons = lessonDAO.getLessonsByCourseId(courseId);
-            System.out.println("CustomerViewLessonServlet: Found " + (lessons != null ? lessons.size() : 0) + " lessons");
-
-            // Determine active lesson
             Lesson activeLesson = null;
 
             if (lessons == null || lessons.isEmpty()) {
-                // No lessons found for this course
                 request.setAttribute("courseId", courseId);
                 request.setAttribute("lessons", lessons);
                 request.setAttribute("activeLesson", null);
@@ -69,8 +59,6 @@ public class CustomerViewLessonServlet extends HttpServlet {
                 request.getRequestDispatcher("customer-view-lesson.jsp").forward(request, response);
                 return;
             }
-
-            // Try to select by provided lessonId first
             if (lessonId != null) {
                 for (Lesson l : lessons) {
                     if (l.getLessonId().equals(lessonId)) {
@@ -79,17 +67,16 @@ public class CustomerViewLessonServlet extends HttpServlet {
                     }
                 }
             }
-
-            // If no specific lesson found, use the first one
             if (activeLesson == null) {
                 activeLesson = lessons.get(0);
             }
-
-            // Load quizzes of the active lesson (used for the sidebar quiz entry)
             QuizDAO quizDAO = new QuizDAO();
             List<Quiz> quizzes = quizDAO.getQuizzesByLessonId(activeLesson.getLessonId());
-
+            CourseDAO courseDAO = new CourseDAO();
+            Course course = courseDAO.getCourseById(courseId);
+            
             request.setAttribute("courseId", courseId);
+            request.setAttribute("course", course);
             request.setAttribute("lessons", lessons);
             request.setAttribute("activeLesson", activeLesson);
             request.setAttribute("quizzes", quizzes);
