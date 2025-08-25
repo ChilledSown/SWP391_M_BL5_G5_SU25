@@ -166,6 +166,7 @@
         <div class="header-area header-transparent">
             <div class="main-header">
                 <div class="header-bottom header-sticky">
+ parking: 40px;
                     <div class="container-fluid">
                         <div class="row align-items-center">
                             <div class="col-xl-2 col-lg-2">
@@ -200,12 +201,12 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -282,12 +283,6 @@
                                         <label for="explanation" class="mb-2">Explanation (optional)</label>
                                         <textarea class="form-control" name="explanation" id="explanation" rows="3" placeholder="Enter explanation" maxlength="1000">${fn:escapeXml(submittedExplanation)}</textarea>
                                         <div class="error-message" id="explanationError"></div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" name="isActive" id="isActive" ${submittedIsActive == 'true' ? 'checked' : ''}>
-                                            <label class="form-check-label" for="isActive">Is Active</label>
-                                        </div>
                                     </div>
                                     <div class="col-12 form-group">
                                         <button type="submit" class="btn-primary">Create Quiz</button>
@@ -426,8 +421,7 @@
                                 required: true,
                                 validCorrectAnswerLetter: true
                             },
-                            explanation: { maxlength: 1000 },
-                            isActive: { required: false }
+                            explanation: { maxlength: 1000 }
                         },
                         messages: {
                             lessonId: { required: "Please select a lesson." },
@@ -514,7 +508,7 @@
                                 },
                                 error: function(xhr) {
                                     let errorMessage = 'Failed to create quiz. Please try again.';
-                                    if (xhr.responseText && xhr.responseText.startsWith('error:')) {
+                                    if (xhr.responseText && xhr.responseText.startWith('error:')) {
                                         errorMessage = xhr.responseText.substring(6);
                                     }
                                     $('#createForm').prepend(
