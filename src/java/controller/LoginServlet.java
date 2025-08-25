@@ -76,13 +76,13 @@ public class LoginServlet extends HttpServlet {
 
                 switch (u.getRole()) {
                     case "admin":
-                        response.sendRedirect("admin");
+                        response.sendRedirect("overviewadmin");
                         break;
                     case "customer":
                         response.sendRedirect("home");
                         break;
                     case "seller":
-                        response.sendRedirect("DashBoardSeller.jsp");
+                        response.sendRedirect("instructor-dashboard");
                         break;
                 }
             } else {

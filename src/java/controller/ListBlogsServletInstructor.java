@@ -21,8 +21,8 @@ import model.User;
  *
  * @author Admin
  */
-@WebServlet(name = "ListBlogsServletSeller", urlPatterns = {"/listBlogsSeller"})
-public class ListBlogsServletSeller extends HttpServlet {
+@WebServlet(name = "ListBlogsServletSeller", urlPatterns = {"/listBlogsInstructor"})
+public class ListBlogsServletInstructor extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -81,7 +81,7 @@ public class ListBlogsServletSeller extends HttpServlet {
         session.setAttribute("blogTitle", title);
         session.setAttribute("blogCreatedDate", createdDate);
         // Forward to seller_blog.jsp
-        request.getRequestDispatcher("seller_blog.jsp").forward(request, response);
+        request.getRequestDispatcher("instructor_blog.jsp").forward(request, response);
     }
 
     /**

@@ -34,7 +34,7 @@
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 position: relative;
                 overflow: hidden;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                box-shadow: none;
             }
 
             .combined-header::before {
@@ -81,7 +81,8 @@
                 border-radius: 15px;
                 padding: 30px;
                 margin-bottom: 40px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: none;
+                width: 100%;
             }
 
             .stat-item {
@@ -111,13 +112,14 @@
                 flex-direction: column;
                 background: white;
                 border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                box-shadow: none;
                 transition: all 0.3s ease;
+                width: 100%;
             }
 
             .properties.properties2:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                box-shadow: none;
             }
 
             .properties__card {
@@ -220,7 +222,7 @@
 
             .border-btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                box-shadow: none;
                 color: white;
                 text-decoration: none;
             }
@@ -230,7 +232,8 @@
                 padding: 80px 20px;
                 background: white;
                 border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: none;
+                width: 100%;
             }
 
             .no-courses i {
@@ -254,19 +257,24 @@
             .btn-explore {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
-                padding: 12px 30px;
-                border-radius: 25px;
+                padding: 10px 20px;
+                border-radius: 12px;
                 text-decoration: none;
                 font-weight: 600;
-                transition: all 0.3s ease;
-                display: inline-block;
+                font-size: 14px;
+                line-height: 1.2;
+                transition: all 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
             }
 
             .btn-explore:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                transform: translateY(-1px);
                 color: white;
                 text-decoration: none;
+                filter: brightness(1.03);
             }
 
             .course-topic .badge {
@@ -275,8 +283,8 @@
                 text-transform: uppercase;
                 letter-spacing: 1px;
                 margin-bottom: 8px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: #ffffff;
+                background: #e3f2fd;
+                color: #1976d2;
             }
 
             /* Navigation Styling for Combined Header */
@@ -530,15 +538,6 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </p>
-
-                                                <c:if test="${not empty courseTopicsMap}">
-                                                    <c:set var="courseTopic" value="${courseTopicsMap[course.course_id]}" />
-                                                    <c:if test="${not empty courseTopic}">
-                                                        <div class="course-topic">
-                                                            <span class="badge"><i class="fas fa-tag"></i>${courseTopic.name}</span>
-                                                        </div>
-                                                    </c:if>
-                                                </c:if>
 
                                                 <div class="properties__footer d-flex justify-content-between align-items-center">
                                                     <div class="restaurant-name">

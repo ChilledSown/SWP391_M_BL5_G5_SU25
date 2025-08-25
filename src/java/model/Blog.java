@@ -2,15 +2,14 @@ package model;
 
 import java.sql.Timestamp;
 
-
 public class Blog {
     private Long blogId;         
     private String title;        
     private String content;      
     private String thumbnailUrl;
-    private Timestamp createdAt; 
-    private Timestamp updatedAt; 
-    private int createdBy; 
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private int createdBy;
     private String createdByName;
 
     public Blog(long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, int createdBy, String createdByName) {

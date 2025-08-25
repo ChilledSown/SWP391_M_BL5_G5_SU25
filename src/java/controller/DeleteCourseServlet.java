@@ -64,13 +64,13 @@ public class DeleteCourseServlet extends HttpServlet {
             try {
                 long courseId = Long.parseLong(id);
                 CourseDAO dao = new CourseDAO();
-                dao.markCourseAsDeleted(courseId); // dùng hàm cập nhật status
+                dao.markCourseAsDeleted(courseId); 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        response.sendRedirect("listCousera"); // về lại danh sách
+        response.sendRedirect("listCourses"); 
     }
 
     /**

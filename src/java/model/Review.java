@@ -11,13 +11,26 @@ import java.util.Date;
  * @author sondo
  */
 public class Review {
+
     private Long review_id;
     private Long course_id;
     private int rating;
     private String comment;
     private Date created_at;
     private Long user_id;
-    
+    private String courseTitle;
+    private String studentName;
+
+    public Review(Long review_id, Long course_id, int rating, String comment, Date created_at, Long user_id, String courseTitle, String studentName) {
+        this.review_id = review_id;
+        this.course_id = course_id;
+        this.rating = rating;
+        this.comment = comment;
+        this.created_at = created_at;
+        this.user_id = user_id;
+        this.courseTitle = courseTitle;
+        this.studentName = studentName;
+    }
     
 
     public Review(Long review_id, Long course_id, int rating, String comment, Date created_at, Long user_id) {
@@ -79,5 +92,21 @@ public class Review {
     public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
-    
+
+    public String getCourseTitle() {
+        return courseTitle;
+    }
+
+    public void setCourseTitle(String courseTitle) {
+        this.courseTitle = courseTitle;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
 }

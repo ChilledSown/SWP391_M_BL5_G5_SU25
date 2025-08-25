@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Reviews | Seller Dashboard</title>
+    <title>Manage Reviews | Instructor Dashboard</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -242,6 +242,7 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
+<<<<<<< HEAD:web/reviews.jsp
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
@@ -249,6 +250,13 @@
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link active">Reviews</a></li>
                                
+=======
+                                <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link active">Reviews</a></li>
+>>>>>>> main:web/reviewsForInstrructor.jsp
                             </ul>
                         </div>
                         <!-- Main Content -->
@@ -288,6 +296,7 @@
                                         <th>Rating</th>
                                         <th>Comment</th>
                                         <th>Date</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -297,12 +306,13 @@
                                             <td>${review.studentName}</td>
                                             <td>${review.rating} / 5</td>
                                             <td>${review.comment}</td>
-                                            <td><fmt:formatDate value="${review.date}" pattern="yyyy-MM-dd" /></td>
+                                            <td><fmt:formatDate value="${review.created_at}" pattern="yyyy-MM-dd" /></td>
+                                           
                                         </tr>
                                     </c:forEach>
                                     <c:if test="${empty reviews}">
                                         <tr>
-                                            <td colspan="5" class="text-center">No reviews found.</td>
+                                            <td colspan="6" class="text-center">No reviews found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>
@@ -423,5 +433,5 @@
             <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-</body>
+        </body>
 </html>

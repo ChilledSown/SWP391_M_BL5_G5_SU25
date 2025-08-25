@@ -130,6 +130,35 @@
         .blog-meta span {
             margin-right: 15px;
         }
+        .search-form {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .search-form input {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .search-form button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .search-form .search-btn {
+            background: #667eea;
+            color: white;
+        }
+        .search-form .reset-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .message.error {
+            color: red;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -164,8 +193,7 @@
                                             <li><a href="home">Home</a></li>
                                             <li><a href="courses">Courses</a></li>
                                             <li><a href="about.jsp">About</a></li>
-                                            <li class="active"><a href="blog">Blog</a>                                            
-                                            </li>
+                                            <li class="active"><a href="blog">Blog</a></li>
                                             <li><a href="contact.jsp">Contact</a></li>
                                             <li class="button-header margin-left"><a href="profile" class="btn">Profile</a></li>
                                             <li class="button-header"><a href="login" class="btn btn3">Logout</a></li>
@@ -192,7 +220,7 @@
                         <div class="row">
                             <div class="col-xl-8 col-lg-11 col-md-12">
                                 <div class="hero__caption hero__caption2">
-                                        <h1 data-animation="bounceIn" data-delay="0.2s">Our Blogs</h1>
+                                    <h1 data-animation="bounceIn" data-delay="0.2s">Our Blogs</h1>
                                     <nav aria-label="breadcrumb">
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item"><a href="home">Home</a></li>
@@ -207,10 +235,16 @@
             </div>
         </section>
         
-        
         <!-- Blog Area Start -->
         <div class="blog-area section-padding40 fix">
             <div class="container">
+                <div class="search-form">
+                    <form action="blog" method="get">
+                        <input type="text" name="search" value="${searchQuery}" placeholder="Search by title">
+                        <button type="submit" class="search-btn">Search</button>
+                        <button type="button" class="reset-btn" onclick="window.location.href='blog'">Reset</button>
+                    </form>
+                </div>
                 <div class="row justify-content-center">
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mb-55">
@@ -218,6 +252,9 @@
                         </div>
                     </div>
                 </div>
+                <c:if test="${not empty message}">
+                    <p class="message error">${message}</p>
+                </c:if>
                 <div class="row" id="blogs-list">
                     <c:if test="${not empty blogs}">
                         <c:forEach var="blog" items="${blogs}">
@@ -260,10 +297,14 @@
                         </div>
                     </c:if>
                 </div>
+                <c:if test="${currentPage lt totalPages}">
+                    <div class="text-center mt-30">
+                        <button id="load-more" class="btn">Load More</button>
+                    </div>
+                </c:if>
             </div>
         </div>
         <!-- Blog Area End -->
-        
         
     </main>
     <footer>
@@ -376,5 +417,60 @@
     <script src="./assets/js/jquery.ajaxchimp.min.js"></script>
     <script src="./assets/js/plugins.js"></script>
     <script src="./assets/js/main.js"></script>
+    <script>
+        $(document).ready(function() {
+            var currentPage = ${currentPage};
+            var totalPages = ${totalPages};
+            var searchQuery = '${searchQuery}';
+            $('#load-more').click(function() {
+                currentPage++;
+                var url = 'blog?page=' + currentPage + '&ajax=true';
+                if (searchQuery) {
+                    url += '&search=' + encodeURIComponent(searchQuery);
+                }
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        var html = '';
+                        data.forEach(function(blog) {
+                            var thumbnail = blog.thumbnailUrl ? blog.thumbnailUrl : 'assets/img/blog/comment_1.png';
+                            var content = blog.content ? blog.content : 'No content available';
+                            var createdAt = new Date(blog.createdAt).toLocaleString('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'});
+                            html += '<div class="col-lg-4">' +
+                                    '<div class="properties properties2 mb-30">' +
+                                    '<div class="properties__card">' +
+                                    '<div class="properties__img overlay1">' +
+                                    '<a href="blog_details?id=' + blog.blogId + '">' +
+                                    '<img src="' + thumbnail + '" alt="' + blog.title + '">' +
+                                    '</a>' +
+                                    '</div>' +
+                                    '<div class="properties__caption">' +
+                                    '<h3><a href="blog_details?id=' + blog.blogId + '">' + blog.title + '</a></h3>' +
+                                    '<p>' + content + '</p>' +
+                                    '<div class="properties__footer d-flex justify-content-between align-items-center">' +
+                                    '<div class="blog-meta">' +
+                                    '<span><i class="fas fa-user"></i> ' + blog.createdByName + '</span>' +
+                                    '<span><i class="fas fa-calendar-alt"></i> ' + createdAt + '</span>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<a href="blog_details?id=' + blog.blogId + '" class="border-btn border-btn2">Read More</a>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>';
+                        });
+                        $('#blogs-list').append(html);
+                        if (currentPage >= totalPages) {
+                            $('#load-more').hide();
+                        }
+                    },
+                    error: function() {
+                        alert('Error loading more blogs');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
