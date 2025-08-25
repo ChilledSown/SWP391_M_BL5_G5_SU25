@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @WebServlet(name = "DashboardServlet", urlPatterns = {"/DashBoard"})
-public class DashboardServlet extends HttpServlet {
+public class InstructorDashboardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -104,12 +104,12 @@ public class DashboardServlet extends HttpServlet {
                 .count() : 0); // Giả định
         newReviewsThisMonth = 0; // Cần tích hợp ReviewDAO để tính chính xác
 
-       
+        // Danh sách hoạt động gần đây (giả định)
         List<String> recentActivities = new ArrayList<>();
         recentActivities.add("Logged in at " + new Date());
-        
+        // Có thể thêm logic lấy từ bảng log nếu có
 
-      
+        // Truyền dữ liệu vào request
         request.setAttribute("totalCourses", totalCourses);
         request.setAttribute("totalLessons", totalLessons);
         request.setAttribute("totalQuizzes", totalQuizzes);
