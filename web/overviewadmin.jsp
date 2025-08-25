@@ -108,26 +108,6 @@
         .chart-container canvas {
             max-width: 100%;
         }
-        .enrollment-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .enrollment-table th, .enrollment-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .enrollment-table th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-        }
-        .enrollment-table tr:hover {
-            background-color: #f5f5f5;
-        }
         .profile-section {
             text-align: center;
             margin-bottom: 30px;
@@ -209,8 +189,16 @@
                     <p>${totalUsers}</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Courses</h3>
-                    <p>${totalCourses}</p>
+                    <h3>Total Admins</h3>
+                    <p>${totalAdmins}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Sellers</h3>
+                    <p>${totalSellers}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Customers</h3>
+                    <p>${totalCustomers}</p>
                 </div>
             </div>
             <!-- User Growth Chart -->
@@ -218,36 +206,6 @@
                 <h3>User Growth (Last 30 Days)</h3>
                 <canvas id="userGrowthChart"></canvas>
             </div>
-            <!-- Enrollment Growth Chart -->
-            <div class="chart-container">
-                <h3>Course Enrollment Growth (Last 30 Days)</h3>
-                <canvas id="enrollmentGrowthChart"></canvas>
-            </div>
-            <!-- Course Enrollment Table -->
-            <h3>Course Enrollment Counts</h3>
-            <table class="enrollment-table">
-                <thead>
-                    <tr>
-                        <th>Course ID</th>
-                        <th>Title</th>
-                        <th>Enrollments</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="enrollment" items="${courseEnrollments}">
-                        <tr>
-                            <td>${enrollment.courseId}</td>
-                            <td>${enrollment.title}</td>
-                            <td>${enrollment.enrollmentCount}</td>
-                        </tr>
-                    </c:forEach>
-                    <c:if test="${empty courseEnrollments}">
-                        <tr>
-                            <td colspan="3" style="text-align: center;">No enrollment data available</td>
-                        </tr>
-                    </c:if>
-                </tbody>
-            </table>
         </main>
     </div>
     <script>
@@ -271,30 +229,6 @@
                 scales: {
                     x: { title: { display: true, text: 'Date' } },
                     y: { title: { display: true, text: 'Number of Users' }, beginAtZero: true }
-                }
-            }
-        });
-
-        // Enrollment Growth Chart
-        const enrollmentGrowthData = {
-            labels: [<c:forEach var="entry" items="${enrollmentGrowthData}" varStatus="loop">'${entry.key}'<c:if test="${!loop.last}">,</c:if></c:forEach>],
-            datasets: [{
-                label: 'Enrollments',
-                data: [<c:forEach var="entry" items="${enrollmentGrowthData}" varStatus="loop">${entry.value}<c:if test="${!loop.last}">,</c:if></c:forEach>],
-                borderColor: '#2ecc71',
-                backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                fill: true,
-                tension: 0.4
-            }]
-        };
-        new Chart(document.getElementById('enrollmentGrowthChart'), {
-            type: 'line',
-            data: enrollmentGrowthData,
-            options: {
-                responsive: true,
-                scales: {
-                    x: { title: { display: true, text: 'Date' } },
-                    y: { title: { display: true, text: 'Number of Enrollments' }, beginAtZero: true }
                 }
             }
         });
