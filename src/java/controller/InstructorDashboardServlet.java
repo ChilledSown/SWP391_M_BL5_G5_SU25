@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "DashboardServlet", urlPatterns = {"/DashBoard"})
-public class DashboardServlet extends HttpServlet {
+@WebServlet(name = "InstructorDashboardServlet", urlPatterns = {"/instructor-dashboard"})
+public class InstructorDashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -41,7 +41,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("totalBlogs", totalBlogs);
         request.setAttribute("performanceViews", performanceViews);
         request.setAttribute("recentActivity", recentActivity);
-        request.getRequestDispatcher("/instructor_Doashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("Instructor_Doashboard.jsp").forward(request, response);
     }
 
     @Override
