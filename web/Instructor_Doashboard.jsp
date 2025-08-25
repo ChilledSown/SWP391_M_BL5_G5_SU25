@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Seller Dashboard | Online Learning</title>
+    <title>Instructor Dashboard | Online Learning</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -211,11 +211,18 @@
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
+<<<<<<< HEAD:web/DashBoardSeller.jsp
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+=======
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+>>>>>>> main:web/Instructor_Doashboard.jsp
                            
                             </ul>
                         </div>
@@ -258,9 +265,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="dashboard-card">
-                                            <h4>Quick Actions</h4>
-                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
-                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>
+<!--                                            <h4>Quick Actions</h4>-->
+<!--                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
+                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>-->
                                         </div>
                                     </div>
                                 </div>

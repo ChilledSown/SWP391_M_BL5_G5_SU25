@@ -7,7 +7,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Manage Blogs | Seller Dashboard</title>
+        <title>Manage Blogs | Instructor Dashboard</title>
         <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="manifest" href="site.webmanifest">
@@ -243,12 +243,18 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
+<<<<<<< HEAD:web/seller_blog.jsp
                                 <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsSeller" class="nav-link active">Blogs</a></li>
+=======
+                                <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link active">Blogs</a></li>
+>>>>>>> main:web/instructor_blog.jsp
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <!-- Main Content -->
@@ -259,7 +265,7 @@
                                 <i class="fas fa-plus"></i> Create New Blog
                             </a>
                             <!-- Search -->
-                            <form method="get" action="listBlogsSeller" class="mb-4">
+                            <form method="get" action="listBlogsInstructor" class="mb-4">
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
@@ -300,7 +306,7 @@
                                                 <a href="deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
-                                                <a href="blogDetail?blogId=${blog.blogId}" class="btn-action" title="Detail">
+                                                <a href="blogDetailSeller?blogId=${blog.blogId}" class="btn-action" title="Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
