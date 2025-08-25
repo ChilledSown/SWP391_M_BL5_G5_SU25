@@ -221,7 +221,7 @@
                                             <ul id="navigation">
                                                 <li><a href="index.jsp">Home</a></li>
                                                 <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
-                                                <li><a href="logout">Logout</a></li>
+                                                <li><a href="logout.jsp">Logout</a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -242,21 +242,11 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-<<<<<<< HEAD:web/reviews.jsp
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link active">Reviews</a></li>
-                               
-=======
                                 <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link active">Reviews</a></li>
->>>>>>> main:web/reviewsForInstrructor.jsp
                             </ul>
                         </div>
                         <!-- Main Content -->

@@ -189,7 +189,7 @@
                                             <ul id="navigation">
                                                 <li><a href="index.jsp">Home</a></li>
                                                 <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
-                                                <li><a href="logout">Logout</a></li>
+                                                <li><a href="logout.jsp">Logout</a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -211,18 +211,11 @@
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
-<<<<<<< HEAD:web/DashBoardSeller.jsp
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
-                                <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
-=======
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="instructorvideoquiz">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
->>>>>>> main:web/Instructor_Doashboard.jsp
                            
                             </ul>
                         </div>
