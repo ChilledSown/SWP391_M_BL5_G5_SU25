@@ -109,4 +109,8 @@ public class OverviewAdminDAO extends DBContext {
         }
         return growthData;
     }
+    public static void main(String[] args) {
+        OverviewAdminDAO oad = new OverviewAdminDAO();
+        
+    }
 }
