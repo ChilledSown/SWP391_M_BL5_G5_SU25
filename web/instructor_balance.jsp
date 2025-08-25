@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Manage Balance | Seller Dashboard</title>
+    <title>Manage Balance | Instructor Dashboard</title>
     <meta name="description" content="Seller dashboard for managing blogs, courses, balance, and reviews">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
@@ -175,6 +175,11 @@
             font-size: 1rem;
             margin-bottom: 20px;
         }
+        .success-message {
+            color: #28a745;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
         .footer-wrappper {
             background: #343a40;
         }
@@ -189,6 +194,27 @@
         .footer-social a:hover {
             color: #007bff;
         }
+        .filter-form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-form {
+            display: inline-block;
+        }
+        .status-select {
+            width: 120px;
+            padding: 5px;
+            margin: 0;
+        }
+        .action-cell {
+            white-space: nowrap; /* Prevent wrapping */
+        }
+        .clearfix {
+            clear: both;
+            margin-bottom: 20px;
+        }
         @media (max-width: 991px) {
             .sidebar {
                 min-height: auto;
@@ -199,6 +225,12 @@
             }
             .content {
                 padding: 20px;
+            }
+            .filter-form {
+                flex-direction: column;
+            }
+            .status-select {
+                width: 100px; /* Adjusted for smaller screens */
             }
         }
         @media (max-width: 767px) {
@@ -216,11 +248,19 @@
             .dashboard-card {
                 margin-bottom: 15px;
             }
+            .action-cell {
+                display: block; /* Stack elements on mobile */
+            }
+            .status-select {
+                width: 100%;
+            }
+            .filter-form {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Preloader Start -->
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
             <div class="preloader-inner position-relative">
@@ -231,7 +271,6 @@
             </div>
         </div>
     </div>
-    <!-- Preloader End -->
     <header>
         <div class="header-area header-transparent">
             <div class="main-header">
@@ -268,27 +307,43 @@
             <section class="dashboard-area section-padding40">
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="seller_blog.jsp" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link active">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
-                        <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
                             <h2>Balance Management</h2>
                             <p>View your earnings and transaction history here.</p>
                             <c:if test="${not empty errorMessage}">
                                 <div class="error-message">${errorMessage}</div>
                             </c:if>
+                            <c:if test="${not empty message}">
+                                <div class="success-message">${message}</div>
+                            </c:if>
                             <div class="dashboard-card">
                                 <h4>Current Balance</h4>
                                 <p><fmt:formatNumber value="${balance}" type="currency" currencySymbol="$" maxFractionDigits="2" /></p>
                             </div>
+                            <form action="${pageContext.request.contextPath}/balance" method="get" class="filter-form">
+                                <div class="form-group">
+                                    <label for="fromDate">From Date:</label>
+                                    <input type="date" name="fromDate" id="fromDate" class="form-control" value="${fromDate}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="toDate">To Date:</label>
+                                    <input type="date" name="toDate" id="toDate" class="form-control" value="${toDate}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="searchTerm">Search:</label>
+                                    <input type="text" name="searchTerm" id="searchTerm" class="form-control" value="${searchTerm}" placeholder="Enter description...">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -296,6 +351,7 @@
                                         <th>Description</th>
                                         <th>Amount</th>
                                         <th>Method</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -307,6 +363,19 @@
                                             <td><fmt:formatNumber value="${transaction.amount}" type="currency" currencySymbol="$" maxFractionDigits="2" /></td>
                                             <td>${transaction.paymentMethod}</td>
                                             <td>
+                                                <form action="${pageContext.request.contextPath}/balance" method="post" class="status-form">
+                                                    <input type="hidden" name="action" value="updateStatus">
+                                                    <input type="hidden" name="orderId" value="${transaction.orderId}">
+                                                    <input type="hidden" name="fromDate" value="${fromDate}">
+                                                    <input type="hidden" name="toDate" value="${toDate}">
+                                                    <input type="hidden" name="searchTerm" value="${searchTerm}">
+                                                    <select name="status" class="form-control status-select" onchange="this.form.submit()">
+                                                        <option value="completed" ${transaction.paymentStatus == 'completed' ? 'selected' : ''}>Completed</option>
+                                                        <option value="cancelled" ${transaction.paymentStatus == 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td class="action-cell">
                                                 <a href="balanceDetail?orderId=${transaction.orderId}" class="btn-action" title="Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
@@ -315,11 +384,12 @@
                                     </c:forEach>
                                     <c:if test="${empty transactions}">
                                         <tr>
-                                            <td colspan="5" class="text-center">No transactions found.</td>
+                                            <td colspan="6" class="text-center">No transactions found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>
                             </table>
+                            <div class="clearfix"></div> <!-- Ensures pagination is below the table -->
                             <jsp:include page="pagination.jsp" />
                         </div>
                     </div>
@@ -410,7 +480,6 @@
             <div id="back-top">
                 <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
             </div>
-            <!-- JS here -->
             <script src="${pageContext.request.contextPath}/assets/js/vendor/modernizr-3.5.0.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/vendor/jquery-1.12.4.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/popper.min.js"></script>
@@ -436,5 +505,5 @@
             <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-</body>
+        </body>
 </html>

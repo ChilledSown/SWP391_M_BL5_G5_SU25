@@ -59,7 +59,7 @@ public class DeleteReviewServlet extends HttpServlet {
             // Delete review
             reviewDAO.deleteReview(reviewId);
             
-            // Redirect back to course detail page
+          
             response.sendRedirect("customer-course-detail?id=" + courseId);
             
         } catch (Exception e) {
