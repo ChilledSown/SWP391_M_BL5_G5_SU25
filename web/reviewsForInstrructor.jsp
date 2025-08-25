@@ -247,7 +247,6 @@
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="reviewsForInstrructor.jsp" class="nav-link active">Reviews</a></li>
-                               
                             </ul>
                         </div>
                         <!-- Main Content -->
@@ -287,6 +286,7 @@
                                         <th>Rating</th>
                                         <th>Comment</th>
                                         <th>Date</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -296,12 +296,13 @@
                                             <td>${review.studentName}</td>
                                             <td>${review.rating} / 5</td>
                                             <td>${review.comment}</td>
-                                            <td><fmt:formatDate value="${review.date}" pattern="yyyy-MM-dd" /></td>
+                                            <td><fmt:formatDate value="${review.created_at}" pattern="yyyy-MM-dd" /></td>
+                                           
                                         </tr>
                                     </c:forEach>
                                     <c:if test="${empty reviews}">
                                         <tr>
-                                            <td colspan="5" class="text-center">No reviews found.</td>
+                                            <td colspan="6" class="text-center">No reviews found.</td>
                                         </tr>
                                     </c:if>
                                 </tbody>
@@ -422,5 +423,5 @@
             <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
-</body>
+        </body>
 </html>

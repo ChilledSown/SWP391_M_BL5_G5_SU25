@@ -30,15 +30,22 @@
     </c:if>
     <!-- Search form -->
     <form method="get" action="manageQuizInstructor" class="mb-3">
+        
+         <a href="createQuizSeller?lessonId=${lessonId}&courseId=${courseId}" class="btn btn-success mb-3">
+        <i class="fa-solid fa-plus"></i> Add New Quiz
+    </a>
+        
         <input type="hidden" name="lessonId" value="${lessonId}" />
         <input type="hidden" name="courseId" value="${courseId}" />
         <div class="row g-2">
             <div class="col-md-4">
                 <input type="text" name="question" class="form-control" placeholder="Search by question..." value="${param.question}" />
             </div>
+            From date
             <div class="col-md-3">
                 <input type="date" name="startDate" class="form-control" placeholder="From date" value="${param.startDate}" />
             </div>
+            To Date
             <div class="col-md-3">
                 <input type="date" name="endDate" class="form-control" placeholder="To date" value="${param.endDate}" />
             </div>
@@ -98,9 +105,7 @@
     <a href="manageLessonInstructor?courseId=${courseId}" class="btn btn-secondary mb-3">
         <i class="fa-solid fa-arrow-left"></i> Back to Lessons
     </a>
-    <a href="createQuizSeller?lessonId=${lessonId}&courseId=${courseId}" class="btn btn-success mb-3">
-        <i class="fa-solid fa-plus"></i> Add New Quiz
-    </a>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

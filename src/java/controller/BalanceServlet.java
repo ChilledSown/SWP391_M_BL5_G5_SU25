@@ -15,6 +15,7 @@ import java.util.List;
 
 @WebServlet(name = "BalanceServlet", urlPatterns = {"/balance"})
 public class BalanceServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -26,6 +27,9 @@ public class BalanceServlet extends HttpServlet {
         int createdBy = user.getUser_id().intValue();
         BalanceDAO balanceDAO = new BalanceDAO();
         String status = request.getParameter("status");
+        String fromDate = request.getParameter("fromDate");
+        String toDate = request.getParameter("toDate");
+        String searchTerm = request.getParameter("searchTerm");
         int page = 1;
         int pageSize = 10;
         if (request.getParameter("page") != null) {
@@ -36,11 +40,14 @@ public class BalanceServlet extends HttpServlet {
             }
         }
         double balance = balanceDAO.getBalance(createdBy);
-        List<BalanceDTOSeller> transactions = balanceDAO.getTransactions(createdBy, status, page, pageSize);
-        int totalTransactions = balanceDAO.getTransactionCount(createdBy, status);
+        List<BalanceDTOSeller> transactions = balanceDAO.getTransactions(createdBy, status, fromDate, toDate, searchTerm, page, pageSize);
+        int totalTransactions = balanceDAO.getTransactionCount(createdBy, status, fromDate, toDate, searchTerm);
         request.setAttribute("balance", balance);
         request.setAttribute("transactions", transactions);
         request.setAttribute("status", status);
+        request.setAttribute("fromDate", fromDate);
+        request.setAttribute("toDate", toDate);
+        request.setAttribute("searchTerm", searchTerm);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", (int) Math.ceil((double) totalTransactions / pageSize));
         String message = request.getParameter("message");
@@ -90,16 +97,41 @@ public class BalanceServlet extends HttpServlet {
                     errorMessage = "Invalid status. Only 'completed' or 'cancelled' are allowed.";
                 }
                 String redirectUrl = request.getContextPath() + "/balance";
+                String fromDate = request.getParameter("fromDate");
+                String toDate = request.getParameter("toDate");
+                String searchTerm = request.getParameter("searchTerm");
+                if (fromDate != null && !fromDate.isEmpty()) {
+                    redirectUrl += "?fromDate=" + URLEncoder.encode(fromDate, "UTF-8");
+                }
+                if (toDate != null && !toDate.isEmpty()) {
+                    redirectUrl += (redirectUrl.contains("?") ? "&" : "?") + "toDate=" + URLEncoder.encode(toDate, "UTF-8");
+                }
+                if (searchTerm != null && !searchTerm.isEmpty()) {
+                    redirectUrl += (redirectUrl.contains("?") ? "&" : "?") + "searchTerm=" + URLEncoder.encode(searchTerm, "UTF-8");
+                }
                 if (message != null) {
-                    redirectUrl += "?message=" + URLEncoder.encode(message, "UTF-8");
+                    redirectUrl += (redirectUrl.contains("?") ? "&" : "?") + "message=" + URLEncoder.encode(message, "UTF-8");
                 } else if (errorMessage != null) {
-                    redirectUrl += "?errorMessage=" + URLEncoder.encode(errorMessage, "UTF-8");
+                    redirectUrl += (redirectUrl.contains("?") ? "&" : "?") + "errorMessage=" + URLEncoder.encode(errorMessage, "UTF-8");
                 }
                 response.sendRedirect(redirectUrl);
                 return;
             } catch (NumberFormatException e) {
                 errorMessage = "Invalid order ID.";
-                response.sendRedirect(request.getContextPath() + "/balance?errorMessage=" + URLEncoder.encode(errorMessage, "UTF-8"));
+                String redirectUrl = request.getContextPath() + "/balance?errorMessage=" + URLEncoder.encode(errorMessage, "UTF-8");
+                String fromDate = request.getParameter("fromDate");
+                String toDate = request.getParameter("toDate");
+                String searchTerm = request.getParameter("searchTerm");
+                if (fromDate != null && !fromDate.isEmpty()) {
+                    redirectUrl += "&fromDate=" + URLEncoder.encode(fromDate, "UTF-8");
+                }
+                if (toDate != null && !toDate.isEmpty()) {
+                    redirectUrl += "&toDate=" + URLEncoder.encode(toDate, "UTF-8");
+                }
+                if (searchTerm != null && !searchTerm.isEmpty()) {
+                    redirectUrl += "&searchTerm=" + URLEncoder.encode(searchTerm, "UTF-8");
+                }
+                response.sendRedirect(redirectUrl);
                 return;
             }
         }
