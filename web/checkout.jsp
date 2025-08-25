@@ -34,22 +34,9 @@
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 80vh;
         }
+        .checkout-section .container { max-width: none; width: 100%; padding-left: 0; padding-right: 0; }
         
-        .checkout-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .checkout-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-            border-radius: 20px 20px 0 0;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 0;
-        }
+        .checkout-header { display: none; }
         
         .checkout-header::before {
             content: '';
@@ -80,8 +67,9 @@
         
         .checkout-content {
             background: white;
-            border-radius: 0 0 20px 20px;
+            border-radius: 0;
             overflow: hidden;
+            width: 100%;
         }
         
         .checkout-grid {
@@ -94,11 +82,13 @@
         .left-column {
             padding: 40px;
             border-right: 1px solid #e9ecef;
+            width: 100%;
         }
         
         .right-column {
             padding: 40px;
             background: #f8f9fa;
+            width: 100%;
         }
         
         .order-summary {
@@ -259,6 +249,8 @@
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
+            box-shadow: none;
+            width: 100%;
         }
         
         .price-row {
@@ -344,6 +336,8 @@
             border: 1px solid #c3e6cb;
             border-radius: 12px;
             color: #155724;
+            box-shadow: none;
+            width: 100%;
         }
         
         .secure-badge i {
@@ -355,7 +349,8 @@
             text-align: center;
             padding: 60px 20px;
             background: white;
-            border-radius: 0 0 20px 20px;
+            border-radius: 0;
+            width: 100%;
         }
         
         .empty-cart-icon {

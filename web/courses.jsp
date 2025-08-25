@@ -33,10 +33,10 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 35px;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             margin-bottom: 40px;
             position: relative;
             overflow: visible;
+            width: 100%;
         }
         
         .search-filter-container::before {
@@ -90,13 +90,12 @@
             background: rgba(255,255,255,0.95);
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 100%;
         }
         
         .search-box input:focus {
             outline: none;
             background: white;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             transform: translateY(-2px);
         }
         
@@ -115,19 +114,16 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         
         .search-btn:hover {
             transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         
         .search-btn i {
             font-size: 18px;
         }
         
-        /* CSS cho Course Topic Badge */
         .course-topic {
             margin-bottom: 15px;
         }
@@ -141,13 +137,12 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
             transition: all 0.3s ease;
+            width: 100%;
         }
         
         .course-topic .badge:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
         
         .course-topic .badge i {
@@ -161,9 +156,9 @@
             padding: 25px;
             backdrop-filter: blur(10px);
             overflow: visible;
+            width: 100%;
         }
 
-        /* Ensure Nice Select dropdowns render above container and not clipped */
         .nice-select { width: 100%; }
         .nice-select .list { z-index: 10000; }
         .nice-select.open .list { max-height: 280px; overflow-y: auto; }
@@ -196,14 +191,12 @@
             background: rgba(255,255,255,0.95);
             font-size: 14px;
             transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             cursor: pointer;
         }
         
         .filter-item select:focus {
             outline: none;
             background: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
             transform: translateY(-1px);
         }
         
@@ -219,15 +212,14 @@
             border-radius: 12px;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            width: 100%;
         }
         
         .clear-filters-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
             color: white;
             text-decoration: none;
         }
@@ -266,56 +258,18 @@
             backdrop-filter: blur(5px);
         }
         
-        @media (max-width: 768px) {
-            .search-filter-container {
-                padding: 25px 20px;
-                margin: 0 15px 30px 15px;
-            }
-            
-            .filters-row {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .search-box input {
-                padding: 15px 55px 15px 20px;
-                font-size: 14px;
-            }
-            
-            .search-btn {
-                width: 40px;
-                height: 40px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .search-filter-container {
-                padding: 20px 15px;
-            }
-            
-            .search-filter-title h3 {
-                font-size: 20px;
-            }
-            
-            .search-filter-title p {
-                font-size: 14px;
-            }
-        }
-        
-        /* Course card uniform height styles - Compact version */
         .properties.properties2 {
             height: 100%;
             display: flex;
             flex-direction: column;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            width: 100%;
         }
         
         .properties.properties2:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
         .properties__card {
@@ -967,7 +921,6 @@
     <script src="./assets/js/plugins.js"></script>
     <script src="./assets/js/main.js"></script>
     
-         <!-- Custom JavaScript for Search and Filter -->
      <script>
          // Auto-submit form when Enter key is pressed in search input
          document.addEventListener('DOMContentLoaded', function() {
