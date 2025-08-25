@@ -131,7 +131,7 @@ public class UpdateCourseServlet extends HttpServlet {
         // Cập nhật DB
         CourseDAO dao = new CourseDAO();
         dao.updateCourse(courseId, title, description, Integer.parseInt(priceStr), thumbnailUrl, Long.parseLong(topicIdStr));
-        response.sendRedirect("listCousera");
+        response.sendRedirect("listCourses");
     }
 
     @Override

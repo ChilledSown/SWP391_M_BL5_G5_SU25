@@ -5,11 +5,8 @@ import java.util.List;
 import model.Lesson;
 import java.sql.*;
 
-/**
- *
- * @author sondo
- */
 public class LessonDAO extends DBContext {
+
     public List<Lesson> getLessonsByCourseId(long courseId) {
         List<Lesson> lessons = new ArrayList<>();
         String sql = "SELECT * FROM Lesson WHERE Course_Id = ? ORDER BY Created_At ASC";
@@ -121,7 +118,7 @@ public class LessonDAO extends DBContext {
         return -1;
     }
 
-    public void updateLesson(Lesson lesson) throws Exception{
+    public void updateLesson(Lesson lesson) throws Exception {
         String sql = "UPDATE Lesson SET Title = ?, Video_Url = ?, Content = ?, Updated_At = GETDATE() WHERE Lesson_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, lesson.getTitle());
@@ -137,7 +134,6 @@ public class LessonDAO extends DBContext {
     public void deleteLesson(long lessonId) {
         QuizDAO quizDAO = new QuizDAO();
         quizDAO.deleteQuizzesByLessonId(lessonId);
-
         String sql = "DELETE FROM Lesson WHERE Lesson_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, lessonId);
@@ -178,7 +174,7 @@ public class LessonDAO extends DBContext {
         return false;
     }
 
-    public List<Lesson> getFilteredLessonsByCoursePaged(long courseId, String title, String createdDate, int offset, int limit) {
+    public List<Lesson> getFilteredLessonsByCoursePaged(long courseId, String title, String startDate, String endDate, int offset, int limit) {
         List<Lesson> lessons = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT * FROM Lesson WHERE Course_Id = ? ");
@@ -191,9 +187,13 @@ public class LessonDAO extends DBContext {
                 params.add("%" + word + "%");
             }
         }
-        if (createdDate != null && !createdDate.trim().isEmpty()) {
-            sql.append("AND CAST(Created_At AS DATE) = ? ");
-            params.add(createdDate);
+        if (startDate != null && !startDate.trim().isEmpty()) {
+            sql.append("AND CAST(Created_At AS DATE) >= ? ");
+            params.add(startDate);
+        }
+        if (endDate != null && !endDate.trim().isEmpty()) {
+            sql.append("AND CAST(Created_At AS DATE) <= ? ");
+            params.add(endDate);
         }
         sql.append("ORDER BY Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
@@ -221,7 +221,7 @@ public class LessonDAO extends DBContext {
         return lessons;
     }
 
-    public int countFilteredLessonsByCourse(long courseId, String title, String createdDate) {
+    public int countFilteredLessonsByCourse(long courseId, String title, String startDate, String endDate) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT COUNT(*) AS Total FROM Lesson WHERE Course_Id = ? ");
         List<Object> params = new ArrayList<>();
@@ -233,9 +233,13 @@ public class LessonDAO extends DBContext {
                 params.add("%" + word + "%");
             }
         }
-        if (createdDate != null && !createdDate.trim().isEmpty()) {
-            sql.append("AND CAST(Created_At AS DATE) = ? ");
-            params.add(createdDate);
+        if (startDate != null && !startDate.trim().isEmpty()) {
+            sql.append("AND CAST(Created_At AS DATE) >= ? ");
+            params.add(startDate);
+        }
+        if (endDate != null && !endDate.trim().isEmpty()) {
+            sql.append("AND CAST(Created_At AS DATE) <= ? ");
+            params.add(endDate);
         }
         try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
             int index = 1;
