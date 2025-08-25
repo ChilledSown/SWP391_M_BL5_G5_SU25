@@ -17,6 +17,7 @@ public class QuizDetailSellerServlet extends HttpServlet {
         try {
             long quizId = Long.parseLong(request.getParameter("quizId"));
             long lessonId = Long.parseLong(request.getParameter("lessonId"));
+            long courseId = Long.parseLong(request.getParameter("courseId")); // Retrieve courseId
             QuizDAO dao = new QuizDAO();
             Quiz quiz = dao.getQuizById(quizId);
             if (quiz == null) {
@@ -25,9 +26,10 @@ public class QuizDetailSellerServlet extends HttpServlet {
             }
             request.setAttribute("quiz", quiz);
             request.setAttribute("lessonId", lessonId);
+            request.setAttribute("courseId", courseId); // Set courseId as an attribute
             request.getRequestDispatcher("quiz_detail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quiz or lesson ID.");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid quiz, lesson, or course ID.");
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving quiz.");
