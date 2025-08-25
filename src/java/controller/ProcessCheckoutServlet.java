@@ -33,40 +33,28 @@ public class ProcessCheckoutServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         
         try {
-            // Get user from session
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-            
-            // Check if user is logged in
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
             long userId = user.getUser_id();
-            
-            // Get DAOs
             CartDAO cartDAO = new CartDAO();
             CourseDAO courseDAO = new CourseDAO();
             OrderDAO orderDAO = new OrderDAO();
             OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
-            
-            // Get user's cart
             Cart userCart = cartDAO.getCartByUserId(userId);
             
             if (userCart != null) {
-                // Get cart items
                 List<CartItem> cartItems = cartDAO.getCartItemsByCartId(userCart.getCart_id());
                 
                 if (cartItems != null && !cartItems.isEmpty()) {
-                    // Get cart total
                     double cartTotal = cartDAO.getCartTotal(userCart.getCart_id());
-                    
-                    // Create pending order
                     long orderId = orderDAO.insertOrder(userId, cartTotal, "pending");
                     
                     if (orderId > 0) {
-                        // Create order details
                         boolean allDetailsInserted = true;
                         for (CartItem item : cartItems) {
                             boolean detailInserted = orderDetailDAO.insertOrderDetail(orderId, item.getCourse_id(), item.getPrice());
@@ -77,29 +65,22 @@ public class ProcessCheckoutServlet extends HttpServlet {
                         }
                         
                         if (allDetailsInserted) {
-                            // Store order ID in session for payment processing
                             session.setAttribute("pendingOrderId", orderId);
                             session.setAttribute("orderAmount", cartTotal);
-                            // No JSON body; indicate success with 204 No Content
-                            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                             return;
                         } else {
-                            // Failed to insert order details
                             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to create order details");
                             return;
                         }
                     } else {
-                        // Failed to create order
                         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to create order");
                         return;
                     }
                 } else {
-                    // Empty cart
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Cart is empty");
                     return;
                 }
             } else {
-                // No cart found
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No cart found");
                 return;
             }
