@@ -41,7 +41,7 @@ public class InstructorDashboardServlet extends HttpServlet {
         request.setAttribute("totalBlogs", totalBlogs);
         request.setAttribute("performanceViews", performanceViews);
         request.setAttribute("recentActivity", recentActivity);
-        request.getRequestDispatcher("instructor_Doashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("Instructor_Doashboard.jsp").forward(request, response);
     }
 
     @Override

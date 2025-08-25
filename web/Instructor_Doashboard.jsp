@@ -212,11 +212,10 @@
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="#overview" class="nav-link active">Overview</a></li>
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="instructorvideoquiz">Video Quiz</a></li>
+                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                                 <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
-                           
                             </ul>
                         </div>
                         <!-- Main Content -->
@@ -258,9 +257,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="dashboard-card">
-<!--                                            <h4>Quick Actions</h4>-->
-<!--                                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
-                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a>-->
+                                            <!-- <h4>Quick Actions</h4> -->
+                                            <!-- <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-2">Create New Course</a>
+                                            <a href="seller_blog.jsp" class="btn btn-primary">Create New Blog</a> -->
                                         </div>
                                     </div>
                                 </div>
@@ -405,7 +404,7 @@
                     navLinks.forEach(link => {
                         link.addEventListener('click', function (e) {
                             const href = this.getAttribute('href');
-                            if (!href.startsWith('#')) return; // Allow navigation to external pages like listCousera, seller_blog.jsp, balance.jsp, reviews.jsp
+                            if (!href.startsWith('#')) return; // Allow navigation to external pages like listCourses, listVideoQuiz, listBlogsInstructor, balance, listReviews
                             e.preventDefault();
                             const targetId = href.substring(1);
                             navLinks.forEach(l => l.classList.remove('active'));
