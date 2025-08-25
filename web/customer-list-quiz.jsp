@@ -546,24 +546,24 @@
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Quiz Header -->
-        <div class="quiz-header">
-            <h1 class="quiz-title">Course Quiz</h1>
-            <p class="quiz-subtitle">${course.title} - ${totalCourseQuizzes} Questions</p>
-        </div>
+            <!-- Quiz Header -->
+            <div class="quiz-header">
+                <h1 class="quiz-title">Course Quiz</h1>
+                <p class="quiz-subtitle">${course.title} - ${totalCourseQuizzes} Questions</p>
+            </div>
 
-        <!-- Score Section (Hidden by default) -->
-        <div class="score-section" id="scoreSection">
+            <!-- Score Section (Hidden by default) -->
+            <div class="score-section" id="scoreSection">
             <div class="score-header">
                 <h2 class="score-title">Quiz Results</h2>
                 <div class="score-percentage" id="scorePercentage">0%</div>
-            </div>
+                    </div>
             
             <div class="score-details">
                 <div class="score-item">
                     <div class="score-label">Total Questions</div>
                     <div class="score-value" id="totalQuestions">0</div>
-                </div>
+                    </div>
                 <div class="score-item">
                     <div class="score-label">Correct Answers</div>
                     <div class="score-value" id="correctAnswers">0</div>
@@ -586,44 +586,44 @@
                 <a href="customer-course-detail?id=${course.course_id}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Course
                 </a>
+                </div>
             </div>
-        </div>
 
-        <!-- Quiz Content -->
-        <form id="quizForm" method="post" action="customer-list-quiz">
-            <input type="hidden" name="courseId" value="${course.course_id}">
-            <input type="hidden" name="lessonId" value="${lesson.lessonId}">
-            
-            <div class="quiz-content">
-                <c:forEach var="quiz" items="${quizzes}" varStatus="status">
-                    <div class="question-container" id="quiz-${quiz.quizId}">
+            <!-- Quiz Content -->
+            <form id="quizForm" method="post" action="customer-list-quiz">
+                <input type="hidden" name="courseId" value="${course.course_id}">
+                <input type="hidden" name="lessonId" value="${lesson.lessonId}">
+                
+                <div class="quiz-content">
+                    <c:forEach var="quiz" items="${quizzes}" varStatus="status">
+                        <div class="question-container" id="quiz-${quiz.quizId}">
                         <div class="question-number">Question ${status.index + 1}</div>
                         <div class="question-text" id="question-text-${quiz.quizId}">
                             <c:out value="${quiz.question}" escapeXml="true"/>
                         </div>
-                        <div class="options-container">
-                            <c:set var="options" value="${fn:split(quiz.answerOptions, ';')}" />
-                            <c:forEach var="option" items="${options}" varStatus="optionStatus">
-                                <c:set var="optionParts" value="${fn:split(option, '.')}" />
-                                <c:if test="${fn:length(optionParts) >= 2}">
-                                    <c:set var="optionLetter" value="${optionParts[0]}" />
-                                    <c:set var="optionText" value="${optionParts[1]}" />
-                                    <div class="option-item">
-                                        <input type="radio" 
-                                               id="option_${quiz.quizId}_${optionStatus.index}" 
-                                               name="answer_${quiz.quizId}" 
-                                               value="${optionLetter}"
-                                               <c:if test="${showResults && param['answer_' += quiz.quizId] == optionLetter}">checked</c:if>>
-                                        <label class="option-label" for="option_${quiz.quizId}_${optionStatus.index}">
+                            <div class="options-container">
+                                <c:set var="options" value="${fn:split(quiz.answerOptions, ';')}" />
+                                <c:forEach var="option" items="${options}" varStatus="optionStatus">
+                                    <c:set var="optionParts" value="${fn:split(option, '.')}" />
+                                    <c:if test="${fn:length(optionParts) >= 2}">
+                                        <c:set var="optionLetter" value="${optionParts[0]}" />
+                                        <c:set var="optionText" value="${optionParts[1]}" />
+                                        <div class="option-item">
+                                            <input type="radio" 
+                                                   id="option_${quiz.quizId}_${optionStatus.index}" 
+                                                   name="answer_${quiz.quizId}" 
+                                                   value="${optionLetter}"
+                                                   <c:if test="${showResults && param['answer_' += quiz.quizId] == optionLetter}">checked</c:if>>
+                                            <label class="option-label" for="option_${quiz.quizId}_${optionStatus.index}">
                                             <span>${optionLetter}. </span><span class="option-content" id="option-content-${quiz.quizId}_${optionStatus.index}"><c:out value="${optionText}" escapeXml="true"/></span>
-                                        </label>
-                                    </div>
-                                </c:if>
-                            </c:forEach>
-                        </div>
-                        
-                        <!-- Answer Feedback (Hidden by default) -->
-                        <div class="answer-feedback" id="feedback_${quiz.quizId}">
+                                            </label>
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                            
+                            <!-- Answer Feedback (Hidden by default) -->
+                            <div class="answer-feedback" id="feedback_${quiz.quizId}">
                             <c:if test="${showResults}">
                                 <c:set var="quizResult" value="${quizResults[quiz.quizId]}" />
                                 <c:choose>
@@ -649,23 +649,23 @@
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
+                            </div>
                         </div>
-                    </div>
-                </c:forEach>
-            </div>
+                    </c:forEach>
+                </div>
 
-            <!-- Submit Button -->
-            <div class="submit-section">
-                <button type="submit" class="submit-btn" id="submitBtn">Submit All Answers</button>
-            </div>
-        </form>
+                <!-- Submit Button -->
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit All Answers</button>
+                </div>
+            </form>
 
-        <!-- Congratulations Section (Hidden by default) -->
-        <div class="congratulations-section" id="congratulationsSection">
-            <div class="congratulations-text">Congratulations, you have passed the course!!</div>
-            <div class="navigation-buttons">
-                <a href="home" class="nav-btn">Back to Home</a>
-                <a href="customer-course-detail?id=${course.course_id}" class="nav-btn">Back to Course</a>
+            <!-- Congratulations Section (Hidden by default) -->
+            <div class="congratulations-section" id="congratulationsSection">
+                <div class="congratulations-text">Congratulations, you have passed the course!!</div>
+                <div class="navigation-buttons">
+                    <a href="home" class="nav-btn">Back to Home</a>
+                    <a href="customer-course-detail?id=${course.course_id}" class="nav-btn">Back to Course</a>
             </div>
         </div>
     </div>
@@ -772,7 +772,7 @@
             // Show congratulations if passed
             if (isPassedFlag) {
                 setTimeout(() => {
-                    congratulationsSection.classList.add('show');
+                congratulationsSection.classList.add('show');
                 }, 1000);
             }
             

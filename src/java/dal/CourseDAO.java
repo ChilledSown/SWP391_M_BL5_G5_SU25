@@ -505,7 +505,7 @@ public class CourseDAO extends DBContext {
                     "JOIN Order_Detail od ON od.Course_Id = c.Course_Id " +
                     "JOIN [Order] o ON o.Order_Id = od.Order_Id " +
                     "LEFT JOIN Payment p ON p.Order_Id = o.Order_Id " +
-                    "WHERE o.User_Id = ? AND o.Status = 'paid'";
+                    "WHERE o.User_Id = ? AND o.Status = 'completed'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
