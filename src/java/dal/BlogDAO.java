@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Types;
 import model.Blog;
 
 public class BlogDAO extends DBContext {
@@ -18,17 +19,18 @@ public class BlogDAO extends DBContext {
                      "INNER JOIN Users u ON b.Created_By = u.UserID " +
                      "ORDER BY b.Created_At DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 blogs.add(new Blog(
-                    rs.getLong("Blog_Id"),
-                    rs.getString("Title"),
-                    rs.getString("Content"),
-                    rs.getString("Thumbnail_Url"),
-                    rs.getTimestamp("Created_At"),
-                    rs.getTimestamp("Updated_At"),
-                    rs.getInt("Created_By"),
-                    rs.getString("CreatedByName")
+                        rs.getLong("Blog_Id"),
+                        rs.getString("Title"),
+                        rs.getString("Content"),
+                        rs.getString("Thumbnail_Url"),
+                        rs.getTimestamp("Created_At"),
+                        rs.getTimestamp("Updated_At"),
+                        rs.getInt("Created_By"),
+                        rs.getString("CreatedByName")
                 ));
             }
         } catch (SQLException e) {
@@ -44,18 +46,19 @@ public class BlogDAO extends DBContext {
                      "INNER JOIN Users u ON b.Created_By = u.UserID " +
                      "WHERE b.Blog_Id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
             ps.setLong(1, blogId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Blog(
-                    rs.getLong("Blog_Id"),
-                    rs.getString("Title"),
-                    rs.getString("Content"),
-                    rs.getString("Thumbnail_Url"),
-                    rs.getTimestamp("Created_At"),
-                    rs.getTimestamp("Updated_At"),
-                    rs.getInt("Created_By"),
-                    rs.getString("CreatedByName")
+                        rs.getLong("Blog_Id"),
+                        rs.getString("Title"),
+                        rs.getString("Content"),
+                        rs.getString("Thumbnail_Url"),
+                        rs.getTimestamp("Created_At"),
+                        rs.getTimestamp("Updated_At"),
+                        rs.getInt("Created_By"),
+                        rs.getString("CreatedByName")
                 );
             }
         } catch (SQLException e) {
