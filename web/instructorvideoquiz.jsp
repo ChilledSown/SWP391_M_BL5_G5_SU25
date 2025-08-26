@@ -172,6 +172,34 @@
         .error-message.show {
             display: block;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .pagination a, .pagination span {
+            margin: 0 5px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .pagination a:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .pagination .active {
+            background-color: #007bff;
+            color: #ffffff;
+            cursor: default;
+        }
+        .pagination .disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+        }
         @media (max-width: 991px) {
             .sidebar {
                 min-height: auto;
@@ -202,6 +230,12 @@
             }
             .table-responsive {
                 overflow-x: auto;
+            }
+            .pagination {
+                flex-wrap: wrap;
+            }
+            .pagination a, .pagination span {
+                margin: 5px;
             }
         }
     </style>
@@ -340,7 +374,30 @@
                                 </table>
                             </div>
                             <c:if test="${not empty videoQuizzes}">
-                                <jsp:include page="pagination.jsp" />
+                                <div class="pagination">
+                                    <c:if test="${currentPage > 1}">
+                                        <a href="#" data-page="${currentPage - 1}">Previous</a>
+                                    </c:if>
+                                    <c:if test="${currentPage <= 1}">
+                                        <span class="disabled">Previous</span>
+                                    </c:if>
+                                    <c:forEach begin="1" end="${totalPages}" var="i">
+                                        <c:choose>
+                                            <c:when test="${i == currentPage}">
+                                                <span class="active">${i}</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="#" data-page="${i}">${i}</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                    <c:if test="${currentPage < totalPages}">
+                                        <a href="#" data-page="${currentPage + 1}">Next</a>
+                                    </c:if>
+                                    <c:if test="${currentPage >= totalPages}">
+                                        <span class="disabled">Next</span>
+                                    </c:if>
+                                </div>
                             </c:if>
                         </div>
                     </div>

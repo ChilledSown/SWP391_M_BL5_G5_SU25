@@ -276,10 +276,7 @@
                         <a href="manageslider">Manage Slider</a>
                     </li>
                     <li data-section="settings">
-                        <a href="${pageContext.request.contextPath}/logout">Logout</a>
-                    </li>
-                    <li data-section="settings">
-                        <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                        <a href="logout">Logout</a>
                     </li>
                 </ul>
             </nav>

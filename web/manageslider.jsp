@@ -348,7 +348,7 @@
                         <li data-section="slider" class="active">
                             <a href="manageslider">Manage Slider</a>
                         </li>
-                        <li data-section="settings"><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                        <li data-section="settings"><a href="logout">Logout</a></li>
                     </ul>
                 </nav>
             </aside>
