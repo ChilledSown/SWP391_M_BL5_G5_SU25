@@ -362,10 +362,10 @@
                     <!-- Sidebar -->
                     <div class="col-lg-3 col-md-4 sidebar">
                         <ul class="nav flex-column" id="sidebarNav">
-                            <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                            <li class="nav-item"><a href="DashBoard" class="nav-link">Overview</a></li>
                             <li class="nav-item"><a href="listCourses" class="nav-link active">Courses</a></li>
                             <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
-                            <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+                            <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                             <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                         </ul>
                     </div>

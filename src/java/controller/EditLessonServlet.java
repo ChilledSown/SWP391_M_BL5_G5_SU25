@@ -15,27 +15,28 @@ import java.util.Date;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import model.Lesson;
-import java.sql.SQLException;
-
 
 @WebServlet(name = "EditLessonServlet", urlPatterns = {"/editLesson"})
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 100 * 1024 * 1024, // 100MB
-        maxRequestSize = 150 * 1024 * 1024 // 150MB
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 100 * 1024 * 1024, // 100MB
+    maxRequestSize = 150 * 1024 * 1024 // 150MB
 )
 public class EditLessonServlet extends HttpServlet {
-
     private static final Logger LOGGER = Logger.getLogger(EditLessonServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.INFO, "Received GET request for editLesson with lessonId={0}, courseId={1}",
-                new Object[]{request.getParameter("lessonId"), request.getParameter("courseId")});
+        LOGGER.log(Level.INFO, "Received GET request for editLesson with parameters: {0}",
+                request.getParameterMap());
 
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
+
+        // Log giá trị tham số để debug
+        LOGGER.log(Level.INFO, "Raw lessonIdStr: {0}, Raw courseIdStr: {1}", new Object[]{lessonIdStr, courseIdStr});
+
         if (lessonIdStr == null || lessonIdStr.isEmpty() || courseIdStr == null || courseIdStr.isEmpty()) {
             String error = "Lesson ID and Course ID are required.";
             LOGGER.log(Level.WARNING, error);
@@ -44,13 +45,15 @@ public class EditLessonServlet extends HttpServlet {
             return;
         }
 
-        Long lessonId, courseId;
+        Long lessonId = null, courseId = null;
         try {
-            lessonId = Long.parseLong(lessonIdStr);
-            courseId = Long.parseLong(courseIdStr);
+            lessonId = Long.parseLong(lessonIdStr.trim()); // Loại bỏ khoảng trắng
+            courseId = Long.parseLong(courseIdStr.trim()); // Loại bỏ khoảng trắng
+            LOGGER.log(Level.INFO, "Parsed lessonId: {0}, courseId: {1}", new Object[]{lessonId, courseId});
         } catch (NumberFormatException e) {
-            String error = "Invalid lesson ID or course ID format: " + e.getMessage();
-            LOGGER.log(Level.WARNING, error);
+            String error = "Invalid lesson ID or course ID format: " + e.getMessage() + 
+                           " (lessonIdStr: " + lessonIdStr + ", courseIdStr: " + courseIdStr + ")";
+            LOGGER.log(Level.SEVERE, error, e);
             request.setAttribute("errorMessage", error);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
@@ -72,6 +75,7 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
+
         LOGGER.log(Level.INFO, "Successfully loaded lesson ID={0} for editing", lessonId);
         request.setAttribute("lesson", lesson);
         request.setAttribute("courseId", courseId);
@@ -81,9 +85,8 @@ public class EditLessonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.INFO, "Received POST request for editLesson with lessonId={0}, courseId={1}",
-                new Object[]{request.getParameter("lessonId"), request.getParameter("courseId")});
-
+        LOGGER.log(Level.INFO, "Received POST request for editLesson with parameters: {0}",
+                request.getParameterMap());
         request.setCharacterEncoding("UTF-8");
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
@@ -104,7 +107,6 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
-
         // Validate inputs
         if (lessonIdStr == null || lessonIdStr.trim().isEmpty() || courseIdStr == null || courseIdStr.trim().isEmpty()) {
             String error = "Lesson ID and Course ID are required.";
@@ -150,14 +152,14 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
-
         Long lessonId, courseId;
         try {
-            lessonId = Long.parseLong(lessonIdStr);
-            courseId = Long.parseLong(courseIdStr);
+            lessonId = Long.parseLong(lessonIdStr.trim());
+            courseId = Long.parseLong(courseIdStr.trim());
         } catch (NumberFormatException e) {
-            String error = "Invalid lesson ID or course ID format: " + e.getMessage();
-            LOGGER.log(Level.WARNING, error);
+            String error = "Invalid lesson ID or course ID format: " + e.getMessage() + 
+                           " (lessonIdStr: " + lessonIdStr + ", courseIdStr: " + courseIdStr + ")";
+            LOGGER.log(Level.SEVERE, error, e);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
             request.setAttribute("videoUrl", videoUrl);
@@ -166,7 +168,6 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
-
         LessonDAO dao = new LessonDAO();
         // Validate lesson existence and course ID match
         Lesson existingLesson = dao.getLessonById(lessonId);
@@ -192,7 +193,6 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
-
         // Validate duplicate title
         if (dao.isTitleDuplicateForUpdate(title.trim(), courseId, lessonId)) {
             String error = "A lesson with this title already exists for the course.";
@@ -205,17 +205,14 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
-
         // Handle video file upload
-        String finalVideoUrl = videoUrl != null ? videoUrl.trim() : "";
+        String finalVideoUrl = videoUrl != null ? videoUrl.trim() : existingLesson.getVideoUrl();
         if (videoFilePart != null && videoFilePart.getSize() > 0) {
             String fileName = Paths.get(videoFilePart.getSubmittedFileName()).getFileName().toString();
             String contentType = videoFilePart.getContentType();
             long fileSize = videoFilePart.getSize();
-
             LOGGER.log(Level.INFO, "Processing video file upload: name={0}, size={1}, type={2}",
                     new Object[]{fileName, fileSize, contentType});
-
             // Validate file
             if (!(contentType.equals("video/mp4") || contentType.equals("video/webm") || contentType.equals("video/ogg"))) {
                 String error = "Only MP4, WebM, or OGG video files are allowed.";
@@ -239,7 +236,6 @@ public class EditLessonServlet extends HttpServlet {
                 request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
                 return;
             }
-
             // Save file
             String uploadPath = getServletContext().getRealPath("/") + "assets/videos/uploads";
             LOGGER.log(Level.INFO, "Resolved upload path: {0}", uploadPath);
@@ -288,7 +284,6 @@ public class EditLessonServlet extends HttpServlet {
                 return;
             }
         }
-
         // Update lesson
         Lesson lesson = new Lesson();
         lesson.setLessonId(lessonId);
@@ -297,7 +292,6 @@ public class EditLessonServlet extends HttpServlet {
         lesson.setVideoUrl(finalVideoUrl);
         lesson.setContent(content != null ? content.trim() : "");
         lesson.setUpdatedAt(new Date());
-
         try {
             dao.updateLesson(lesson);
         } catch (Exception ex) {
@@ -308,7 +302,6 @@ public class EditLessonServlet extends HttpServlet {
         response.setContentType("text/plain");
         response.getWriter().write("success");
         LOGGER.log(Level.INFO, "Sent success response for lesson ID={0}", lessonId);
-
     }
 
     @Override

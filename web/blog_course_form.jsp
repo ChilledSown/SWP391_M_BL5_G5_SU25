@@ -60,6 +60,7 @@
         #thumbPreviewWrap {
             position: relative;
             display: inline-block;
+            margin-top: 12px;
         }
         .remove-thumb {
             position: absolute;
@@ -219,14 +220,13 @@
                         <% } %>
                     </div>
                     <div class="form-group">
-                        <label for="thumbnail_url">Thumbnail</label>
-                        <input type="url" class="form-control mb-2" id="thumbnailUrlInput" placeholder="Paste image URL here" value="<%= thumbnailUrlValue %>">
+                        <label for="thumbnail">Thumbnail</label>
                         <input type="file" class="form-control mb-2" id="thumbnailInput" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
-                        <div id="thumbPreviewWrap" style="margin-top:12px; display:<%= (thumbnailUrlValue != null && !thumbnailUrlValue.isEmpty()) ? "block" : "none"%>;">
+                        <div id="thumbPreviewWrap" style="display:${not empty thumbnailUrlValue ? 'block' : 'none'}; margin-top: 12px;">
                             <button type="button" class="remove-thumb" id="btnRemoveThumb">&times;</button>
-                            <img id="thumbPreview" src="<%= thumbnailUrlValue %>" alt="Thumbnail preview" style="max-width: 100%; border:1px solid #e9ecef; border-radius:6px;">
+                            <img id="thumbPreview" src="${pageContext.request.contextPath}/<%= thumbnailUrlValue %>" alt="Thumbnail preview" style="max-width: 100%; border: 1px solid #e9ecef; border-radius: 6px;">
                         </div>
-                        <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="<%= thumbnailUrlValue %>">
+                        <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="<%= thumbnailUrlValue != null && !thumbnailUrlValue.isEmpty() ? thumbnailUrlValue : "" %>">
                         <% if (thumbnailError != null) { %>
                         <div class="error-message"><%= thumbnailError %></div>
                         <% } %>
@@ -290,22 +290,22 @@
 <script src="./assets/js/main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const urlInput = document.getElementById('thumbnailUrlInput');
     const fileInput = document.getElementById('thumbnailInput');
     const hiddenInput = document.getElementById('thumbnail_url');
     const previewImg = document.getElementById('thumbPreview');
     const previewWrap = document.getElementById('thumbPreviewWrap');
     const removeBtn = document.getElementById('btnRemoveThumb');
 
-    urlInput.addEventListener('input', function () {
-        const url = urlInput.value.trim();
-        if (url !== "") {
-            previewImg.src = url;
+    // Load ảnh cũ khi trang được tải
+    window.onload = function() {
+        const initialThumbnailUrl = "<%= thumbnailUrlValue %>";
+        if (initialThumbnailUrl && initialThumbnailUrl.trim() !== "") {
+            previewImg.src = "${pageContext.request.contextPath}/" + initialThumbnailUrl;
             previewWrap.style.display = "block";
-            hiddenInput.value = url;
-            fileInput.value = "";
+        } else {
+            previewWrap.style.display = "none";
         }
-    });
+    };
 
     fileInput.addEventListener('change', function (event) {
         const file = event.target.files[0];
@@ -314,8 +314,7 @@
         reader.onload = function (e) {
             previewImg.src = e.target.result;
             previewWrap.style.display = "block";
-            urlInput.value = "";
-            hiddenInput.value = "file";
+            hiddenInput.value = "file"; // Đánh dấu rằng đã chọn file mới
         };
         reader.readAsDataURL(file);
     });
@@ -323,9 +322,8 @@
     removeBtn?.addEventListener('click', function () {
         previewImg.src = "";
         previewWrap.style.display = "none";
-        urlInput.value = "";
         fileInput.value = "";
-        hiddenInput.value = "null";
+        hiddenInput.value = "null"; // Đánh dấu xóa ảnh
     });
 </script>
 </body>
