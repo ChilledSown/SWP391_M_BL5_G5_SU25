@@ -503,7 +503,6 @@
                             var lessonId = $('#lessonId').val();
                             var timestamp = $('#timestamp').val();
 
-                            // Construct answerOptions
                             var optionA = $('#answerOptionA').val().trim();
                             var optionB = $('#answerOptionB').val().trim();
                             var optionC = $('#answerOptionC').val().trim();
@@ -515,7 +514,6 @@
                             if (optionD) answerOptionsArray.push('D. ' + optionD);
                             var answerOptions = answerOptionsArray.join('; ');
 
-                            // Construct correctAnswer
                             var correctLetters = [];
                             $('input[name="correctLetters[]"]:checked').each(function() {
                                 correctLetters.push($(this).val());
@@ -531,18 +529,15 @@
                             $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
 
-                            // Validate at least two options
                             if (answerOptionsArray.length < 2) {
                                 $('#answerOptionAError').text('At least two options are required.').addClass('show');
                                 return;
                             }
-                            // Validate at least one correct answer
                             if (correctAnswerArray.length < 1) {
                                 $('#correctLettersError').text('At least one correct answer is required.').addClass('show');
                                 return;
                             }
 
-                            // Submit form via AJAX
                             $.ajax({
                                 url: form.action,
                                 type: form.method,
@@ -578,7 +573,6 @@
                         }
                     });
 
-                    // Custom validator for correctLetters
                     $.validator.addMethod('validCorrectLetters', function(value, element) {
                         var checked = $('input[name="correctLetters[]"]:checked');
                         if (checked.length === 0) return false;

@@ -236,7 +236,6 @@
                             </c:if>
                             <c:choose>
                                 <c:when test="${not empty videoQuiz}">
-                                    <!-- Parse Answer_Options -->
                                     <c:set var="options" value="${fn:split(videoQuiz.answerOptions, ';')}" />
                                     <c:set var="optionA" value="${fn:length(options) > 0 ? fn:trim(fn:substringAfter(options[0], 'A.')) : ''}" />
                                     <c:set var="optionB" value="${fn:length(options) > 1 ? fn:trim(fn:substringAfter(options[1], 'B.')) : ''}" />
@@ -435,7 +434,6 @@
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
             <script>
                 $(document).ready(function() {
-                    // Redirect on success message
                     const message = $('.alert-success').text();
                     if (message && message.trim() !== '') {
                         setTimeout(function() {
@@ -443,7 +441,6 @@
                         }, 2000);
                     }
 
-                    // Update correct options based on input
                     function updateCorrectOptions() {
                         const optionA = $('#answerOptionA').val().trim();
                         const optionB = $('#answerOptionB').val().trim();
@@ -460,9 +457,8 @@
                         if (!optionD) $('#correctD').prop('checked', false);
                     }
 
-                    // Update options on input change
                     $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectOptions);
-                    updateCorrectOptions(); // Initial check
+                    updateCorrectOptions(); 
 
                     $('#editForm').validate({
                         rules: {
@@ -544,7 +540,6 @@
                             $(element).nextAll('.error-message').removeClass('show').empty();
                         },
                         submitHandler: function(form) {
-                            // Construct answerOptions
                             const optionA = $('#answerOptionA').val().trim();
                             const optionB = $('#answerOptionB').val().trim();
                             const optionC = $('#answerOptionC').val().trim();
@@ -556,7 +551,6 @@
                             if (optionD) answerOptionsArray.push('D. ' + optionD);
                             const answerOptions = answerOptionsArray.join(';');
 
-                            // Construct correctAnswer
                             const correctLetters = [];
                             $('input[name="correctLetters[]"]:checked').each(function() {
                                 correctLetters.push($(this).val());
@@ -572,18 +566,15 @@
                             $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
 
-                            // Validate at least two options
                             if (answerOptionsArray.length < 2) {
                                 $('#answerOptionAError').text('At least two options are required.').addClass('show');
                                 return;
                             }
-                            // Validate at least one correct answer
                             if (correctAnswerArray.length < 1) {
                                 $('#correctLettersError').text('At least one correct answer is required.').addClass('show');
                                 return;
                             }
 
-                            // Submit form via AJAX
                             $.ajax({
                                 url: form.action,
                                 type: form.method,
@@ -619,7 +610,6 @@
                         }
                     });
 
-                    // Custom validator for correctLetters
                     $.validator.addMethod('validCorrectLetters', function(value, element) {
                         var checked = $('input[name="correctLetters[]"]:checked');
                         if (checked.length === 0) return false;

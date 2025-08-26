@@ -148,7 +148,6 @@ public class InstructorVideoDAO extends DBContext {
     }
 
     public boolean insertVideoQuiz(VideoQuiz quiz) {
-        // Validate answer options and correct answer
         if (!isValidVideoQuiz(quiz)) {
             System.out.println("Invalid video quiz data: " + quiz);
             return false;
@@ -172,7 +171,6 @@ public class InstructorVideoDAO extends DBContext {
     }
 
     public boolean updateVideoQuiz(VideoQuiz quiz) {
-        // Validate answer options and correct answer
         if (!isValidVideoQuiz(quiz)) {
             System.out.println("Invalid video quiz data: " + quiz);
             return false;

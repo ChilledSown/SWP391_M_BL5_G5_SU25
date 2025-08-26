@@ -81,7 +81,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 }
             }
 
-            // Default: List with search and pagination
             String question = request.getParameter("title");
             String lessonIdStr = request.getParameter("lessonId");
             Long lessonId = (lessonIdStr != null && !lessonIdStr.isEmpty()) ? Long.parseLong(lessonIdStr) : null;
@@ -112,7 +111,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
         try {
             String action = request.getParameter("action");
 
-            // Retrieve form parameters
             String lessonIdStr = request.getParameter("lessonId");
             String timestampStr = request.getParameter("timestamp");
             String question = request.getParameter("question");
@@ -124,7 +122,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
             String answerOptionD = request.getParameter("answerOptionD");
             String explanation = request.getParameter("explanation");
 
-            // Validate required fields
             if (lessonIdStr == null || lessonIdStr.trim().isEmpty()) {
                 handleValidationError(request, response, action, "Lesson ID is required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, explanation);
                 return;
@@ -138,7 +135,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 return;
             }
 
-            // Parse numeric fields
             Long lessonId;
             Integer timestamp;
             try {
@@ -149,7 +145,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 return;
             }
 
-            // Normalize and validate answerOptions and correctAnswer
             String normalizedAnswerOptions = answerOptions != null ? answerOptions.trim().replaceAll("\\s*;\\s*", "; ") : "";
             String normalizedCorrectAnswer = correctAnswer != null ? correctAnswer.trim().replaceAll("\\s*;\\s*", "; ") : "";
             boolean optionsModified = (answerOptionA != null && !answerOptionA.trim().isEmpty()) ||
@@ -173,7 +168,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                 }
 
                 if (optionsModified) {
-                    // Validate modified answer options and correct answers
                     if (normalizedAnswerOptions.isEmpty()) {
                         handleValidationError(request, response, action, "Answer options are required when modifying answers.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, explanation);
                         return;
@@ -205,15 +199,12 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                         return;
                     }
                 } else {
-                    // Use existing quiz's answer options and correct answer
                     normalizedAnswerOptions = existingQuiz.getAnswerOptions();
                     normalizedCorrectAnswer = existingQuiz.getCorrectAnswer();
                 }
 
-                // Always set isActive to true
                 boolean isActive = true;
 
-                // Create VideoQuiz object
                 VideoQuiz quiz = new VideoQuiz(videoQuizId, lessonId, timestamp, question.trim(), normalizedAnswerOptions, normalizedCorrectAnswer, explanation != null ? explanation.trim() : null, isActive, null, null);
 
                 System.out.println("Edit action: quiz=" + quiz);
@@ -224,7 +215,6 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     handleValidationError(request, response, action, "Failed to update video quiz.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, explanation);
                 }
             } else if ("create".equals(action)) {
-                // For create action, validate all fields
                 if (normalizedAnswerOptions.isEmpty()) {
                     handleValidationError(request, response, action, "Answer options are required.", lessonIdStr, timestampStr, question, answerOptions, answerOptionA, answerOptionB, answerOptionC, answerOptionD, explanation);
                     return;
@@ -255,10 +245,8 @@ public class InstructorVideoQuizServlet extends HttpServlet {
                     return;
                 }
 
-                // Always set isActive to true
                 boolean isActive = true;
 
-                // Create VideoQuiz object
                 VideoQuiz quiz = new VideoQuiz(null, lessonId, timestamp, question.trim(), normalizedAnswerOptions, normalizedCorrectAnswer, explanation != null ? explanation.trim() : null, isActive, null, null);
 
                 System.out.println("Create action: quiz=" + quiz);
