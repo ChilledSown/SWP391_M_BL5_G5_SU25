@@ -155,7 +155,7 @@
                 initialPage = initialPage || '${pageContext.request.contextPath}/home';
             } else if (role === 'seller') {
                 backText = "Back to Seller";
-                initialPage = initialPage || '${pageContext.request.contextPath}/listCousera';
+                initialPage = initialPage || '${pageContext.request.contextPath}/DashBoard';
             } else if (role === 'admin') {
                 backText = "Back to Admin";
                 initialPage = initialPage || '${pageContext.request.contextPath}/overviewadmin';

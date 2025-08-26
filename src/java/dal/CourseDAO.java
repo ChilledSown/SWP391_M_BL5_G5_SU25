@@ -773,4 +773,17 @@ public class CourseDAO extends DBContext {
         }
         return 0;
     }
+    public boolean isTitleExistsExceptCurrent(String title, long currentCourseId) {
+        String sql = "SELECT 1 FROM Course WHERE Title = ? AND Course_Id != ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, title);
+            ps.setLong(2, currentCourseId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // Trả về true nếu có bản ghi trùng lặp, loại trừ currentCourseId
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

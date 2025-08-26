@@ -222,9 +222,10 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">
-                                               
+                                                <li class="nav-item"><a href="profile" class="nav-link active">Profile</a></li>
                                                 <li><a href="DashBoard">Dashboard</a></li>
                                                 <li><a href="logout">Logout</a></li>
+                                               
                                             </ul>
                                         </nav>
                                     </div>
@@ -246,10 +247,11 @@
                     <!-- Sidebar -->
                     <div class="col-lg-3 col-md-4 sidebar">
                         <ul class="nav flex-column" id="sidebarNav">
+                         
                             <li class="nav-item"><a href="DashBoard" class="nav-link active">Overview</a></li>
                             <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                             <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
-                            <li class="nav-item"><a href="listOrders" class="nav-link">Orders</a></li>
+                            <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
                             <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                         </ul>
                     </div>

@@ -1,8 +1,3 @@
-<%-- 
-    Document   : quiz_form
-    Created on : Aug 19, 2025, 12:31:02 AM
-    Author     : Admin
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -15,74 +10,56 @@
     <c:if test="${not empty errorMessage}">
         <div class="alert alert-danger">${errorMessage}</div>
     </c:if>
-    <form method="post" action="${quiz != null ? 'editQuizSeller' : 'createQuizSeller'}">
-        <input type="hidden" name="lessonId" value="${param.lessonId != null ? param.lessonId : lessonId}" />
-        <input type="hidden" name="courseId" value="${param.courseId != null ? param.courseId : courseId}" />
+    <form method="post" action="${quiz != null ? 'editQuizSeller' : 'createQuizSeller'}"
+          ${quiz == null ? 'enctype="multipart/form-data"' : ''}>
+        <input type="hidden" name="lessonId" value="${lessonId}" />
+        <input type="hidden" name="courseId" value="${courseId}" />
         <c:if test="${quiz != null}">
             <input type="hidden" name="quizId" value="${quiz.quizId}" />
         </c:if>
-        <div class="mb-3">
-            <label for="question">Question</label>
-            <input type="text" class="form-control" id="question" name="question" value="${quiz != null ? quiz.question : param.question}" required />
-        </div>
-        <div class="mb-3">
-            <label>Answer Options (at least two required)</label>
-            <c:choose>
-                <c:when test="${quiz != null}">
-                    <%
-                        String[] options = ((model.Quiz) request.getAttribute("quiz")).getAnswerOptions().split(";", -1);
-                        String optionA = options.length > 0 ? options[0].trim() : "";
-                        String optionB = options.length > 1 ? options[1].trim() : "";
-                        String optionC = options.length > 2 ? options[2].trim() : "";
-                        String optionD = options.length > 3 ? options[3].trim() : "";
-                    %>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">A</span>
-                        <input type="text" class="form-control" name="answerOptionA" value="<%= optionA %>" />
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">B</span>
-                        <input type="text" class="form-control" name="answerOptionB" value="<%= optionB %>" />
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">C</span>
-                        <input type="text" class="form-control" name="answerOptionC" value="<%= optionC %>" />
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">D</span>
-                        <input type="text" class="form-control" name="answerOptionD" value="<%= optionD %>" />
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">A</span>
-                        <input type="text" class="form-control" name="answerOptionA" value="${param.answerOptionA}" />
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">B</span>
-                        <input type="text" class="form-control" name="answerOptionB" value="${param.answerOptionB}" />
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">C</span>
-                        <input type="text" class="form-control" name="answerOptionC" value="${param.answerOptionC}" />
-                    </div>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">D</span>
-                        <input type="text" class="form-control" name="answerOptionD" value="${param.answerOptionD}" />
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <div class="mb-3">
-            <label for="correctAnswer">Correct Answer (A, B, C, or D)</label>
-            <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" value="${quiz != null ? quiz.correctAnswer : param.correctAnswer}" required />
-        </div>
-        <div class="mb-3">
-            <label for="explanation">Explanation</label>
-            <textarea class="form-control" id="explanation" name="explanation" rows="3" required>${quiz != null ? quiz.explanation : param.explanation}</textarea>
-        </div>
+        <c:if test="${quiz == null}">
+            <div class="mb-3">
+                <label for="importFile">Import Questions from File (.txt)</label>
+                <input type="file" class="form-control" id="importFile" name="importFile" accept=".txt" />
+            </div>
+        </c:if>
+        <c:if test="${quiz != null || empty param.importFile}">
+            <div class="mb-3">
+                <label for="question">Question</label>
+                <input type="text" class="form-control" id="question" name="question" value="${quiz != null ? quiz.question : param.question}" required />
+            </div>
+            <div class="mb-3">
+                <label>Answer Options (at least two required)</label>
+                <c:set var="options" value="${quiz != null ? quiz.answerOptions.split(';') : ['', '', '', '']}" />
+                <div class="input-group mb-2">
+                    <span class="input-group-text">A</span>
+                    <input type="text" class="form-control" name="answerOptionA" value="${options[0]}" />
+                </div>
+                <div class="input-group mb-2">
+                    <span class="input-group-text">B</span>
+                    <input type="text" class="form-control" name="answerOptionB" value="${options[1]}" />
+                </div>
+                <div class="input-group mb-2">
+                    <span class="input-group-text">C</span>
+                    <input type="text" class="form-control" name="answerOptionC" value="${options[2]}" />
+                </div>
+                <div class="input-group mb-2">
+                    <span class="input-group-text">D</span>
+                    <input type="text" class="form-control" name="answerOptionD" value="${options[3]}" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="correctAnswer">Correct Answer (A, B, C, or D)</label>
+                <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" value="${quiz != null ? quiz.correctAnswer : param.correctAnswer}" required />
+            </div>
+            <div class="mb-3">
+                <label for="explanation">Explanation</label>
+                <textarea class="form-control" id="explanation" name="explanation" rows="3" required>${quiz != null ? quiz.explanation : param.explanation}</textarea>
+            </div>
+        </c:if>
         <button type="submit" class="btn btn-primary">${quiz != null ? "Update" : "Create"}</button>
-        <a href="manageQuizInstructor?lessonId=${param.lessonId != null ? param.lessonId : lessonId}&courseId=${param.courseId != null ? param.courseId : courseId}" class="btn btn-secondary">Cancel</a>
+        <a href="manageQuizInstructor?lessonId=${lessonId}&courseId=${courseId}" class="btn btn-secondary">Cancel</a>
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
