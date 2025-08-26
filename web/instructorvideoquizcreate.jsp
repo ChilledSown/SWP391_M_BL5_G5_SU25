@@ -200,12 +200,12 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -267,16 +267,25 @@
                                         <div class="error-message" id="answerOptionDError"></div>
                                     </div>
                                     <div class="col-12 form-group">
-                                        <label for="correctAnswerLetter" class="mb-2">Correct Answer</label>
-                                        <select name="correctAnswerLetter" id="correctAnswerLetter" class="form-control" required>
-                                            <option value="" disabled ${empty submittedCorrectAnswer ? 'selected' : ''}>Select correct answer</option>
-                                            <option value="A" ${submittedCorrectAnswer == 'A' ? 'selected' : ''}>A</option>
-                                            <option value="B" ${submittedCorrectAnswer == 'B' ? 'selected' : ''}>B</option>
-                                            <option value="C" ${submittedCorrectAnswer == 'C' ? 'selected' : ''}>C</option>
-                                            <option value="D" ${submittedCorrectAnswer == 'D' ? 'selected' : ''}>D</option>
-                                        </select>
-                                        <div class="form-text">Select the letter corresponding to the correct answer (e.g., A for Option A).</div>
-                                        <div class="error-message" id="correctAnswerLetterError"></div>
+                                        <label class="mb-2">Correct Answers (select at least one)</label>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input correct-checkbox" id="correctA" name="correctLetters[]" value="A">
+                                            <label class="form-check-label" for="correctA">A</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input correct-checkbox" id="correctB" name="correctLetters[]" value="B">
+                                            <label class="form-check-label" for="correctB">B</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input correct-checkbox" id="correctC" name="correctLetters[]" value="C">
+                                            <label class="form-check-label" for="correctC">C</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input correct-checkbox" id="correctD" name="correctLetters[]" value="D">
+                                            <label class="form-check-label" for="correctD">D</label>
+                                        </div>
+                                        <div class="form-text">Select the letters corresponding to the correct answers (e.g., A for Option A).</div>
+                                        <div class="error-message" id="correctLettersError"></div>
                                     </div>
                                     <div class="col-12 form-group">
                                         <label for="explanation" class="mb-2">Explanation (optional)</label>
@@ -394,32 +403,25 @@
                         }, 2000);
                     }
 
-                    // Function to check duplicate timestamp
-                    function checkTimestampDuplicate(lessonId, timestamp) {
-                        return $.ajax({
-                            url: "instructorvideoquiz?action=checkTimestamp",
-                            data: { lessonId: lessonId, timestamp: timestamp },
-                            type: "GET"
-                        });
-                    }
-
-                    // Update correct answer options based on input
-                    function updateCorrectAnswerOptions() {
+                    // Update correct options based on input
+                    function updateCorrectOptions() {
                         const optionA = $('#answerOptionA').val().trim();
                         const optionB = $('#answerOptionB').val().trim();
                         const optionC = $('#answerOptionC').val().trim();
                         const optionD = $('#answerOptionD').val().trim();
-                        $('#correctAnswerLetter option[value="A"]').prop('disabled', !optionA);
-                        $('#correctAnswerLetter option[value="B"]').prop('disabled', !optionB);
-                        $('#correctAnswerLetter option[value="C"]').prop('disabled', !optionC);
-                        $('#correctAnswerLetter option[value="D"]').prop('disabled', !optionD);
-                        if ($('#correctAnswerLetter').val() && $('#correctAnswerLetter option:selected').prop('disabled')) {
-                            $('#correctAnswerLetter').val('');
-                        }
+
+                        $('#correctA').prop('disabled', !optionA);
+                        if (!optionA) $('#correctA').prop('checked', false);
+                        $('#correctB').prop('disabled', !optionB);
+                        if (!optionB) $('#correctB').prop('checked', false);
+                        $('#correctC').prop('disabled', !optionC);
+                        if (!optionC) $('#correctC').prop('checked', false);
+                        $('#correctD').prop('disabled', !optionD);
+                        if (!optionD) $('#correctD').prop('checked', false);
                     }
 
-                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectAnswerOptions);
-                    updateCorrectAnswerOptions();
+                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectOptions);
+                    updateCorrectOptions();
 
                     $('#createForm').validate({
                         rules: {
@@ -438,9 +440,6 @@
                                         timestamp: function() {
                                             return $('#timestamp').val();
                                         }
-                                    },
-                                    dataFilter: function(data) {
-                                        return data !== 'exists';
                                     }
                                 }
                             },
@@ -449,9 +448,9 @@
                             answerOptionB: { required: true, maxlength: 250 },
                             answerOptionC: { maxlength: 250 },
                             answerOptionD: { maxlength: 250 },
-                            correctAnswerLetter: { 
+                            "correctLetters[]": { 
                                 required: true,
-                                validCorrectAnswerLetter: true
+                                validCorrectLetters: true
                             },
                             explanation: { maxlength: 1000 }
                         },
@@ -477,16 +476,20 @@
                             },
                             answerOptionC: { maxlength: "Option C cannot exceed 250 characters." },
                             answerOptionD: { maxlength: "Option D cannot exceed 250 characters." },
-                            correctAnswerLetter: {
-                                required: "Correct answer is required.",
-                                validCorrectAnswerLetter: "Please select a valid correct answer corresponding to a non-empty option."
+                            "correctLetters[]": {
+                                required: "At least one correct answer is required.",
+                                validCorrectLetters: "Please select valid correct answers corresponding to non-empty options."
                             },
                             explanation: { maxlength: "Explanation cannot exceed 1000 characters." }
                         },
                         errorElement: 'div',
                         errorClass: 'error-message show',
                         errorPlacement: function(error, element) {
-                            error.insertAfter(element);
+                            if (element.attr("name") == "correctLetters[]") {
+                                error.insertAfter("#correctLettersError");
+                            } else {
+                                error.insertAfter(element);
+                            }
                         },
                         highlight: function(element) {
                             $(element).addClass('is-invalid').removeClass('is-valid');
@@ -505,30 +508,37 @@
                             var optionB = $('#answerOptionB').val().trim();
                             var optionC = $('#answerOptionC').val().trim();
                             var optionD = $('#answerOptionD').val().trim();
-                            var answerOptions = ['A. ' + optionA, 'B. ' + optionB];
-                            if (optionC) answerOptions.push('C. ' + optionC);
-                            if (optionD) answerOptions.push('D. ' + optionD);
-                            answerOptions = answerOptions.join('; ');
+                            var answerOptionsArray = [];
+                            if (optionA) answerOptionsArray.push('A. ' + optionA);
+                            if (optionB) answerOptionsArray.push('B. ' + optionB);
+                            if (optionC) answerOptionsArray.push('C. ' + optionC);
+                            if (optionD) answerOptionsArray.push('D. ' + optionD);
+                            var answerOptions = answerOptionsArray.join('; ');
 
                             // Construct correctAnswer
-                            var currentCorrectLetter = $('#correctAnswerLetter').val();
-                            var correctAnswer;
-                            if (currentCorrectLetter === 'A') correctAnswer = 'A. ' + optionA;
-                            else if (currentCorrectLetter === 'B') correctAnswer = 'B. ' + optionB;
-                            else if (currentCorrectLetter === 'C') correctAnswer = 'C. ' + optionC;
-                            else if (currentCorrectLetter === 'D') correctAnswer = 'D. ' + optionD;
+                            var correctLetters = [];
+                            $('input[name="correctLetters[]"]:checked').each(function() {
+                                correctLetters.push($(this).val());
+                            });
+                            var correctAnswerArray = [];
+                            for (var i = 0; i < correctLetters.length; i++) {
+                                var letter = correctLetters[i];
+                                var opt = $('#answerOption' + letter).val().trim();
+                                if (opt) correctAnswerArray.push(letter + '. ' + opt);
+                            }
+                            var correctAnswer = correctAnswerArray.join('; ');
 
                             $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
 
                             // Validate at least two options
-                            if (!optionA || !optionB) {
-                                $('#answerOptionAError').text('At least two options (A and B) are required.').addClass('show');
+                            if (answerOptionsArray.length < 2) {
+                                $('#answerOptionAError').text('At least two options are required.').addClass('show');
                                 return;
                             }
-                            // Validate correct answer
-                            if (!correctAnswer) {
-                                $('#correctAnswerLetterError').text('Correct answer cannot be empty.').addClass('show');
+                            // Validate at least one correct answer
+                            if (correctAnswerArray.length < 1) {
+                                $('#correctLettersError').text('At least one correct answer is required.').addClass('show');
                                 return;
                             }
 
@@ -568,18 +578,18 @@
                         }
                     });
 
-                    // Custom validator for correctAnswerLetter
-                    $.validator.addMethod('validCorrectAnswerLetter', function(value, element) {
-                        var optionA = $('#answerOptionA').val().trim();
-                        var optionB = $('#answerOptionB').val().trim();
-                        var optionC = $('#answerOptionC').val().trim();
-                        var optionD = $('#answerOptionD').val().trim();
-                        if (value === 'A' && !optionA) return false;
-                        if (value === 'B' && !optionB) return false;
-                        if (value === 'C' && !optionC) return false;
-                        if (value === 'D' && !optionD) return false;
-                        return ['A', 'B', 'C', 'D'].includes(value);
-                    }, 'Please select a valid correct answer corresponding to a non-empty option.');
+                    // Custom validator for correctLetters
+                    $.validator.addMethod('validCorrectLetters', function(value, element) {
+                        var checked = $('input[name="correctLetters[]"]:checked');
+                        if (checked.length === 0) return false;
+                        var valid = true;
+                        checked.each(function() {
+                            var letter = $(this).val();
+                            var optVal = $('#answerOption' + letter).val().trim();
+                            if (!optVal) valid = false;
+                        });
+                        return valid;
+                    }, 'Please select valid correct answers corresponding to non-empty options.');
                 });
             </script>
         </body>

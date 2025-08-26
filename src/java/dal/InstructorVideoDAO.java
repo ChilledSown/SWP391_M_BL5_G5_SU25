@@ -266,10 +266,21 @@ public class InstructorVideoDAO extends DBContext {
             System.out.println("Validation failed: Options A and B must be non-empty.");
             return false;
         }
-        String normalizedCorrectAnswer = quiz.getCorrectAnswer().trim();
-        boolean validCorrectAnswer = options.contains(normalizedCorrectAnswer);
-        if (!validCorrectAnswer) {
-            System.out.println("Validation failed: Correct answer does not match any option.");
+        String normalizedCorrectAnswer = quiz.getCorrectAnswer().trim().replaceAll("\\s*;\\s*", "; ");
+        List<String> correctList = Arrays.asList(normalizedCorrectAnswer.split("; "));
+        if (correctList.isEmpty()) {
+            System.out.println("Validation failed: At least one correct answer is required.");
+            return false;
+        }
+        boolean allValid = true;
+        for (String corr : correctList) {
+            if (!options.contains(corr)) {
+                allValid = false;
+                break;
+            }
+        }
+        if (!allValid) {
+            System.out.println("Validation failed: Some correct answers do not match options.");
             return false;
         }
         return true;

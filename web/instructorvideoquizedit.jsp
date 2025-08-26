@@ -217,12 +217,12 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -242,9 +242,14 @@
                                     <c:set var="optionB" value="${fn:length(options) > 1 ? fn:trim(fn:substringAfter(options[1], 'B.')) : ''}" />
                                     <c:set var="optionC" value="${fn:length(options) > 2 ? fn:trim(fn:substringAfter(options[2], 'C.')) : ''}" />
                                     <c:set var="optionD" value="${fn:length(options) > 3 ? fn:trim(fn:substringAfter(options[3], 'D.')) : ''}" />
-                                    <c:set var="correctLetter" value="${fn:substringBefore(videoQuiz.correctAnswer, '.')}" />
+                                    <c:set var="correctOptions" value="${fn:split(videoQuiz.correctAnswer, ';')}" />
+                                    <c:set var="correctLetters" value=""/>
+                                    <c:forEach var="corr" items="${correctOptions}">
+                                        <c:set var="letter" value="${fn:trim(fn:substringBefore(corr, '.'))}" />
+                                        <c:set var="correctLetters" value="${correctLetters} ${letter}" />
+                                    </c:forEach>
                                     <form action="instructorvideoquiz?action=edit" method="post" id="editForm">
-                                        <input type="hidden" name="videoQuizId" value="${fn:escapeXml(videoQuiz.videoQuizId)}">
+                                        <input type="hidden" name="videoQuizId" id="videoQuizId" value="${fn:escapeXml(videoQuiz.videoQuizId)}">
                                         <input type="hidden" name="answerOptions" id="answerOptions">
                                         <input type="hidden" name="correctAnswer" id="correctAnswer">
                                         <div class="row">
@@ -294,16 +299,25 @@
                                                 </div>
                                             </div>
                                             <div class="col-12 form-group">
-                                                <label for="correctAnswerLetter" class="mb-2">Correct Answer</label>
-                                                <select name="correctAnswerLetter" id="correctAnswerLetter" class="form-control" required>
-                                                    <option value="" disabled>Select correct answer</option>
-                                                    <option value="A" ${correctLetter == 'A' ? 'selected' : ''}>A</option>
-                                                    <option value="B" ${correctLetter == 'B' ? 'selected' : ''}>B</option>
-                                                    <option value="C" ${correctLetter == 'C' ? 'selected' : ''}>C</option>
-                                                    <option value="D" ${correctLetter == 'D' ? 'selected' : ''}>D</option>
-                                                </select>
-                                                <div class="form-text">Select the letter corresponding to the correct answer (e.g., A for Option A).</div>
-                                                <div class="error-message" id="correctAnswerLetterError"></div>
+                                                <label class="mb-2">Correct Answers (select at least one)</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctA" name="correctLetters[]" value="A" ${fn:contains(correctLetters, 'A') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctA">A</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctB" name="correctLetters[]" value="B" ${fn:contains(correctLetters, 'B') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctB">B</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctC" name="correctLetters[]" value="C" ${fn:contains(correctLetters, 'C') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctC">C</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctD" name="correctLetters[]" value="D" ${fn:contains(correctLetters, 'D') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctD">D</label>
+                                                </div>
+                                                <div class="form-text">Select the letters corresponding to the correct answers (e.g., A for Option A).</div>
+                                                <div class="error-message" id="correctLettersError"></div>
                                             </div>
                                             <div class="col-12 form-group">
                                                 <label for="explanation" class="mb-2">Explanation (optional)</label>
@@ -429,56 +443,58 @@
                         }, 2000);
                     }
 
-                    // Update correct answer dropdown based on input
-                    function updateCorrectAnswerOptions() {
+                    // Update correct options based on input
+                    function updateCorrectOptions() {
                         const optionA = $('#answerOptionA').val().trim();
                         const optionB = $('#answerOptionB').val().trim();
                         const optionC = $('#answerOptionC').val().trim();
                         const optionD = $('#answerOptionD').val().trim();
 
-                        // Enable/disable options based on whether they are filled
-                        $('#correctAnswerLetter option[value="A"]').prop('disabled', !optionA);
-                        $('#correctAnswerLetter option[value="B"]').prop('disabled', !optionB);
-                        $('#correctAnswerLetter option[value="C"]').prop('disabled', !optionC);
-                        $('#correctAnswerLetter option[value="D"]').prop('disabled', !optionD);
-
-                        // If the currently selected option is disabled, reset to a valid option
-                        if ($('#correctAnswerLetter').val() && $('#correctAnswerLetter option:selected').prop('disabled')) {
-                            const validOptions = ['A', 'B', 'C', 'D'].filter(letter => {
-                                if (letter === 'A' && optionA) return true;
-                                if (letter === 'B' && optionB) return true;
-                                if (letter === 'C' && optionC) return true;
-                                if (letter === 'D' && optionD) return true;
-                                return false;
-                            });
-                            $('#correctAnswerLetter').val(validOptions.length > 0 ? validOptions[0] : '');
-                        }
-
-                        // Show error if no valid options are available
-                        const validOptionCount = [optionA, optionB, optionC, optionD].filter(opt => opt).length;
-                        if (validOptionCount < 2) {
-                            $('#correctAnswerLetterError').text('At least two options are required.').addClass('show');
-                        } else {
-                            $('#correctAnswerLetterError').removeClass('show').empty();
-                        }
+                        $('#correctA').prop('disabled', !optionA);
+                        if (!optionA) $('#correctA').prop('checked', false);
+                        $('#correctB').prop('disabled', !optionB);
+                        if (!optionB) $('#correctB').prop('checked', false);
+                        $('#correctC').prop('disabled', !optionC);
+                        if (!optionC) $('#correctC').prop('checked', false);
+                        $('#correctD').prop('disabled', !optionD);
+                        if (!optionD) $('#correctD').prop('checked', false);
                     }
 
                     // Update options on input change
-                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectAnswerOptions);
-                    updateCorrectAnswerOptions(); // Initial check
+                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectOptions);
+                    updateCorrectOptions(); // Initial check
 
                     $('#editForm').validate({
                         rules: {
                             lessonId: { required: true },
-                            timestamp: { required: true, number: true, min: 0 },
+                            timestamp: { 
+                                required: true, 
+                                number: true, 
+                                min: 0,
+                                remote: {
+                                    url: "instructorvideoquiz?action=checkTimestamp",
+                                    type: "GET",
+                                    data: {
+                                        lessonId: function() {
+                                            return $('#lessonId').val();
+                                        },
+                                        timestamp: function() {
+                                            return $('#timestamp').val();
+                                        },
+                                        videoQuizId: function() {
+                                            return $('#videoQuizId').val();
+                                        }
+                                    }
+                                }
+                            },
                             question: { required: true, maxlength: 500 },
                             answerOptionA: { required: true, maxlength: 250 },
                             answerOptionB: { required: true, maxlength: 250 },
                             answerOptionC: { maxlength: 250 },
                             answerOptionD: { maxlength: 250 },
-                            correctAnswerLetter: { 
+                            "correctLetters[]": { 
                                 required: true,
-                                validCorrectAnswerLetter: true
+                                validCorrectLetters: true
                             },
                             explanation: { maxlength: 1000 }
                         },
@@ -487,7 +503,8 @@
                             timestamp: {
                                 required: "Timestamp is required.",
                                 number: "Timestamp must be a number.",
-                                min: "Timestamp must be non-negative."
+                                min: "Timestamp must be non-negative.",
+                                remote: "This timestamp already exists for the selected lesson."
                             },
                             question: {
                                 required: "Question is required.",
@@ -503,16 +520,20 @@
                             },
                             answerOptionC: { maxlength: "Option C cannot exceed 250 characters." },
                             answerOptionD: { maxlength: "Option D cannot exceed 250 characters." },
-                            correctAnswerLetter: {
-                                required: "Correct answer is required.",
-                                validCorrectAnswerLetter: "Please select a valid correct answer corresponding to a non-empty option."
+                            "correctLetters[]": {
+                                required: "At least one correct answer is required.",
+                                validCorrectLetters: "Please select valid correct answers corresponding to non-empty options."
                             },
                             explanation: { maxlength: "Explanation cannot exceed 1000 characters." }
                         },
                         errorElement: 'div',
                         errorClass: 'error-message show',
                         errorPlacement: function(error, element) {
-                            error.insertAfter(element.closest('.answer-option-group'));
+                            if (element.attr("name") == "correctLetters[]") {
+                                error.insertAfter("#correctLettersError");
+                            } else {
+                                error.insertAfter(element.closest('.answer-option-group'));
+                            }
                         },
                         highlight: function(element) {
                             $(element).addClass('is-invalid').removeClass('is-valid');
@@ -536,12 +557,17 @@
                             const answerOptions = answerOptionsArray.join(';');
 
                             // Construct correctAnswer
-                            const correctLetter = $('#correctAnswerLetter').val();
-                            let correctAnswer = '';
-                            if (correctLetter === 'A' && optionA) correctAnswer = 'A. ' + optionA;
-                            else if (correctLetter === 'B' && optionB) correctAnswer = 'B. ' + optionB;
-                            else if (correctLetter === 'C' && optionC) correctAnswer = 'C. ' + optionC;
-                            else if (correctLetter === 'D' && optionD) correctAnswer = 'D. ' + optionD;
+                            const correctLetters = [];
+                            $('input[name="correctLetters[]"]:checked').each(function() {
+                                correctLetters.push($(this).val());
+                            });
+                            const correctAnswerArray = [];
+                            for (let i = 0; i < correctLetters.length; i++) {
+                                const letter = correctLetters[i];
+                                const opt = $('#answerOption' + letter).val().trim();
+                                if (opt) correctAnswerArray.push(letter + '. ' + opt);
+                            }
+                            const correctAnswer = correctAnswerArray.join(';');
 
                             $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
@@ -551,9 +577,9 @@
                                 $('#answerOptionAError').text('At least two options are required.').addClass('show');
                                 return;
                             }
-                            // Validate correct answer
-                            if (!correctAnswer) {
-                                $('#correctAnswerLetterError').text('Please select a valid correct answer corresponding to a non-empty option.').addClass('show');
+                            // Validate at least one correct answer
+                            if (correctAnswerArray.length < 1) {
+                                $('#correctLettersError').text('At least one correct answer is required.').addClass('show');
                                 return;
                             }
 
@@ -593,18 +619,18 @@
                         }
                     });
 
-                    // Custom validator for correctAnswerLetter
-                    $.validator.addMethod('validCorrectAnswerLetter', function(value, element) {
-                        const optionA = $('#answerOptionA').val().trim();
-                        const optionB = $('#answerOptionB').val().trim();
-                        const optionC = $('#answerOptionC').val().trim();
-                        const optionD = $('#answerOptionD').val().trim();
-                        if (value === 'A' && !optionA) return false;
-                        if (value === 'B' && !optionB) return false;
-                        if (value === 'C' && !optionC) return false;
-                        if (value === 'D' && !optionD) return false;
-                        return ['A', 'B', 'C', 'D'].includes(value);
-                    }, 'Please select a valid correct answer corresponding to a non-empty option.');
+                    // Custom validator for correctLetters
+                    $.validator.addMethod('validCorrectLetters', function(value, element) {
+                        var checked = $('input[name="correctLetters[]"]:checked');
+                        if (checked.length === 0) return false;
+                        var valid = true;
+                        checked.each(function() {
+                            var letter = $(this).val();
+                            var optVal = $('#answerOption' + letter).val().trim();
+                            if (!optVal) valid = false;
+                        });
+                        return valid;
+                    }, 'Please select valid correct answers corresponding to non-empty options.');
                 });
             </script>
         </body>
