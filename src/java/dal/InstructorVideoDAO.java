@@ -207,6 +207,29 @@ public class InstructorVideoDAO extends DBContext {
         }
     }
 
+    public boolean checkDuplicateLessonAndTimestamp(Long lessonId, Integer timestamp, Long excludeVideoQuizId) {
+        String sql = "SELECT COUNT(*) FROM VideoQuiz WHERE Lesson_Id = ? AND Timestamp = ? AND (? IS NULL OR Video_Quiz_Id != ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, lessonId);
+            ps.setInt(2, timestamp);
+            if (excludeVideoQuizId == null) {
+                ps.setNull(3, java.sql.Types.BIGINT);
+                ps.setNull(4, java.sql.Types.BIGINT);
+            } else {
+                ps.setLong(3, excludeVideoQuizId);
+                ps.setLong(4, excludeVideoQuizId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking duplicate lesson and timestamp: " + e.getMessage());
+        }
+        return false;
+    }
+
     private VideoQuiz mapResultSetToVideoQuiz(ResultSet rs) throws SQLException {
         VideoQuiz quiz = new VideoQuiz();
         quiz.setVideoQuizId(rs.getLong("Video_Quiz_Id"));

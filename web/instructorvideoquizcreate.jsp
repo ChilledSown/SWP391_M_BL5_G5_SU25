@@ -166,7 +166,6 @@
         <div class="header-area header-transparent">
             <div class="main-header">
                 <div class="header-bottom header-sticky">
- parking: 40px;
                     <div class="container-fluid">
                         <div class="row align-items-center">
                             <div class="col-xl-2 col-lg-2">
@@ -201,12 +200,12 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -395,23 +394,56 @@
                         }, 2000);
                     }
 
-                    // Ensure all correct answer options are enabled
-                    function updateCorrectAnswerOptions() {
-                        // Always enable A, B, C, and D
-                        $('#correctAnswerLetter option[value="A"]').prop('disabled', false);
-                        $('#correctAnswerLetter option[value="B"]').prop('disabled', false);
-                        $('#correctAnswerLetter option[value="C"]').prop('disabled', false);
-                        $('#correctAnswerLetter option[value="D"]').prop('disabled', false);
+                    // Function to check duplicate timestamp
+                    function checkTimestampDuplicate(lessonId, timestamp) {
+                        return $.ajax({
+                            url: "instructorvideoquiz?action=checkTimestamp",
+                            data: { lessonId: lessonId, timestamp: timestamp },
+                            type: "GET"
+                        });
                     }
 
-                    // Update options on input change
+                    // Update correct answer options based on input
+                    function updateCorrectAnswerOptions() {
+                        const optionA = $('#answerOptionA').val().trim();
+                        const optionB = $('#answerOptionB').val().trim();
+                        const optionC = $('#answerOptionC').val().trim();
+                        const optionD = $('#answerOptionD').val().trim();
+                        $('#correctAnswerLetter option[value="A"]').prop('disabled', !optionA);
+                        $('#correctAnswerLetter option[value="B"]').prop('disabled', !optionB);
+                        $('#correctAnswerLetter option[value="C"]').prop('disabled', !optionC);
+                        $('#correctAnswerLetter option[value="D"]').prop('disabled', !optionD);
+                        if ($('#correctAnswerLetter').val() && $('#correctAnswerLetter option:selected').prop('disabled')) {
+                            $('#correctAnswerLetter').val('');
+                        }
+                    }
+
                     $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectAnswerOptions);
-                    updateCorrectAnswerOptions(); // Initial check
+                    updateCorrectAnswerOptions();
 
                     $('#createForm').validate({
                         rules: {
                             lessonId: { required: true },
-                            timestamp: { required: true, number: true, min: 0 },
+                            timestamp: { 
+                                required: true, 
+                                number: true, 
+                                min: 0,
+                                remote: {
+                                    url: "instructorvideoquiz?action=checkTimestamp",
+                                    type: "GET",
+                                    data: {
+                                        lessonId: function() {
+                                            return $('#lessonId').val();
+                                        },
+                                        timestamp: function() {
+                                            return $('#timestamp').val();
+                                        }
+                                    },
+                                    dataFilter: function(data) {
+                                        return data !== 'exists';
+                                    }
+                                }
+                            },
                             question: { required: true, maxlength: 500 },
                             answerOptionA: { required: true, maxlength: 250 },
                             answerOptionB: { required: true, maxlength: 250 },
@@ -428,17 +460,18 @@
                             timestamp: {
                                 required: "Timestamp is required.",
                                 number: "Timestamp must be a number.",
-                                min: "Timestamp must be non-negative."
+                                min: "Timestamp must be non-negative.",
+                                remote: "This timestamp already exists for the selected lesson."
                             },
                             question: {
                                 required: "Question is required.",
                                 maxlength: "Question cannot exceed 500 characters."
                             },
-                            answerOptionA: {
+                            answerOptionA: { 
                                 required: "Option A is required.",
                                 maxlength: "Option A cannot exceed 250 characters."
                             },
-                            answerOptionB: {
+                            answerOptionB: { 
                                 required: "Option B is required.",
                                 maxlength: "Option B cannot exceed 250 characters."
                             },
@@ -464,6 +497,9 @@
                             $(element).nextAll('.error-message').removeClass('show').empty();
                         },
                         submitHandler: function(form) {
+                            var lessonId = $('#lessonId').val();
+                            var timestamp = $('#timestamp').val();
+
                             // Construct answerOptions
                             var optionA = $('#answerOptionA').val().trim();
                             var optionB = $('#answerOptionB').val().trim();
@@ -472,16 +508,29 @@
                             var answerOptions = ['A. ' + optionA, 'B. ' + optionB];
                             if (optionC) answerOptions.push('C. ' + optionC);
                             if (optionD) answerOptions.push('D. ' + optionD);
-                            $('#answerOptions').val(answerOptions.join(' ; '));
+                            answerOptions = answerOptions.join('; ');
 
-                            // Construct full correctAnswer
-                            var correctLetter = $('#correctAnswerLetter').val();
-                            var correctAnswer = '';
-                            if (correctLetter === 'A') correctAnswer = 'A. ' + optionA;
-                            else if (correctLetter === 'B') correctAnswer = 'B. ' + optionB;
-                            else if (correctLetter === 'C') correctAnswer = 'C. ' + optionC;
-                            else if (correctLetter === 'D') correctAnswer = 'D. ' + optionD;
+                            // Construct correctAnswer
+                            var currentCorrectLetter = $('#correctAnswerLetter').val();
+                            var correctAnswer;
+                            if (currentCorrectLetter === 'A') correctAnswer = 'A. ' + optionA;
+                            else if (currentCorrectLetter === 'B') correctAnswer = 'B. ' + optionB;
+                            else if (currentCorrectLetter === 'C') correctAnswer = 'C. ' + optionC;
+                            else if (currentCorrectLetter === 'D') correctAnswer = 'D. ' + optionD;
+
+                            $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
+
+                            // Validate at least two options
+                            if (!optionA || !optionB) {
+                                $('#answerOptionAError').text('At least two options (A and B) are required.').addClass('show');
+                                return;
+                            }
+                            // Validate correct answer
+                            if (!correctAnswer) {
+                                $('#correctAnswerLetterError').text('Correct answer cannot be empty.').addClass('show');
+                                return;
+                            }
 
                             // Submit form via AJAX
                             $.ajax({
@@ -508,7 +557,7 @@
                                 },
                                 error: function(xhr) {
                                     let errorMessage = 'Failed to create quiz. Please try again.';
-                                    if (xhr.responseText && xhr.responseText.startWith('error:')) {
+                                    if (xhr.responseText && xhr.responseText.startsWith('error:')) {
                                         errorMessage = xhr.responseText.substring(6);
                                     }
                                     $('#createForm').prepend(

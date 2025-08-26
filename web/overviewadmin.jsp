@@ -184,13 +184,16 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li class="active" data-section="overview">
-                        <a href="admin">Overview</a>
+                        <a href="overviewadmin">Overview</a>
                     </li>
                     <li data-section="courses">
-                        <a href="managetopic">Manage Topic</a>
+                        <a href="admintopic">List Topic</a>
                     </li>
                     <li data-section="users">
                         <a href="manageuser">Manage Users</a>
+                    </li>
+                    <li data-section="slider">
+                        <a href="manageslider">Manage Slider</a>
                     </li>
                     <li data-section="settings">
                         <a href="${pageContext.request.contextPath}/logout">Logout</a>

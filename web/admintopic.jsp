@@ -316,9 +316,9 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li data-section="overview">
-                        <a href="admin">Overview</a>
+                        <a href="overviewadmin">Overview</a>
                     </li>
-                    <li class="active" data-section="topics">
+                    <li data-section="courses" class="active">
                         <a href="admintopic">List Topic</a>
                     </li>
                     <li data-section="users">

@@ -143,6 +143,6 @@ public class EditBlogServletSeller extends HttpServlet {
         session.removeAttribute("duplicateMessage");
         session.removeAttribute("errorMessage");
 
-        response.sendRedirect("instructor_blog");
+        response.sendRedirect("listBlogsInstructor");
     }
 }

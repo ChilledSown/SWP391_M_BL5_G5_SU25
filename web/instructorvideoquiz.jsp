@@ -248,12 +248,12 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -273,7 +273,7 @@
                                     </div>
                                     <div class="col-md-6 form-group">
                                         <label for="lessonId" class="mb-2">Filter by Lesson</label>
-                                        <select name="lessonId" id="lessonId" class="form-control">
+                                        <select name="lessonId" id="lessonId" class="form-control" onchange="this.form.submit()">
                                             <option value="">All Lessons</option>
                                             <c:forEach var="lesson" items="${lessons}">
                                                 <option value="${lesson.lessonId}" ${lesson.lessonId == param.lessonId ? 'selected' : ''}>
