@@ -336,10 +336,18 @@
                 </div>
                 <nav class="sidebar-nav">
                     <ul>
-                        <li data-section="overview"><a href="admin">Overview</a></li>
-                        <li data-section="courses"><a href="admintopic">List Topic</a></li>
-                        <li data-section="users"><a href="manageuser">Manage Users</a></li>
-                        <li data-section="slider" class="active"><a href="manageslider">Manage Slider</a></li>
+                        <li data-section="overview">
+                            <a href="admin">Overview</a>
+                        </li>
+                        <li data-section="courses">
+                            <a href="admintopic">List Topic</a>
+                        </li>
+                        <li data-section="users">
+                            <a href="manageuser">Manage Users</a>
+                        </li>
+                        <li data-section="slider" class="active">
+                            <a href="manageslider">Manage Slider</a>
+                        </li>
                         <li data-section="settings"><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
                     </ul>
                 </nav>
