@@ -125,7 +125,6 @@
             opacity: 0.9;
         }
 
-        /* Score Section - Coursera Style */
         .score-section {
             background: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -580,9 +579,6 @@
             </div>
             
             <div class="score-actions">
-                <button class="btn btn-primary" onclick="tryAgain()">
-                    <i class="fas fa-redo"></i> Try Again
-                </button>
                 <a href="customer-course-detail?id=${course.course_id}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Course
                 </a>

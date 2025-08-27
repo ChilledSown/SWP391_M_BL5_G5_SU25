@@ -415,49 +415,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        @media (max-width: 992px) {
-            .checkout-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .left-column {
-                border-right: none;
-                border-bottom: 1px solid #e9ecef;
-            }
-            
-            .payment-methods {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .checkout-content {
-                border-radius: 0;
-            }
-            
-            .checkout-header {
-                border-radius: 0;
-            }
-            
-            .left-column, .right-column {
-                padding: 30px 20px;
-            }
-            
-            .order-item {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-            
-            .order-price {
-                text-align: center;
-            }
-            
-            .checkout-actions {
-                align-items: center;
-            }
-        }
         .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; }
         .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
         .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
@@ -798,7 +755,7 @@
             },
             createOrder: function (data, actions) {
                 showLoading();
-                // First, create order in our system (no JSON response expected)
+                // First, create order in the system 
                 return fetch('process-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }

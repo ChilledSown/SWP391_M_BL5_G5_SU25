@@ -616,6 +616,7 @@
         <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
         
         <script>
+            // Video.js in-video quiz: load quizzes, watch time, pause to ask, resume after
             let videoQuizzes = [];
             let currentQuiz = null;
             let selectedAnswer = null;
@@ -629,8 +630,8 @@
                 }
             });
 
-            // Custom control handlers removed to rely on Video.js built-in UI
 
+            // Load quizzes from backend (plain text format)
             function loadVideoQuizzes(lessonId) {
                 fetch('video-quiz?action=get-quizzes&lessonId=' + lessonId)
                     .then(response => response.text())
@@ -662,6 +663,7 @@
                     });
             }
             
+            // Initialize Video.js player and time tracking
             function setupVideoTracking() {
                 const el = document.getElementById('lessonVideo');
                 if (!el) return;
@@ -716,6 +718,7 @@
                 }
             }
 
+            // Update current time and duration text
             function updateTimeDisplay() {
                 if (videoElement) {
                     const current = Math.floor(videoElement.currentTime());
@@ -725,6 +728,7 @@
                 }
             }
 
+            // Update simple progress bar width
             function updateProgress() {
                 if (videoElement) {
                     const progress = (videoElement.currentTime() / videoElement.duration()) * 100;
@@ -732,12 +736,14 @@
                 }
             }
 
+            // Convert seconds to mm:ss
             function formatTime(seconds) {
                 const mins = Math.floor(seconds / 60);
                 const secs = seconds % 60;
                 return `${mins}:${secs.toString().padStart(2, '0')}`;
             }
             
+            // Check if it's time to show any quiz
             function checkForQuizzes() {
                 if (videoQuizzes.length === 0) return;
                 
@@ -762,6 +768,7 @@
                 }
             }
 
+            // Render and show quiz overlay, pause video
             function showVideoQuiz(quiz) {
                 currentQuiz = quiz;
                 selectedAnswer = null;
@@ -809,6 +816,7 @@
                 } catch (_) {}
             }
             
+            // Mark user's selected option
             function selectOption(optionId, val) {
                 document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
                 const input = document.getElementById(optionId);
@@ -818,6 +826,7 @@
                 selectedAnswer = val;
             }
 
+            // Submit user's answer to backend and show feedback
             function submitQuizAnswer() {
                 if (!selectedAnswer || !currentQuiz) {
                     alert('Please select an answer');
@@ -842,6 +851,7 @@
                 .catch(() => alert('Submit failed'));
             }
             
+            // Show result (correct/incorrect) and explanation, change button to Continue
             function showQuizResult(result) {
                 var html = '<div class="quiz-result ' + (result.isCorrect ? 'correct' : 'incorrect') + '">' +
                            '<strong>' + (result.isCorrect ? 'Correct!' : 'Incorrect!') + '</strong>' +
@@ -857,6 +867,7 @@
                 btn.className = 'btn btn-success';
             }
             
+            // Hide overlay and resume video playback
             function closeVideoQuiz() {
                 document.getElementById('videoQuizOverlay').style.display = 'none';
                 currentQuiz = null;
@@ -870,6 +881,7 @@
                 } catch (_) {}
             }
             
+            // Cleanup on page unload: clear timers and dispose Video.js
             window.addEventListener('beforeunload', function() {
                 if (quizCheckInterval) clearInterval(quizCheckInterval);
                 try {

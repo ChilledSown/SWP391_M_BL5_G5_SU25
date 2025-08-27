@@ -2,6 +2,7 @@ package controller;
 
 import dal.CourseDAO;
 import dal.LessonDAO;
+import dal.QuizDAO;
 import model.Course;
 import model.Lesson;
 import model.User;
@@ -46,10 +47,13 @@ public class CustomerQuizPreparationServlet extends HttpServlet {
             
             CourseDAO courseDAO = new CourseDAO();
             LessonDAO lessonDAO = new LessonDAO();
+            QuizDAO quizDAO = new QuizDAO();
             
             Course course = courseDAO.getCourseById(courseId);
             Lesson lesson = lessonDAO.getLessonById(lessonId);
             List<Lesson> lessons = lessonDAO.getLessonsByCourseId(courseId);
+            
+            int totalCourseQuizzes = quizDAO.countQuizzesByCourseId(courseId);
             
             if (course == null || lesson == null) {
                 response.sendRedirect("purchased-courses");
@@ -59,6 +63,7 @@ public class CustomerQuizPreparationServlet extends HttpServlet {
             request.setAttribute("course", course);
             request.setAttribute("lesson", lesson);
             request.setAttribute("lessons", lessons);
+            request.setAttribute("totalCourseQuizzes", totalCourseQuizzes);
             
             request.getRequestDispatcher("customer-quiz-preparation.jsp").forward(request, response);
             
