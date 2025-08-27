@@ -24,7 +24,7 @@ public class InstructorDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         model.User user = (model.User) session.getAttribute("user");
-        if (user == null || user.getUser_id() == null || !"seller".equalsIgnoreCase(user.getRole())) {
+        if (user == null || user.getUser_id() == null || !"instructor".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }

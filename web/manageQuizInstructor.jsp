@@ -24,7 +24,7 @@
     </style>
 </head>
 <body class="container mt-5">
-    <h2>Quizzes for Lesson ID: ${lessonId}</h2>
+    <h2>Quizzes for Lesson</h2>
     <c:if test="${not empty errorMessage}">
         <div class="alert alert-danger">${errorMessage}</div>
     </c:if>
@@ -53,9 +53,11 @@
             <div class="col-md-4">
                 <input type="text" name="question" class="form-control" placeholder="Search by question..." value="${param.question}" />
             </div>
+            From
             <div class="col-md-3">
                 <input type="date" name="startDate" class="form-control" placeholder="From date" value="${param.startDate}" />
             </div>
+            To 
             <div class="col-md-3">
                 <input type="date" name="endDate" class="form-control" placeholder="To date" value="${param.endDate}" />
             </div>

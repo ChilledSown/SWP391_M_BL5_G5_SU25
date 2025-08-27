@@ -1,3 +1,4 @@
+
 <%@ page import="java.util.*" %>
 <%@ page import="model.*" %>
 <%@ page import="dal.*" %>
@@ -144,7 +145,7 @@
                                 btnText = "Create Blog";
                                 formAction = "createBlog";
                             }
-                            // Use request attribute if available (set by EditBlogServlet)
+                            // Use request attribute if available (set by servlet)
                             if (request.getAttribute("blog") != null) {
                                 blog = (Blog) request.getAttribute("blog");
                             }
@@ -156,12 +157,13 @@
                             String contentError = (String) session.getAttribute("contentError");
                             String thumbnailError = (String) session.getAttribute("thumbnailError");
                             String duplicateMessage = (String) session.getAttribute("duplicateMessage");
-                            String errorMessage = (String) request.getAttribute("errorMessage");
-                            // Clear session attributes to prevent persistent display
+                            String errorMessage = (String) session.getAttribute("errorMessage");
+                            // Clear session attributes
                             session.removeAttribute("titleError");
                             session.removeAttribute("contentError");
                             session.removeAttribute("thumbnailError");
                             session.removeAttribute("duplicateMessage");
+                            session.removeAttribute("errorMessage");
                         %>
                         <h2><%= headerText %></h2>
                         <% if (duplicateMessage != null) { %>
@@ -191,14 +193,12 @@
                                 <% } %>
                             </div>
                             <div class="form-group">
-                                <label for="thumbnail_url">Thumbnail</label>
-                                <input type="url" class="form-control mb-2" id="thumbnailUrlInput" placeholder="Paste image URL here" value="">
+                                <label for="thumbnailInput">Thumbnail</label>
                                 <input type="file" class="form-control mb-2" id="thumbnailInput" name="thumbnail" accept=".jpg,.jpeg,.png,.gif">
                                 <div id="thumbPreviewWrap" style="margin-top:12px; display:<%= (thumbnailUrlValue != null && !thumbnailUrlValue.isEmpty()) ? "block" : "none" %>;">
                                     <button type="button" class="remove-thumb" id="btnRemoveThumb">&times;</button>
                                     <img id="thumbPreview" src="<%= thumbnailUrlValue %>" alt="Thumbnail preview" style="max-width: 100%; border:1px solid #e9ecef; border-radius:6px;">
                                 </div>
-                                <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="">
                                 <% if (thumbnailError != null) { %>
                                     <div class="error-message"><%= thumbnailError %></div>
                                 <% } %>
@@ -251,34 +251,11 @@
         <script src="${pageContext.request.contextPath}/assets/js/jquery.validate.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
         <script>
-            const urlInput = document.getElementById('thumbnailUrlInput');
             const fileInput = document.getElementById('thumbnailInput');
-            const hiddenInput = document.getElementById('thumbnail_url');
             const previewImg = document.getElementById('thumbPreview');
             const previewWrap = document.getElementById('thumbPreviewWrap');
             const removeBtn = document.getElementById('btnRemoveThumb');
-
-            // Initialize inputs
             const existingThumbnail = "<%= thumbnailUrlValue %>";
-            if (existingThumbnail) {
-                urlInput.value = existingThumbnail;
-                hiddenInput.value = existingThumbnail;
-            }
-
-            urlInput.addEventListener('input', function () {
-                const url = urlInput.value.trim();
-                if (url !== "") {
-                    previewImg.src = url;
-                    previewWrap.style.display = "block";
-                    hiddenInput.value = url;
-                    fileInput.value = "";
-                } else {
-                    // Reset to existing thumbnail if URL is cleared
-                    previewImg.src = existingThumbnail;
-                    previewWrap.style.display = existingThumbnail ? "block" : "none";
-                    hiddenInput.value = existingThumbnail;
-                }
-            });
 
             fileInput.addEventListener('change', function (event) {
                 const file = event.target.files[0];
@@ -287,8 +264,6 @@
                 reader.onload = function (e) {
                     previewImg.src = e.target.result;
                     previewWrap.style.display = "block";
-                    urlInput.value = "";
-                    hiddenInput.value = "file";
                 };
                 reader.readAsDataURL(file);
             });
@@ -296,18 +271,14 @@
             removeBtn?.addEventListener('click', function () {
                 previewImg.src = "";
                 previewWrap.style.display = "none";
-                urlInput.value = "";
                 fileInput.value = "";
-                hiddenInput.value = "null";
             });
 
-            // Client-side validation (only for title and content)
             $(document).ready(function () {
                 $("#blogForm").validate({
                     rules: {
                         title: { required: true },
-                        content: { required: true },
-                        thumbnailUrlInput: { required: false, url: false } // Explicitly disable URL validation
+                        content: { required: true }
                     },
                     messages: {
                         title: "Please enter a title.",
@@ -317,10 +288,6 @@
                         error.appendTo(element.closest(".form-group"));
                     },
                     submitHandler: function (form) {
-                        // Ensure thumbnail_url is set to existing thumbnail if unchanged
-                        if (!hiddenInput.value && existingThumbnail) {
-                            hiddenInput.value = existingThumbnail;
-                        }
                         form.submit();
                     }
                 });

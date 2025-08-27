@@ -8,9 +8,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Lesson;
 import model.Quiz;
+import model.User;
 
 @WebServlet(name = "ManageQuizServlet", urlPatterns = {"/manageQuizInstructor"})
 public class ManageQuizServlet extends HttpServlet {
@@ -27,6 +29,12 @@ public class ManageQuizServlet extends HttpServlet {
         String lessonIdRaw = request.getParameter("lessonId");
         String courseIdRaw = request.getParameter("courseId");
 
+        HttpSession session = request.getSession();
+User user = (User) session.getAttribute("user");
+if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+    response.sendRedirect("login.jsp");
+    return;
+}
         // Kiểm tra lessonId
         if (lessonIdRaw == null || lessonIdRaw.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Missing lessonId parameter.");

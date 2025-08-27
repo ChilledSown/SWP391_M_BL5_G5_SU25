@@ -251,7 +251,7 @@
                             <li class="nav-item"><a href="DashBoard" class="nav-link active">Overview</a></li>
                             <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
                             <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
-                            <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
+                            <li class="nav-item"><a href="balance" class="nav-link">Order</a></li>
                             <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                         </ul>
                     </div>
@@ -309,13 +309,7 @@
                                         <div class="card-number">${totalOrders}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="dashboard-card">
-                                        <i class="fas fa-star"></i>
-                                        <h4>Average Rating</h4>
-                                        <div class="card-number"><fmt:formatNumber value="${averageRating}" maxFractionDigits="1" /> / 5</div>
-                                    </div>
-                                </div>
+                               
                                 <div class="col-md-3">
                                     <div class="dashboard-card">
                                         <i class="fas fa-dollar-sign"></i>
@@ -330,18 +324,7 @@
                                 </div>
                             </div>
                           
-                            <!-- Quick Actions -->
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <div class="quick-action-card">
-                                        <h4><i class="fas fa-rocket"></i> Quick Actions</h4>
-                                        <a href="addCourse" class="btn btn-light btn-sm"><i class="fas fa-plus"></i> Create New Course</a>
-                                        <a href="addLesson" class="btn btn-light btn-sm"><i class="fas fa-plus"></i> Add New Lesson</a>
-                                        <a href="addQuiz" class="btn btn-light btn-sm"><i class="fas fa-plus"></i> Create Quiz</a>
-                                        <a href="addBlog" class="btn btn-light btn-sm"><i class="fas fa-plus"></i> Write New Blog</a>
-                                    </div>
-                                </div>
-                            </div>
+                                        
                             <!-- Recent Activity -->
                             <div class="row mt-4">
                                 <div class="col-md-6">

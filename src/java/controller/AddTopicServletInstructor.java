@@ -8,7 +8,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import model.User;
 
 @WebServlet(name = "AddTopicServletInstructor", urlPatterns = {"/addTopicInstructor"})
 @MultipartConfig(
@@ -17,20 +23,31 @@ import java.io.IOException;
     maxRequestSize = 5 * 1024 * 1024 // 5MB
 )
 public class AddTopicServletInstructor extends HttpServlet {
+    private static final String UPLOAD_DIR = "assets/img/uploads/";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
+        
+        
+        HttpSession session = request.getSession();
+User user = (User) session.getAttribute("user");
+if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+    response.sendRedirect("login.jsp");
+    return;
+}
 
         // Retrieve parameters
         String name = request.getParameter("name");
         String description = request.getParameter("description");
+        Part filePart = request.getPart("thumbnail");
         String thumbnailUrl = request.getParameter("thumbnail_url");
-
-        // Preserve original parameters for redirect
         String type = request.getParameter("type");
         String action = request.getParameter("action");
         String courseId = request.getParameter("courseId");
+
+        // Construct redirect URL
         String redirectUrl = "blog_course_form.jsp?type=" + (type != null ? type : "course");
         if (action != null) redirectUrl += "&action=" + action;
         if (courseId != null) redirectUrl += "&courseId=" + courseId;
@@ -54,11 +71,33 @@ public class AddTopicServletInstructor extends HttpServlet {
             return;
         }
 
+        // Handle file upload
+        String thumbnailPath = "";
+        if (filePart != null && filePart.getSize() > 0 && !"null".equals(thumbnailUrl)) {
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+            String uniqueFileName = System.currentTimeMillis() + fileExtension; // Avoid file name conflicts
+            String uploadPath = getServletContext().getRealPath("") + UPLOAD_DIR;
+
+            // Create directory if it doesn't exist
+            Path uploadDir = Paths.get(uploadPath);
+            if (!Files.exists(uploadDir)) {
+                Files.createDirectories(uploadDir);
+            }
+
+            // Save file to disk
+            filePart.write(uploadPath + uniqueFileName);
+            thumbnailPath = UPLOAD_DIR + uniqueFileName; // Store relative path
+            System.out.println("File uploaded to: " + uploadPath + uniqueFileName);
+        } else if ("null".equals(thumbnailUrl)) {
+            thumbnailPath = ""; // Image was cleared
+        }
+
         // Create and insert new topic
         Topic topic = new Topic();
         topic.setName(name.trim());
         topic.setDescription(description != null ? description.trim() : "");
-        topic.setThumbnail_url(thumbnailUrl != null ? thumbnailUrl.trim() : "");
+        topic.setThumbnail_url(thumbnailPath);
         long topicId = topicDAO.insertTopic(topic);
 
         // Debug logging
@@ -77,6 +116,6 @@ public class AddTopicServletInstructor extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Servlet to handle adding a new topic for instructors";
+        return "Servlet to handle adding a new topic for instructors with image upload";
     }
 }

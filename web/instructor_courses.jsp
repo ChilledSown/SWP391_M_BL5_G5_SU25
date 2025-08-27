@@ -365,7 +365,7 @@
                             <li class="nav-item"><a href="DashBoard" class="nav-link">Overview</a></li>
                             <li class="nav-item"><a href="listCourses" class="nav-link active">Courses</a></li>
                             <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
-                            <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
+                            <li class="nav-item"><a href="balance" class="nav-link">Order</a></li>
                             <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                         </ul>
                     </div>

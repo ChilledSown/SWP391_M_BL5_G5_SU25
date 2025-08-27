@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import model.Course; // Đảm bảo import lớp Course
+import model.User;
 
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024, // 1MB
@@ -25,8 +26,14 @@ public class UpdateCourseServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+        
         HttpSession session = request.getSession();
+User user = (User) session.getAttribute("user");
+if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+    response.sendRedirect("login.jsp");
+    return;
+}
+        request.setCharacterEncoding("UTF-8");
         // courseId từ hidden input
         String rawId = request.getParameter("courseId");
         long courseId;
