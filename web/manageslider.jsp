@@ -337,7 +337,7 @@
                 <nav class="sidebar-nav">
                     <ul>
                         <li data-section="overview">
-                            <a href="admin">Overview</a>
+                            <a href="overviewadmin">Overview</a>
                         </li>
                         <li data-section="courses">
                             <a href="admintopic">List Topic</a>
@@ -348,7 +348,7 @@
                         <li data-section="slider" class="active">
                             <a href="manageslider">Manage Slider</a>
                         </li>
-                        <li data-section="settings"><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
+                        <li data-section="settings"><a href="logout">Logout</a></li>
                     </ul>
                 </nav>
             </aside>

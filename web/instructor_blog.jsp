@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -90,6 +89,7 @@
                 border: 1px solid #ced4da;
                 padding: 10px;
                 transition: border-color 0.3s ease;
+                height: 32px; /* Consistent height with action buttons */
             }
             .form-control:focus {
                 border-color: #007bff;
@@ -107,7 +107,7 @@
                 border-color: #0056b3;
                 transform: translateY(-2px);
             }
-            .btn-action {
+            .btn-action, .btn-search, .btn-reset {
                 background-color: #ff8243;
                 color: white;
                 border: none;
@@ -122,10 +122,10 @@
                 justify-content: center;
                 transition: background-color 0.2s ease-in-out;
             }
-            .btn-action:hover {
+            .btn-action:hover, .btn-search:hover, .btn-reset:hover {
                 background-color: #e67030;
             }
-            .btn-action i {
+            .btn-action i, .btn-search i, .btn-reset i {
                 font-size: 16px;
             }
             #navigation a {
@@ -183,10 +183,12 @@
                 }
                 .form-control {
                     width: 100%;
+                    height: 32px;
                 }
-                .btn-primary {
-                    width: 100%;
-                    text-align: center;
+                .btn-primary, .btn-search, .btn-reset {
+                    width: 32px;
+                    height: 32px;
+                    margin: 2px;
                 }
             }
         </style>
@@ -212,7 +214,7 @@
                             <div class="row align-items-center">
                                 <div class="col-xl-2 col-lg-2">
                                     <div class="logo">
-                                        <a href="index.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo.png" alt="Logo"></a>
+                                        <a href="${pageContext.request.contextPath}/index.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo.png" alt="Logo"></a>
                                     </div>
                                 </div>
                                 <div class="col-xl-10 col-lg-10">
@@ -220,9 +222,9 @@
                                         <div class="main-menu d-none d-lg-block">
                                             <nav>
                                                 <ul id="navigation">
-                                                    <li><a href="index.jsp">Home</a></li>
-                                                    <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
-                                                    <li><a href="logout">Logout</a></li>
+                                                    <li><a href="${pageContext.request.contextPath}/index.jsp">Home</a></li>
+                                                    <li><a href="${pageContext.request.contextPath}/DashBoardSeller.jsp">Dashboard</a></li>
+                                                    <li><a href="${pageContext.request.contextPath}/logout">Logout</a></li>
                                                 </ul>
                                             </nav>
                                         </div>
@@ -243,31 +245,34 @@
                         <!-- Sidebar -->
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link active">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <!-- Main Content -->
                         <div class="col-lg-9 col-md-8 content">
                             <h2>Blog Management</h2>
                             <p>Manage your blogs here.</p>
-                            <a href="Add_EditSeller.jsp" class="btn btn-primary mb-3">
+                            <a href="${pageContext.request.contextPath}/Add_EditSeller.jsp" class="btn btn-primary mb-3">
                                 <i class="fas fa-plus"></i> Create New Blog
                             </a>
                             <!-- Search -->
-                            <form method="get" action="listBlogsInstructor" class="mb-4">
-                                <div class="row g-2">
-                                    <div class="col-md-6">
+                            <form method="get" action="${pageContext.request.contextPath}/listBlogsInstructor" class="mb-4">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-8 col-sm-7">
                                         <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
                                     </div>
-                                    <div class="col-md-3">
-                                        <input type="date" name="createdDate" class="form-control" value="${param.createdDate}" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                                    <div class="col-md-4 col-sm-5 d-flex">
+                                        <button type="submit" class="btn btn-search me-2" title="Search">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <a href="${pageContext.request.contextPath}/listBlogsInstructor" class="btn btn-reset" title="Reset">
+                                            <i class="fas fa-undo"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -293,13 +298,13 @@
                                                 <fmt:formatDate value="${parsedDate}" pattern="yyyy-MM-dd" />
                                             </td>
                                             <td>
-                                                <a href="Add_EditSeller.jsp?action=update&blogId=${blog.blogId}" class="btn-action" title="Edit">
+                                                <a href="${pageContext.request.contextPath}/Add_EditSeller.jsp?action=update&blogId=${blog.blogId}" class="btn-action" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
+                                                <a href="${pageContext.request.contextPath}/deleteBlog?blogId=${blog.blogId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this blog?');">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
-                                                <a href="blogDetailSeller?blogId=${blog.blogId}" class="btn-action" title="Detail">
+                                                <a href="${pageContext.request.contextPath}/blogDetailSeller?blogId=${blog.blogId}" class="btn-action" title="Detail">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
@@ -326,7 +331,7 @@
                             <div class="col-xl-4 col-lg-5 col-md-4 col-sm-6">
                                 <div class="single-footer-caption mb-50">
                                     <div class="footer-logo mb-25">
-                                        <a href="index.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo2_footer.png" alt="Footer Logo"></a>
+                                        <a href="${pageContext.request.contextPath}/index.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo2_footer.png" alt="Footer Logo"></a>
                                     </div>
                                     <div class="footer-tittle">
                                         <div class="footer-pera">

@@ -148,7 +148,6 @@ public class InstructorVideoDAO extends DBContext {
     }
 
     public boolean insertVideoQuiz(VideoQuiz quiz) {
-        // Validate answer options and correct answer
         if (!isValidVideoQuiz(quiz)) {
             System.out.println("Invalid video quiz data: " + quiz);
             return false;
@@ -172,7 +171,6 @@ public class InstructorVideoDAO extends DBContext {
     }
 
     public boolean updateVideoQuiz(VideoQuiz quiz) {
-        // Validate answer options and correct answer
         if (!isValidVideoQuiz(quiz)) {
             System.out.println("Invalid video quiz data: " + quiz);
             return false;
@@ -205,6 +203,29 @@ public class InstructorVideoDAO extends DBContext {
             System.out.println("Error deleting video quiz ID " + videoQuizId + ": " + e.getMessage());
             return false;
         }
+    }
+
+    public boolean checkDuplicateLessonAndTimestamp(Long lessonId, Integer timestamp, Long excludeVideoQuizId) {
+        String sql = "SELECT COUNT(*) FROM VideoQuiz WHERE Lesson_Id = ? AND Timestamp = ? AND (? IS NULL OR Video_Quiz_Id != ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, lessonId);
+            ps.setInt(2, timestamp);
+            if (excludeVideoQuizId == null) {
+                ps.setNull(3, java.sql.Types.BIGINT);
+                ps.setNull(4, java.sql.Types.BIGINT);
+            } else {
+                ps.setLong(3, excludeVideoQuizId);
+                ps.setLong(4, excludeVideoQuizId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking duplicate lesson and timestamp: " + e.getMessage());
+        }
+        return false;
     }
 
     private VideoQuiz mapResultSetToVideoQuiz(ResultSet rs) throws SQLException {
@@ -243,10 +264,21 @@ public class InstructorVideoDAO extends DBContext {
             System.out.println("Validation failed: Options A and B must be non-empty.");
             return false;
         }
-        String normalizedCorrectAnswer = quiz.getCorrectAnswer().trim();
-        boolean validCorrectAnswer = options.contains(normalizedCorrectAnswer);
-        if (!validCorrectAnswer) {
-            System.out.println("Validation failed: Correct answer does not match any option.");
+        String normalizedCorrectAnswer = quiz.getCorrectAnswer().trim().replaceAll("\\s*;\\s*", "; ");
+        List<String> correctList = Arrays.asList(normalizedCorrectAnswer.split("; "));
+        if (correctList.isEmpty()) {
+            System.out.println("Validation failed: At least one correct answer is required.");
+            return false;
+        }
+        boolean allValid = true;
+        for (String corr : correctList) {
+            if (!options.contains(corr)) {
+                allValid = false;
+                break;
+            }
+        }
+        if (!allValid) {
+            System.out.println("Validation failed: Some correct answers do not match options.");
             return false;
         }
         return true;
