@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.QuizResult;
 
 @WebServlet(name="CustomerListQuizServlet", urlPatterns={"/customer-list-quiz"})
 public class CustomerListQuizServlet extends HttpServlet {
@@ -163,7 +164,7 @@ public class CustomerListQuizServlet extends HttpServlet {
     }
     
     /**
-     * Xác định grade dựa trên điểm số
+     * Determine grade base on score
      */
     private String getGrade(double score) {
         if (score >= 100) return "A+ (Excellent)";
@@ -172,40 +173,5 @@ public class CustomerListQuizServlet extends HttpServlet {
         else if (score >= 70) return "C (Average)";
         else if (score >= 60) return "D (Below Average)";
         else return "F (Fail)";
-    }
-    
-    /**
-     * Inner class để lưu kết quả chi tiết của từng câu hỏi
-     */
-    public static class QuizResult {
-        private Long quizId;
-        private String userAnswer;
-        private String correctAnswer;
-        private boolean isCorrect;
-        private boolean isAnswered;
-        private String question;
-        private String explanation;
-        
-        // Getters and Setters
-        public Long getQuizId() { return quizId; }
-        public void setQuizId(Long quizId) { this.quizId = quizId; }
-        
-        public String getUserAnswer() { return userAnswer; }
-        public void setUserAnswer(String userAnswer) { this.userAnswer = userAnswer; }
-        
-        public String getCorrectAnswer() { return correctAnswer; }
-        public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
-        
-        public boolean isCorrect() { return isCorrect; }
-        public void setCorrect(boolean correct) { isCorrect = correct; }
-        
-        public boolean isAnswered() { return isAnswered; }
-        public void setAnswered(boolean answered) { isAnswered = answered; }
-        
-        public String getQuestion() { return question; }
-        public void setQuestion(String question) { this.question = question; }
-        
-        public String getExplanation() { return explanation; }
-        public void setExplanation(String explanation) { this.explanation = explanation; }
     }
 }
