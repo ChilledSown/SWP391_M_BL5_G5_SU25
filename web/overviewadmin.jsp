@@ -162,21 +162,24 @@
                 <a href="${pageContext.request.contextPath}/profile"><button class="edit-profile-btn" title="Edit Profile"><i class="fas fa-edit"></i></button></a>
             </div>
             <nav class="sidebar-nav">
-                <ul>
-                    <li class="active" data-section="overview">
-                        <a href="admin">Overview</a>
-                    </li>
-                    <li data-section="courses">
-                        <a href="managetopic">Manage Topic</a>
-                    </li>
-                    <li data-section="users">
-                        <a href="manageuser">Manage Users</a>
-                    </li>
-                    <li data-section="settings">
-                        <a href="${pageContext.request.contextPath}/logout">Logout</a>
-                    </li>
-                </ul>
-            </nav>
+                    <ul>
+                        <li class="active"  data-section="overview">
+                            <a href="overviewadmin">Overview</a>
+                        </li>
+                        <li data-section="courses">
+                        <a href="admintopic">List Topic</a>
+                        </li>
+                        <li data-section="users">
+                            <a href="manageuser">Manage Users</a>
+                        </li>
+                        <li data-section="slider">
+                            <a href="manageslider">Manage Slider</a>
+                        </li>
+                        <li data-section="settings">
+                            <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                        </li>
+                    </ul>
+                </nav>
         </aside>
         <main class="main-content">
             <header class="main-header">
@@ -193,8 +196,8 @@
                     <p>${totalAdmins}</p>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Sellers</h3>
-                    <p>${totalSellers}</p>
+                    <h3>Total Instructor</h3>
+                    <p>${totalInstructors}</p>
                 </div>
                 <div class="stat-card">
                     <h3>Total Customers</h3>

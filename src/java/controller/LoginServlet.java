@@ -81,8 +81,8 @@ public class LoginServlet extends HttpServlet {
                     case "customer":
                         response.sendRedirect("home");
                         break;
-                    case "seller":
-                        response.sendRedirect("instructor-dashboard");
+                    case "instructor":
+                        response.sendRedirect("DashBoard");
                         break;
                 }
             } else {

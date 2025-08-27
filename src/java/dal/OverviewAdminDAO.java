@@ -39,8 +39,8 @@ public class OverviewAdminDAO extends DBContext {
     }
 
     // Get total number of sellers
-    public int getTotalSellers() {
-        String sql = "SELECT COUNT(*) FROM Users WHERE role = 'seller'";
+    public int getTotalInstructors() {
+        String sql = "SELECT COUNT(*) FROM Users WHERE role = 'instructor'";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
