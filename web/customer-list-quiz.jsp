@@ -21,7 +21,6 @@
             background: #f7f9fc;
         }
 
-        /* Header Styling */
         .combined-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             position: relative;
@@ -94,7 +93,6 @@
             max-height: 40px;
         }
 
-        /* Main Container - Full width */
         .main-container {
             width: 100%;
             max-width: none;
@@ -104,7 +102,6 @@
             min-height: calc(100vh - 80px);
         }
 
-        /* Quiz Header */
         .quiz-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -124,7 +121,6 @@
             font-size: 16px;
             opacity: 0.9;
         }
-
         .score-section {
             background: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -318,7 +314,6 @@
             width: 100%;
         }
 
-        /* Answer Feedback */
         .answer-feedback {
             margin-top: 20px;
             display: none;
@@ -390,7 +385,6 @@
             width: 100%;
         }
 
-        /* Submit Button */
         .submit-section {
             padding: 20px 0;
             text-align: center;
@@ -422,7 +416,6 @@
             box-shadow: none;
         }
 
-        /* Congratulations Section */
         .congratulations-section {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
@@ -470,7 +463,6 @@
             text-decoration: none;
         }
 
-        /* Footer */
         .footer-wrappper {
             background: #2c3e50;
         }

@@ -188,6 +188,7 @@
                         <div class="col-xl-10 col-lg-10">
                             <div class="menu-wrapper d-flex align-items-center justify-content-end">
                                 <div class="main-menu d-none d-lg-block">
+<<<<<<< HEAD
                                 <nav>
                                     <ul id="navigation">                                                                                          
                                         <li><a href="home">Home</a></li>
@@ -201,6 +202,21 @@
                                 </nav>
                             </div>
                             </div>
+=======
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="home">Home</a></li>
+                                            <li><a href="courses">Courses</a></li>
+                                            <li><a href="about.jsp">About</a></li>
+                                            <li class="active"><a href="blog">Blog</a></li>
+                                            <li><a href="contact.jsp">Contact</a></li>
+                                            <li class="button-header margin-left"><a href="profile" class="btn">Profile</a></li>
+                                            <li class="button-header"><a href="login" class="btn btn3">Logout</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+>>>>>>> 85bac6c9f94c7d390a39154828f299c4f1dbf1d8
                         </div>
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>

@@ -27,7 +27,6 @@
     <link rel="stylesheet" href="assets/css/nice-select.css">
     <link rel="stylesheet" href="assets/css/style.css">
     
-    <!-- Custom CSS for Checkout -->
     <style>
         .checkout-section {
             padding: 80px 0;

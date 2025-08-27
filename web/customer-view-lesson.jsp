@@ -288,11 +288,6 @@
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
-
-            /* Remove custom controls to avoid overlap with Video.js native controls */
-
-
-
             /* Video Quiz Styles */
             .video-quiz-overlay {
                 position: absolute;
@@ -540,11 +535,6 @@
                                 </div>
                             </c:otherwise>
                         </c:choose>
-
-                        
-
-
-
                         <!-- Video Quiz Overlay -->
                         <div id="videoQuizOverlay" class="video-quiz-overlay" style="display: none;">
                             <div class="video-quiz-container">
@@ -628,7 +618,6 @@
                     setupVideoTracking();
                 }
             });
-
 
             // Load quizzes from backend (plain text format)
             function loadVideoQuizzes(lessonId) {

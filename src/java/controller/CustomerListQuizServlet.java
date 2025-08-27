@@ -114,7 +114,6 @@ public class CustomerListQuizServlet extends HttpServlet {
                         correctAnswers++;
                     }
                 }
-                
                 QuizResult result = new QuizResult();
                 result.setQuizId(quiz.getQuizId());
                 result.setUserAnswer(userAnswer);
@@ -135,7 +134,6 @@ public class CustomerListQuizServlet extends HttpServlet {
             String grade = getGrade(score);
             
             int totalCourseQuizzes = allQuizzes.size();
-            
             CourseDAO courseDAO = new CourseDAO();
             LessonDAO lessonDAO = new LessonDAO();
             Course course = courseDAO.getCourseById(courseId);

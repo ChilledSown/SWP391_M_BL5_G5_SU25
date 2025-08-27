@@ -24,8 +24,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         font-family: "Helvetica Neue", Arial, sans-serif;
         background: #f7f9fc;
       }
-
-      /* Header Styling - Consistent with other customer pages */
       .combined-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         position: relative;
@@ -98,14 +96,11 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         max-height: 40px;
       }
 
-      /* Main Layout */
       .main-container {
         display: flex;
         height: calc(100vh - 80px);
         background: #f7f9fc;
       }
-
-      /* Sidebar */
       .sidebar {
         width: 320px;
         background: white;
@@ -228,7 +223,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         color: #856404;
       }
 
-      /* Main Content */
       .main-content {
         flex: 1;
         display: flex;
@@ -237,8 +231,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         padding: 30px;
         overflow-y: auto;
       }
-
-      /* AI Coaching Section */
       .ai-coaching-section {
         background: white;
         border-radius: 12px;
@@ -274,7 +266,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         transform: translateY(-2px);
       }
 
-      /* Coach Response Section */
       .coach-response-section {
         background: white;
         border-radius: 12px;
@@ -322,7 +313,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         white-space: pre-line;
       }
 
-      /* Assignment Detail Section */
       .assignment-section {
         background: white;
         border-radius: 12px;
@@ -352,9 +342,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
         transform: translateY(-2px);
       }
 
-
-
-      /* Footer - Consistent with other customer pages */
       .footer-wrappper {
         background: #2c3e50;
       }
@@ -632,7 +619,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
       }
 
       function startQuiz() {
-        // Redirect to quiz page
         window.location.href =
           "customer-list-quiz?courseId=${course.course_id}&lessonId=${lesson.lessonId}";
       }

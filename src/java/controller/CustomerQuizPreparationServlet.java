@@ -48,13 +48,10 @@ public class CustomerQuizPreparationServlet extends HttpServlet {
             CourseDAO courseDAO = new CourseDAO();
             LessonDAO lessonDAO = new LessonDAO();
             QuizDAO quizDAO = new QuizDAO();
-            
             Course course = courseDAO.getCourseById(courseId);
             Lesson lesson = lessonDAO.getLessonById(lessonId);
             List<Lesson> lessons = lessonDAO.getLessonsByCourseId(courseId);
-            
             int totalCourseQuizzes = quizDAO.countQuizzesByCourseId(courseId);
-            
             if (course == null || lesson == null) {
                 response.sendRedirect("purchased-courses");
                 return;
@@ -64,7 +61,6 @@ public class CustomerQuizPreparationServlet extends HttpServlet {
             request.setAttribute("lesson", lesson);
             request.setAttribute("lessons", lessons);
             request.setAttribute("totalCourseQuizzes", totalCourseQuizzes);
-            
             request.getRequestDispatcher("customer-quiz-preparation.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
@@ -135,7 +131,6 @@ public class CustomerQuizPreparationServlet extends HttpServlet {
     }
     
     private String callGeminiAPI(String prompt) {
-        // Sử dụng GeminiUtil để gọi Gemini API
         return GeminiUtil.generateResponse(prompt);
     }
 }

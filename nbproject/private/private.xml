@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PaymentSuccessServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/model/Review.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/PurchasedCoursesServlet.java</file>
@@ -62,6 +63,9 @@
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/ManageUserServlet.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/src/java/controller/BlogDetailServletSeller.java</file>
             <file>file:/D:/SWP391_M_BL5_G5_SU25-DoHuuSon/SWP391_M_BL5_G5_SU25-DoHuuSon/web/payment-success.jsp</file>
+=======
+            <file>file:/D:/Pull-SWP391/SWP391_M_BL5_G5_SU25/web/seller.jsp</file>
+>>>>>>> 85bac6c9f94c7d390a39154828f299c4f1dbf1d8
         </group>
     </open-files>
 </project-private>
