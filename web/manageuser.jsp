@@ -22,7 +22,7 @@
                 min-height: 100vh;
             }
             .sidebar {
-                width: 250px;
+                width: 200px;
                 background-color: #2c3e50;
                 color: white;
                 padding: 20px;
@@ -258,7 +258,25 @@
             .delete-btn:hover {
                 background-color: #c0392b;
             }
-            
+            .view-btn {
+                background-color: #8e44ad;
+                border: none;
+                padding: 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                color: white;
+                margin-left: 5px;
+                transition: background-color 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+            }
+            .view-btn:hover {
+                background-color: #9b59b6;
+            }
             
             .profile-section {
                 text-align: center;
@@ -329,13 +347,16 @@
                 <nav class="sidebar-nav">
                     <ul>
                         <li  data-section="overview">
-                            <a href="admin">Overview</a>
+                            <a href="overviewadmin">Overview</a>
                         </li>
                         <li data-section="courses">
-                            <a href="managetopic">Manage Topic</a>
+                        <a href="admintopic">List Topic</a>
                         </li>
                         <li class="active" data-section="users">
                             <a href="manageuser">Manage Users</a>
+                        </li>
+                        <li data-section="slider">
+                            <a href="manageslider">Manage Slider</a>
                         </li>
                         <li data-section="settings">
                             <a href="${pageContext.request.contextPath}/logout">Logout</a>
@@ -400,9 +421,13 @@
                                         <td>${user.phone}</td>
                                         <td>${user.address}</td>
                                         <td>${user.email}</td>
-                                        <td><fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy"/></td>
+                                        <td><fmt:formatDate value="${user.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
                                         <td>${user.accountStatus}</td>
                                         <td>
+                                            <form action="detailuser" method="get" style="display:inline;">
+                                                <input type="hidden" name="userId" value="${user.user_id}">
+                                                <button type="submit" class="view-btn" title="View Details"><i class="fas fa-eye"></i></button>
+                                            </form>
                                             <form action="manageuser" method="get" style="display:inline;">
                                                 <input type="hidden" name="action" value="edit">
                                                 <input type="hidden" name="userId" value="${user.user_id}">

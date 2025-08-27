@@ -1,28 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
-/**
- *
- * @author sondo
- */
 public class Blog {
-    private long blogId;         
+    private Long blogId;         
     private String title;        
     private String content;      
     private String thumbnailUrl;
-    private LocalDate createdAt; 
-    private LocalDate updatedAt; 
-    private String createdBy; 
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private int createdBy;
+    private String createdByName;
 
-    public Blog() {
+    public Blog(long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, int createdBy, String createdByName) {
+        this.blogId = blogId;
+        this.title = title;
+        this.content = content;
+        this.thumbnailUrl = thumbnailUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.createdByName = createdByName;
     }
 
-    public Blog(long blogId, String title, String content, String thumbnailUrl, LocalDate createdAt, LocalDate updatedAt, String createdBy) {
+    public Blog(Long blogId, String title, String content, String thumbnailUrl, Timestamp createdAt, Timestamp updatedAt, int createdBy) {
         this.blogId = blogId;
         this.title = title;
         this.content = content;
@@ -32,11 +33,16 @@ public class Blog {
         this.createdBy = createdBy;
     }
 
-    public long getBlogId() {
+    public Blog() {
+    }
+    
+    
+    // Getters and setters
+    public Long getBlogId() {
         return blogId;
     }
 
-    public void setBlogId(long blogId) {
+    public void setBlogId(Long blogId) {
         this.blogId = blogId;
     }
 
@@ -64,34 +70,40 @@ public class Blog {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public LocalDate getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public String getCreatedBy() {
+    public int getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
     }
 
     @Override
     public String toString() {
-        return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + '}';
+        return "Blog{" + "blogId=" + blogId + ", title=" + title + ", content=" + content + ", thumbnailUrl=" + thumbnailUrl + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", createdBy=" + createdBy + ", createdByName=" + createdByName + '}';
     }
-    
-    
 }

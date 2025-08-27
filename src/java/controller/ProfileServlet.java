@@ -14,7 +14,7 @@ import jakarta.servlet.http.Part;
 import model.User;
 import utils.PasswordHashUtil;
 
-@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile"})
+@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile", "/viewprofile", "/updateprofile"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
         maxRequestSize = 1024 * 1024 * 50) // 50MB
@@ -44,7 +44,14 @@ public class ProfileServlet extends HttpServlet {
             request.setAttribute("user", updatedUser);
         }
 
-        request.getRequestDispatcher("profile.jsp").forward(request, response);
+        String action = request.getServletPath();
+        if ("/profile".equals(action)) {
+            response.sendRedirect("viewprofile");
+        } else if ("/viewprofile".equals(action)) {
+            request.getRequestDispatcher("viewprofile.jsp").forward(request, response);
+        } else if ("/updateprofile".equals(action)) {
+            request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
+        }
     }
 
     @Override
@@ -80,7 +87,7 @@ public class ProfileServlet extends HttpServlet {
                 email == null || email.trim().isEmpty()) {
                 request.setAttribute("error", "Please fill in all required fields.");
                 request.setAttribute("user", currentUser);
-                request.getRequestDispatcher("profile.jsp").forward(request, response);
+                request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
                 return;
             }
 
@@ -88,7 +95,7 @@ public class ProfileServlet extends HttpServlet {
             if (!phone.matches("0\\d{9}")) {
                 request.setAttribute("error", "Phone number must be 10 digits and start with 0.");
                 request.setAttribute("user", currentUser);
-                request.getRequestDispatcher("profile.jsp").forward(request, response);
+                request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
                 return;
             }
 
@@ -100,14 +107,14 @@ public class ProfileServlet extends HttpServlet {
             if (existingEmailUser != null && existingEmailUser.getUser_id() != currentUser.getUser_id()) {
                 request.setAttribute("error", "This email is already in use by another account.");
                 request.setAttribute("user", currentUser);
-                request.getRequestDispatcher("profile.jsp").forward(request, response);
+                request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
                 return;
             }
 
             if (existingPhoneUser != null && existingPhoneUser.getUser_id() != currentUser.getUser_id()) {
                 request.setAttribute("error", "This phone number is already in use by another account.");
                 request.setAttribute("user", currentUser);
-                request.getRequestDispatcher("profile.jsp").forward(request, response);
+                request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
                 return;
             }
 
@@ -153,19 +160,19 @@ public class ProfileServlet extends HttpServlet {
 
             if (success) {
                 session.setAttribute("user", updatedUser);
-                request.setAttribute("user", updatedUser);
-                request.setAttribute("message", "Profile updated successfully!");
+                session.setAttribute("message", "Profile updated successfully!"); // Lưu thông báo vào session
+                response.sendRedirect("viewprofile"); // Chuyển hướng về viewprofile
             } else {
                 request.setAttribute("user", currentUser);
                 request.setAttribute("error", "Profile update failed. Please try again.");
+                request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
             }
 
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("user", currentUser);
             request.setAttribute("error", "An error occurred. Please try again.");
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
+            request.getRequestDispatcher("updateprofile.jsp").forward(request, response);
         }
     }
 
@@ -178,6 +185,5 @@ public class ProfileServlet extends HttpServlet {
             }
         }
         return "";
-        
     }
 }

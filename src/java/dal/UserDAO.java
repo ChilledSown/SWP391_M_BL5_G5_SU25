@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.User;
-
 public class UserDAO extends DBContext {
 
     public User login(String email, String password) {
@@ -28,8 +27,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
@@ -57,8 +56,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
@@ -86,8 +85,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
@@ -98,7 +97,7 @@ public class UserDAO extends DBContext {
     }
 
     public boolean insertUser(User user) {
-        String sql = "INSERT INTO Users (FirstName, MiddleName, LastName, Avata_Url, Phone, Address, Email, PasswordHash, Role, Created_At, Account_Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), ?)";
+        String sql = "INSERT INTO Users (FirstName, MiddleName, LastName, Avata_Url, Phone, Address, Email, PasswordHash, Role, Created_At, Updated_At, Account_Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE(), ?)";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, user.getFirstName());
@@ -136,8 +135,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
@@ -178,8 +177,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 ));
             }
@@ -215,7 +214,7 @@ public class UserDAO extends DBContext {
     public List<User> getUsersByName(String searchQuery, int page, int pageSize, String role) {
         List<User> users = new ArrayList<>();
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            return getUsers(page, pageSize, role);  // Nếu không search, dùng getUsers với role
+            return getUsers(page, pageSize, role);
         }
         searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
         String[] keywords = searchQuery.split(" ");
@@ -261,8 +260,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 ));
             }
@@ -274,7 +273,7 @@ public class UserDAO extends DBContext {
 
     public int getTotalUsersByName(String searchQuery, String role) {
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            return getTotalUsers(role);  // Nếu không search, dùng getTotalUsers với role
+            return getTotalUsers(role);
         }
         searchQuery = searchQuery.trim().replaceAll("\\s+", " ");
         String[] keywords = searchQuery.split(" ");
@@ -332,8 +331,8 @@ public class UserDAO extends DBContext {
                     rs.getString("Email"),
                     rs.getString("PasswordHash"),
                     rs.getString("Role"),
-                    rs.getDate("Created_At"),
-                    rs.getDate("Updated_At"),
+                    rs.getTimestamp("Created_At"),
+                    rs.getTimestamp("Updated_At"),
                     rs.getString("Account_Status")
                 );
             }
@@ -342,7 +341,7 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-
+    
     public boolean updateUser(User user) {
         String sql = "UPDATE Users SET FirstName = ?, MiddleName = ?, LastName = ?, Avata_Url = ?, Phone = ?, Address = ?, Email = ?, PasswordHash = ?, Role = ?, Updated_At = GETDATE(), Account_Status = ? WHERE UserID = ?";
         try {
@@ -367,49 +366,49 @@ public class UserDAO extends DBContext {
 
     public boolean deleteUser(long userId) {
         try {
-            // Xóa Order_Detail
+            // Delete Order_Detail
             String sqlOrderDetail = "DELETE FROM Order_Detail WHERE Order_Id IN (SELECT Order_Id FROM [Order] WHERE User_Id = ?)";
             PreparedStatement psOrderDetail = connection.prepareStatement(sqlOrderDetail);
             psOrderDetail.setLong(1, userId);
             psOrderDetail.executeUpdate();
 
-            // Xóa Payment
+            // Delete Payment
             String sqlPayment = "DELETE FROM Payment WHERE Order_Id IN (SELECT Order_Id FROM [Order] WHERE User_Id = ?)";
             PreparedStatement psPayment = connection.prepareStatement(sqlPayment);
             psPayment.setLong(1, userId);
             psPayment.executeUpdate();
 
-            // Xóa Order
+            // Delete Order
             String sqlOrder = "DELETE FROM [Order] WHERE User_Id = ?";
             PreparedStatement psOrder = connection.prepareStatement(sqlOrder);
             psOrder.setLong(1, userId);
             psOrder.executeUpdate();
 
-            // Xóa Cart
+            // Delete Cart
             String sqlCart = "DELETE FROM Cart WHERE User_Id = ?";
             PreparedStatement psCart = connection.prepareStatement(sqlCart);
             psCart.setLong(1, userId);
             psCart.executeUpdate();
 
-            // Xóa Review
+            // Delete Review
             String sqlReview = "DELETE FROM Review WHERE User_Id = ?";
             PreparedStatement psReview = connection.prepareStatement(sqlReview);
             psReview.setLong(1, userId);
             psReview.executeUpdate();
 
-            // Xóa Blog
+            // Delete Blog
             String sqlBlog = "DELETE FROM Blog WHERE Created_By = ?";
             PreparedStatement psBlog = connection.prepareStatement(sqlBlog);
             psBlog.setLong(1, userId);
             psBlog.executeUpdate();
 
-            // Xóa PasswordResetTokens
+            // Delete PasswordResetTokens
             String sqlTokens = "DELETE FROM PasswordResetTokens WHERE UserID = ?";
             PreparedStatement psTokens = connection.prepareStatement(sqlTokens);
             psTokens.setLong(1, userId);
             psTokens.executeUpdate();
 
-            // Xóa User
+            // Delete User
             String sqlUser = "DELETE FROM Users WHERE UserID = ?";
             PreparedStatement psUser = connection.prepareStatement(sqlUser);
             psUser.setLong(1, userId);

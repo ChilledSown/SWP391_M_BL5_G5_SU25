@@ -84,7 +84,7 @@
                 </div>
                 <div style="color:white">${message}</div>
                 <!-- Forget Password -->
-                <a href="login.jsp" class="registration">Login</a>
+                <a href="login" class="registration">Login</a>
             </div>
         </form>
     </main>

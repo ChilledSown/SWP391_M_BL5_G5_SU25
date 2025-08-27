@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Update Profile</title>
     <!-- CSS from index.jsp -->
     <link rel="manifest" href="assets/img/site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
@@ -119,10 +119,9 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        /* Header styling with fixed color */
         .header-area {
             padding: 20px 0;
-            background-color: blueviolet; 
+            background-color: blueviolet;
             color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             text-align: center;
@@ -131,10 +130,8 @@
             margin: 0;
             font-size: 24px;
             font-weight: 700;
-            color: white; 
-        } 
-        
-        
+            color: white;
+        }
         .back-btn {
             position: absolute;
             top: 15px;
@@ -153,11 +150,10 @@
             color: #6a0dad;
         }
     </style>
-     <script>
-        // Lưu trang ban đầu khi đăng nhập (giả sử đã được lưu trong session hoặc có thể truyền qua hidden input)
-        let initialPage = '<c:out value="${sessionScope.initialPage}" />'; 
+    <script>
+        // Lưu trang ban đầu khi đăng nhập
+        let initialPage = '<c:out value="${sessionScope.initialPage}" />';
 
-        // Cập nhật initialPage nếu được truyền từ servlet
         document.addEventListener('DOMContentLoaded', function() {
             const role = '<c:out value="${sessionScope.user.role}" />';
             let backText = "Back to Admin";
@@ -172,17 +168,37 @@
                 initialPage = initialPage || '${pageContext.request.contextPath}/admin';
             }
 
-            // Cập nhật văn bản nút Back
             const backButton = document.querySelector('.back-btn');
             if (backButton && initialPage) {
                 backButton.textContent = backText;
             } else {
-                // Nếu initialPage không được thiết lập, ẩn nút Back để tránh lỗi
                 if (backButton) backButton.style.display = 'none';
             }
-        });
+        
 
-        // Hàm điều hướng về trang ban đầu
+            // Xử lý khi chọn file ảnh
+            const avatarInput = document.getElementById('avatar');
+            const avatarPreview = document.querySelector('.avatar-preview');
+
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    // Hiển thị ảnh preview ngay lập tức
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Nếu không phải file ảnh, giữ nguyên ảnh hiện tại
+                    avatarPreview.src = '${empty user.avataUrl ? "assets/img/blog/author.png" : user.avataUrl}';
+                    alert('Please select a valid image file.');
+                    avatarInput.value = ''; // Xóa file không hợp lệ
+                }
+            });
+        });
+        //
+
         function goBack() {
             if (initialPage) {
                 window.location.href = initialPage;
@@ -191,15 +207,14 @@
     </script>
 </head>
 <body>
-    <!-- Header from index.jsp with only user name -->
-    <header class="header-area header-transparent">
+    <header class="header-area">
         <div class="main-header">
             <div class="header-bottom header-sticky">
                 <div class="container-fluid">
                     <div class="row align-items-center">
                         <div class="col-12">
                             <h1>Welcome, <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}"/></h1>
-                             <button class="back-btn" onclick="goBack()">Back</button>
+                            <button class="back-btn" onclick="goBack()">Back</button>
                         </div>
                     </div>
                 </div>
@@ -207,16 +222,16 @@
         </div>
     </header>
 
-    <main class="main-content">   
+    <main class="main-content">
         <div class="profile-form">
-            <h2>User Profile</h2>
+            <h2>Update Profile</h2>
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
             </c:if>
             <c:if test="${not empty message}">
                 <div class="success-message">${message}</div>
             </c:if>
-            <form action="profile" method="POST" enctype="multipart/form-data">
+            <form action="updateprofile" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="userId" value="${user.user_id}">
                 <div class="form-group">
                     <label for="avatar">Profile Picture</label>
@@ -267,7 +282,6 @@
         </div>
     </main>
 
-    <!-- Footer from index.jsp -->
     <footer>
         <div class="footer-wrappper footer-bg">
             <!-- Footer Start-->
@@ -358,12 +372,10 @@
         </div>
     </footer>
 
-    <!-- Scroll Up -->
     <div id="back-top">
         <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
     </div>
 
-    <!-- JS from index.jsp -->
     <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
     <script src="./assets/js/popper.min.js"></script>

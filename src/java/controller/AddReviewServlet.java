@@ -19,12 +19,12 @@ public class AddReviewServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         
         try {
-            // Lấy tham số từ form
+          
             String courseIdStr = request.getParameter("courseId");
             String userIdStr = request.getParameter("userId");
             String ratingStr = request.getParameter("rating");
             
-            // Validate input
+          
             if (courseIdStr == null || userIdStr == null || ratingStr == null) {
                 request.setAttribute("error", "Missing required parameters");
                 response.sendRedirect("customer-course-detail.jsp?error=missing_params");
@@ -35,20 +35,20 @@ public class AddReviewServlet extends HttpServlet {
             long userId = Long.parseLong(userIdStr);
             int rating = Integer.parseInt(ratingStr);
             
-            // Validate rating range
+          
             if (rating < 1 || rating > 5) {
                 request.setAttribute("error", "Rating must be between 1 and 5");
                 response.sendRedirect("customer-course-detail.jsp?error=invalid_rating");
                 return;
             }
             
-            // Lấy comment từ form
+         
             String comment = request.getParameter("comment");
             if (comment == null) {
                 comment = "";
             }
             
-            // Tạo review object
+      
             Review review = new Review();
             review.setCourse_id(courseId);
             review.setUser_id(userId);
@@ -56,7 +56,7 @@ public class AddReviewServlet extends HttpServlet {
             review.setComment(comment);
             review.setCreated_at(new Date());
             
-            // Lưu review vào database
+         
             ReviewDAO reviewDAO = new ReviewDAO();
             boolean success = reviewDAO.insertReview(review);
             

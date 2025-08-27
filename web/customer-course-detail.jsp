@@ -18,6 +18,23 @@
 
         <!-- Custom CSS for Course Detail -->
         <style>
+            /* Combined Header Styling (from purchased-courses) */
+            .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: none; }
+            .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+            .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
+            .page-header-content { padding: 60px 0; position: relative; z-index: 2; text-align: center; color: white; }
+            .page-header-content h1 { font-size: 36px; font-weight: 700; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .page-header-content p { font-size: 18px; opacity: 0.9; margin: 0; }
+            #navigation { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0; padding: 0; list-style: none; }
+            #navigation li { margin: 0; padding: 0; display: flex; align-items: center; }
+            #navigation li a { color: white !important; font-weight: 500; font-size: 16px; text-decoration: none; padding: 12px 20px; border-radius: 8px; transition: all 0.3s ease; display: block; position: relative; margin: 0 5px; }
+            #navigation li a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: white; transition: all 0.3s ease; transform: translateX(-50%); }
+            /* Disable hover effects for non-button nav links */
+            #navigation li a:not(.btn):hover { color: white !important; background: transparent !important; transform: none !important; box-shadow: none !important; backdrop-filter: none !important; }
+            #navigation li a:not(.btn):hover::after { width: 0 !important; }
+            .logo a { filter: brightness(1.2); }
+            .logo img { max-height: 40px; }
+
             .course-detail-section {
                 padding: 80px 0;
                 background: #f8f9fa;
@@ -26,7 +43,8 @@
             .course-image {
                 border-radius: 15px;
                 overflow: hidden;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: none;
+                width: 100%;
             }
 
             .course-image img {
@@ -39,7 +57,8 @@
                 padding: 30px;
                 background: white;
                 border-radius: 15px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                box-shadow: none;
+                width: 100%;
             }
 
             .course-title {
@@ -112,7 +131,7 @@
 
             .btn-purchase:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+                box-shadow: none;
                 color: white;
             }
 
@@ -129,7 +148,7 @@
 
             .btn-cart:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+                box-shadow: none;
                 color: white;
             }
 
@@ -163,13 +182,14 @@
                 background: white;
                 border-radius: 10px;
                 margin-bottom: 15px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                box-shadow: none;
                 transition: all 0.3s ease;
+                width: 100%;
             }
 
             .lesson-item:hover {
                 transform: translateX(5px);
-                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                box-shadow: none;
             }
 
             .lesson-number {
@@ -200,7 +220,8 @@
                 border-radius: 15px;
                 padding: 25px;
                 margin-bottom: 20px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+                box-shadow: none;
+                width: 100%;
             }
 
             .review-header {
@@ -254,7 +275,7 @@
                 background: white;
                 border: 1px solid #e1e8ed;
                 border-radius: 10px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                box-shadow: none;
                 padding: 10px 0;
                 min-width: 120px;
                 visibility: hidden;
@@ -312,7 +333,8 @@
                 background: white;
                 border-radius: 15px;
                 padding: 25px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+                box-shadow: none;
+                width: 100%;
             }
 
             .review-form {
@@ -351,7 +373,7 @@
 
             .btn-send-review:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+                box-shadow: none;
             }
 
             /* Modal styles */
@@ -373,7 +395,7 @@
                 border-radius: 15px;
                 width: 90%;
                 max-width: 500px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                box-shadow: none;
             }
 
             .modal-header {
@@ -594,49 +616,37 @@
         </div>
         <!-- Preloader Start -->
 
-        <header>
-            <!-- Header Start -->
-            <div class="header-area header-transparent">
-                <div class="main-header ">
-                    <div class="header-bottom  header-sticky">
-                        <div class="container-fluid">
-                            <div class="row align-items-center">
-                                <!-- Logo -->
-                                <div class="col-xl-2 col-lg-2">
-                                    <div class="logo">
-                                        <a href="index.jsp"><img src="assets/img/logo/logo.png" alt=""></a>
-                                    </div>
-                                </div>
-                                <div class="col-xl-10 col-lg-10">
-                                    <div class="menu-wrapper d-flex align-items-center justify-content-end">
-                                        <!-- Main-menu -->
-                                        <div class="main-menu d-none d-lg-block">
-                                            <nav>
-                                                <ul id="navigation">                                                                                          
-                                                    <li class="active" ><a href="home">Home</a></li>
-                                                    <li><a href="courses">Courses</a></li>
-                                                    <li><a href="purchased-courses">Purchased courses</a></li>
-                                                    <li><a href="blog">Blog</a></li>
-                                                    <li><a href="cart">Cart</a></li>
-                                                    <li><a href="customer-list-order">My Order</a></li>
-                                                    <li><a href="profile" class="btn">Profile</a></li>
-                                                    <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
-                                                </ul>
-                                            </nav>
-                                        </div>
-                                    </div>
-                                </div> 
-                                <!-- Mobile Menu -->
-                                <div class="col-12">
-                                    <div class="mobile_menu d-block d-lg-none"></div>
+        <div class="combined-header">
+            <div class="header-top">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-xl-2 col-lg-2 col-md-2">
+                            <div class="logo">
+                                <a href="home"><img src="assets/img/logo/logo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10">
+                            <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                                <div class="main-menu d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">                                                                                          
+                                            <li class="active"><a href="home">Home</a></li>
+                                            <li><a href="courses">Courses</a></li>
+                                            <li><a href="purchased-courses">Purchased courses</a></li>
+                                            <li><a href="blog">Blog</a></li>
+                                            <li><a href="cart">Cart</a></li>
+                                            <li><a href="customer-list-order">My Order</a></li>
+                                            <li><a href="profile" class="btn">Profile</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Header End -->
-        </header>
+        </div>
 
         <main>
             <!-- Course Detail Section -->
@@ -684,15 +694,14 @@
                                             <a href="customer-view-lesson?courseId=${course.course_id}" class="btn-purchase" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">Start Learning</a>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="checkout?courseId=${course.course_id}" class="btn-purchase">Purchase now</a>
                                             <c:choose>
                                                 <c:when test="${isCourseInCart}">
-                                                    <button class="btn-cart in-cart" disabled>In Cart</button>
+                                                    <button class="btn-purchase in-cart" disabled>In Cart</button>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <form action="add-to-cart" method="POST" style="display: inline;">
                                                         <input type="hidden" name="courseId" value="${course.course_id}">
-                                                        <button type="submit" class="btn-cart">Add to cart</button>
+                                                        <button type="submit" class="btn-purchase">Purchase now</button>
                                                     </form>
                                                 </c:otherwise>
                                             </c:choose>

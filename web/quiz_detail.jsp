@@ -1,10 +1,11 @@
-<%--
+<%-- 
     Document : quiz_detail
     Created on : Aug 19, 2025, 12:53:15 AM
     Author : Admin
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
     <title>Quiz Detail</title>
@@ -37,13 +38,13 @@
         </tr>
         <tr>
             <th>Created At</th>
-            <td>${quiz.createdAt}</td>
+            <td><fmt:formatDate value="${quiz.createdAt}" pattern="yyyy-MM-dd"/></td>
         </tr>
         <tr>
             <th>Updated At</th>
-            <td>${quiz.updatedAt}</td>
+            <td><fmt:formatDate value="${quiz.updatedAt}" pattern="yyyy-MM-dd"/></td>
         </tr>
     </table>
-    <a href="manageQuizSeller?lessonId=${lessonId}" class="btn btn-secondary">Back</a>
+    <a href="manageQuizInstructor?lessonId=${lessonId}&courseId=${courseId}" class="btn btn-secondary">Back</a>
 </body>
 </html>
