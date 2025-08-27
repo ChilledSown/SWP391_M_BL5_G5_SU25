@@ -442,7 +442,6 @@ prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
                       <li><a href="purchased-courses">Purchased courses</a></li>
                       <li><a href="blog">Blog</a></li>
                       <li><a href="cart">Cart</a></li>
-                      <li><a href="customer-list-order">My Order</a></li>
                       <li><a href="profile" class="btn">Profile</a></li>
                       <li>
                         <a

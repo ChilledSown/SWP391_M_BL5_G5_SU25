@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "OverviewAdminServlet", urlPatterns = {"/overviewadmin"})
@@ -20,17 +19,17 @@ public class OverviewAdminServlet extends HttpServlet {
 
         // Fetch statistics
         int totalUsers = dao.getTotalUsers();
-        int totalCourses = dao.getTotalCourses();
-        List<Map<String, Object>> courseEnrollments = dao.getCourseEnrollmentCounts();
+        int totalAdmins = dao.getTotalAdmins();
+        int totalSellers = dao.getTotalSellers();
+        int totalCustomers = dao.getTotalCustomers();
         Map<String, Integer> userGrowthData = dao.getUserGrowthData();
-        Map<String, Integer> enrollmentGrowthData = dao.getEnrollmentGrowthData();
 
         // Set attributes for JSP
         request.setAttribute("totalUsers", totalUsers);
-        request.setAttribute("totalCourses", totalCourses);
-        request.setAttribute("courseEnrollments", courseEnrollments);
+        request.setAttribute("totalAdmins", totalAdmins);
+        request.setAttribute("totalSellers", totalSellers);
+        request.setAttribute("totalCustomers", totalCustomers);
         request.setAttribute("userGrowthData", userGrowthData);
-        request.setAttribute("enrollmentGrowthData", enrollmentGrowthData);
 
         request.getRequestDispatcher("overviewadmin.jsp").forward(request, response);
     }
