@@ -98,8 +98,7 @@ public class CustomerListQuizServlet extends HttpServlet {
             int totalQuestions = allQuizzes.size();
             int correctAnswers = 0;
             int answeredQuestions = 0;
-            
-            // Map để lưu kết quả chi tiết của từng câu hỏi
+            //Map to store detailed result of every question
             Map<Long, QuizResult> quizResults = new HashMap<>();
             
             for (Quiz quiz : allQuizzes) {
@@ -115,8 +114,6 @@ public class CustomerListQuizServlet extends HttpServlet {
                         correctAnswers++;
                     }
                 }
-                
-                // Lưu kết quả chi tiết
                 QuizResult result = new QuizResult();
                 result.setQuizId(quiz.getQuizId());
                 result.setUserAnswer(userAnswer);
@@ -128,17 +125,15 @@ public class CustomerListQuizServlet extends HttpServlet {
                 quizResults.put(quiz.getQuizId(), result);
             }
             
-            // Tính điểm
+            // Calculate score
             double score = totalQuestions > 0 ? (double) correctAnswers / totalQuestions * 100 : 0;
             double answeredPercentage = totalQuestions > 0 ? (double) answeredQuestions / totalQuestions * 100 : 0;
             
-            // Xác định trạng thái đạt/không đạt
-            boolean isPassed = score >= 100; // Yêu cầu 100% để pass
+            // Determine pass/not pass status
+            boolean isPassed = score >= 100; // Need 100% to pass
             String grade = getGrade(score);
             
             int totalCourseQuizzes = allQuizzes.size();
-            
-            // Lấy thông tin course và lesson để hiển thị
             CourseDAO courseDAO = new CourseDAO();
             LessonDAO lessonDAO = new LessonDAO();
             Course course = courseDAO.getCourseById(courseId);
@@ -149,7 +144,7 @@ public class CustomerListQuizServlet extends HttpServlet {
             request.setAttribute("totalQuestions", totalQuestions);
             request.setAttribute("correctAnswers", correctAnswers);
             request.setAttribute("answeredQuestions", answeredQuestions);
-            request.setAttribute("score", Math.round(score * 100.0) / 100.0); // Làm tròn 2 chữ số thập phân
+            request.setAttribute("score", Math.round(score * 100.0) / 100.0); 
             request.setAttribute("answeredPercentage", Math.round(answeredPercentage * 100.0) / 100.0);
             request.setAttribute("isPassed", isPassed);
             request.setAttribute("grade", grade);
