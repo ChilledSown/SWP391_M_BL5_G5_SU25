@@ -7,8 +7,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Create Video Quiz | Seller Dashboard</title>
-    <meta name="description" content="Seller dashboard for creating video quizzes">
+    <title>Edit Video Quiz | Seller Dashboard</title>
+    <meta name="description" content="Seller dashboard for editing video quizzes">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets/img/favicon.ico">
@@ -73,6 +73,8 @@
             background-color: #f8f9fa;
             border-radius: 6px 0 0 6px;
             font-weight: 500;
+            width: 50px;
+            justify-content: center;
         }
         .btn-primary {
             background-color: #007bff;
@@ -131,6 +133,21 @@
             font-size: 0.9rem;
             color: #6c757d;
             margin-top: 5px;
+        }
+        .answer-option-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .answer-option-group .form-control {
+            padding-left: 60px;
+        }
+        .answer-option-group .input-group-text {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 48px;
+            line-height: 48px;
+            z-index: 3;
         }
         @media (max-width: 991px) {
             .sidebar {
@@ -200,103 +217,128 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
-                            <h2>Create New Video Quiz</h2>
-                            <p>Fill in the details to create a new video quiz.</p>
+                            <h2>Edit Video Quiz</h2>
+                            <p>Update the details of the video quiz. Enter at least two answer options and select the correct answer.</p>
                             <c:if test="${not empty message}">
                                 <div class="alert alert-success">${fn:escapeXml(message)}</div>
                             </c:if>
                             <c:if test="${not empty error}">
                                 <div class="alert alert-danger">${fn:escapeXml(error)}</div>
                             </c:if>
-                            <form action="instructorvideoquiz?action=create" method="post" id="createForm">
-                                <input type="hidden" name="answerOptions" id="answerOptions">
-                                <input type="hidden" name="correctAnswer" id="correctAnswer">
-                                <div class="row">
-                                    <div class="col-md-6 form-group">
-                                        <label for="lessonId" class="mb-2">Lesson</label>
-                                        <select name="lessonId" id="lessonId" class="form-control" required>
-                                            <option value="" disabled ${empty submittedLessonId ? 'selected' : ''}>Select Lesson</option>
-                                            <c:forEach var="lesson" items="${lessons}">
-                                                <option value="${lesson.lessonId}" ${lesson.lessonId == submittedLessonId ? 'selected' : ''}>
-                                                    ${fn:escapeXml(lesson.title)}
-                                                </option>
-                                            </c:forEach>
-                                        </select>
-                                        <div class="error-message" id="lessonIdError"></div>
-                                    </div>
-                                    <div class="col-md-6 form-group">
-                                        <label for="timestamp" class="mb-2">Timestamp (seconds)</label>
-                                        <input type="number" class="form-control" name="timestamp" id="timestamp" min="0" step="1" value="${submittedTimestamp}" required placeholder="Enter timestamp in seconds">
-                                        <div class="error-message" id="timestampError"></div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <label for="question" class="mb-2">Question</label>
-                                        <input type="text" class="form-control" name="question" id="question" value="${fn:escapeXml(submittedQuestion)}" required placeholder="Enter the quiz question" maxlength="500">
-                                        <div class="error-message" id="questionError"></div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <label class="mb-2">Answer Options (at least two required)</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text">A</span>
-                                            <input type="text" class="form-control" name="answerOptionA" id="answerOptionA" value="${fn:escapeXml(submittedAnswerOptionA)}" placeholder="Enter option A" maxlength="250">
+                            <c:choose>
+                                <c:when test="${not empty videoQuiz}">
+                                    <c:set var="options" value="${fn:split(videoQuiz.answerOptions, ';')}" />
+                                    <c:set var="optionA" value="${fn:length(options) > 0 ? fn:trim(fn:substringAfter(options[0], 'A.')) : ''}" />
+                                    <c:set var="optionB" value="${fn:length(options) > 1 ? fn:trim(fn:substringAfter(options[1], 'B.')) : ''}" />
+                                    <c:set var="optionC" value="${fn:length(options) > 2 ? fn:trim(fn:substringAfter(options[2], 'C.')) : ''}" />
+                                    <c:set var="optionD" value="${fn:length(options) > 3 ? fn:trim(fn:substringAfter(options[3], 'D.')) : ''}" />
+                                    <c:set var="correctOptions" value="${fn:split(videoQuiz.correctAnswer, ';')}" />
+                                    <c:set var="correctLetters" value=""/>
+                                    <c:forEach var="corr" items="${correctOptions}">
+                                        <c:set var="letter" value="${fn:trim(fn:substringBefore(corr, '.'))}" />
+                                        <c:set var="correctLetters" value="${correctLetters} ${letter}" />
+                                    </c:forEach>
+                                    <form action="instructorvideoquiz?action=edit" method="post" id="editForm">
+                                        <input type="hidden" name="videoQuizId" id="videoQuizId" value="${fn:escapeXml(videoQuiz.videoQuizId)}">
+                                        <input type="hidden" name="answerOptions" id="answerOptions">
+                                        <input type="hidden" name="correctAnswer" id="correctAnswer">
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label for="lessonId" class="mb-2">Lesson</label>
+                                                <select name="lessonId" id="lessonId" class="form-control" required>
+                                                    <option value="" disabled>Select Lesson</option>
+                                                    <c:forEach var="lesson" items="${lessons}">
+                                                        <option value="${lesson.lessonId}" ${lesson.lessonId == (submittedLessonId != null ? submittedLessonId : videoQuiz.lessonId) ? 'selected' : ''}>
+                                                            ${fn:escapeXml(lesson.title)}
+                                                        </option>
+                                                    </c:forEach>
+                                                </select>
+                                                <div class="error-message" id="lessonIdError"></div>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="timestamp" class="mb-2">Timestamp (seconds)</label>
+                                                <input type="number" class="form-control" name="timestamp" id="timestamp" min="0" step="1" value="${submittedTimestamp != null ? submittedTimestamp : videoQuiz.timestamp}" required placeholder="Enter timestamp in seconds">
+                                                <div class="error-message" id="timestampError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label for="question" class="mb-2">Question</label>
+                                                <input type="text" class="form-control" name="question" id="question" value="${fn:escapeXml(submittedQuestion != null ? submittedQuestion : videoQuiz.question)}" required placeholder="Enter the quiz question" maxlength="500">
+                                                <div class="error-message" id="questionError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label class="mb-2">Answer Options (at least two required)</label>
+                                                <div class="answer-option-group">
+                                                    <span class="input-group-text">A</span>
+                                                    <input type="text" class="form-control answer-option" name="answerOptionA" id="answerOptionA" value="${fn:escapeXml(optionA)}" placeholder="Enter option A" maxlength="250">
+                                                    <div class="error-message" id="answerOptionAError"></div>
+                                                </div>
+                                                <div class="answer-option-group">
+                                                    <span class="input-group-text">B</span>
+                                                    <input type="text" class="form-control answer-option" name="answerOptionB" id="answerOptionB" value="${fn:escapeXml(optionB)}" placeholder="Enter option B" maxlength="250">
+                                                    <div class="error-message" id="answerOptionBError"></div>
+                                                </div>
+                                                <div class="answer-option-group">
+                                                    <span class="input-group-text">C</span>
+                                                    <input type="text" class="form-control answer-option" name="answerOptionC" id="answerOptionC" value="${fn:escapeXml(optionC)}" placeholder="Enter option C" maxlength="250">
+                                                    <div class="error-message" id="answerOptionCError"></div>
+                                                </div>
+                                                <div class="answer-option-group">
+                                                    <span class="input-group-text">D</span>
+                                                    <input type="text" class="form-control answer-option" name="answerOptionD" id="answerOptionD" value="${fn:escapeXml(optionD)}" placeholder="Enter option D" maxlength="250">
+                                                    <div class="error-message" id="answerOptionDError"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label class="mb-2">Correct Answers (select at least one)</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctA" name="correctLetters[]" value="A" ${fn:contains(correctLetters, 'A') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctA">A</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctB" name="correctLetters[]" value="B" ${fn:contains(correctLetters, 'B') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctB">B</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctC" name="correctLetters[]" value="C" ${fn:contains(correctLetters, 'C') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctC">C</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input correct-checkbox" id="correctD" name="correctLetters[]" value="D" ${fn:contains(correctLetters, 'D') ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="correctD">D</label>
+                                                </div>
+                                                <div class="form-text">Select the letters corresponding to the correct answers (e.g., A for Option A).</div>
+                                                <div class="error-message" id="correctLettersError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <label for="explanation" class="mb-2">Explanation (optional)</label>
+                                                <textarea class="form-control" name="explanation" id="explanation" rows="3" placeholder="Enter explanation" maxlength="1000">${fn:escapeXml(submittedExplanation != null ? submittedExplanation : videoQuiz.explanation)}</textarea>
+                                                <div class="error-message" id="explanationError"></div>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <button type="submit" class="btn-primary">Update Quiz</button>
+                                                <a href="instructorvideoquiz" class="btn-back" title="Back to List">
+                                                    <i class="fas fa-arrow-left"></i> Back
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="error-message" id="answerOptionAError"></div>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text">B</span>
-                                            <input type="text" class="form-control" name="answerOptionB" id="answerOptionB" value="${fn:escapeXml(submittedAnswerOptionB)}" placeholder="Enter option B" maxlength="250">
-                                        </div>
-                                        <div class="error-message" id="answerOptionBError"></div>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text">C</span>
-                                            <input type="text" class="form-control" name="answerOptionC" id="answerOptionC" value="${fn:escapeXml(submittedAnswerOptionC)}" placeholder="Enter option C" maxlength="250">
-                                        </div>
-                                        <div class="error-message" id="answerOptionCError"></div>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text">D</span>
-                                            <input type="text" class="form-control" name="answerOptionD" id="answerOptionD" value="${fn:escapeXml(submittedAnswerOptionD)}" placeholder="Enter option D" maxlength="250">
-                                        </div>
-                                        <div class="error-message" id="answerOptionDError"></div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <label for="correctAnswerLetter" class="mb-2">Correct Answer</label>
-                                        <select name="correctAnswerLetter" id="correctAnswerLetter" class="form-control" required>
-                                            <option value="" disabled ${empty submittedCorrectAnswer ? 'selected' : ''}>Select correct answer</option>
-                                            <option value="A" ${submittedCorrectAnswer == 'A' ? 'selected' : ''}>A</option>
-                                            <option value="B" ${submittedCorrectAnswer == 'B' ? 'selected' : ''}>B</option>
-                                            <option value="C" ${submittedCorrectAnswer == 'C' ? 'selected' : ''}>C</option>
-                                            <option value="D" ${submittedCorrectAnswer == 'D' ? 'selected' : ''}>D</option>
-                                        </select>
-                                        <div class="form-text">Select the letter corresponding to the correct answer (e.g., A for Option A).</div>
-                                        <div class="error-message" id="correctAnswerLetterError"></div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <label for="explanation" class="mb-2">Explanation (optional)</label>
-                                        <textarea class="form-control" name="explanation" id="explanation" rows="3" placeholder="Enter explanation" maxlength="1000">${fn:escapeXml(submittedExplanation)}</textarea>
-                                        <div class="error-message" id="explanationError"></div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" name="isActive" id="isActive" ${submittedIsActive == 'true' ? 'checked' : ''}>
-                                            <label class="form-check-label" for="isActive">Is Active</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 form-group">
-                                        <button type="submit" class="btn-primary">Create Quiz</button>
-                                        <a href="instructorvideoquiz" class="btn-back" title="Back to List">
-                                            <i class="fas fa-arrow-left"></i> Back
-                                        </a>
-                                    </div>
-                                </div>
-                            </form>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <p>No quiz details available to edit.</p>
+                                    <a href="instructorvideoquiz" class="btn-back" title="Back to List">
+                                        <i class="fas fa-arrow-left"></i> Back
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
@@ -392,7 +434,6 @@
             <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
             <script>
                 $(document).ready(function() {
-                    // Redirect on success message
                     const message = $('.alert-success').text();
                     if (message && message.trim() !== '') {
                         setTimeout(function() {
@@ -400,66 +441,95 @@
                         }, 2000);
                     }
 
-                    // Ensure all correct answer options are enabled
-                    function updateCorrectAnswerOptions() {
-                        // Always enable A, B, C, and D
-                        $('#correctAnswerLetter option[value="A"]').prop('disabled', false);
-                        $('#correctAnswerLetter option[value="B"]').prop('disabled', false);
-                        $('#correctAnswerLetter option[value="C"]').prop('disabled', false);
-                        $('#correctAnswerLetter option[value="D"]').prop('disabled', false);
+                    function updateCorrectOptions() {
+                        const optionA = $('#answerOptionA').val().trim();
+                        const optionB = $('#answerOptionB').val().trim();
+                        const optionC = $('#answerOptionC').val().trim();
+                        const optionD = $('#answerOptionD').val().trim();
+
+                        $('#correctA').prop('disabled', !optionA);
+                        if (!optionA) $('#correctA').prop('checked', false);
+                        $('#correctB').prop('disabled', !optionB);
+                        if (!optionB) $('#correctB').prop('checked', false);
+                        $('#correctC').prop('disabled', !optionC);
+                        if (!optionC) $('#correctC').prop('checked', false);
+                        $('#correctD').prop('disabled', !optionD);
+                        if (!optionD) $('#correctD').prop('checked', false);
                     }
 
-                    // Update options on input change
-                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectAnswerOptions);
-                    updateCorrectAnswerOptions(); // Initial check
+                    $('#answerOptionA, #answerOptionB, #answerOptionC, #answerOptionD').on('input', updateCorrectOptions);
+                    updateCorrectOptions(); 
 
-                    $('#createForm').validate({
+                    $('#editForm').validate({
                         rules: {
                             lessonId: { required: true },
-                            timestamp: { required: true, number: true, min: 0 },
+                            timestamp: { 
+                                required: true, 
+                                number: true, 
+                                min: 0,
+                                remote: {
+                                    url: "instructorvideoquiz?action=checkTimestamp",
+                                    type: "GET",
+                                    data: {
+                                        lessonId: function() {
+                                            return $('#lessonId').val();
+                                        },
+                                        timestamp: function() {
+                                            return $('#timestamp').val();
+                                        },
+                                        videoQuizId: function() {
+                                            return $('#videoQuizId').val();
+                                        }
+                                    }
+                                }
+                            },
                             question: { required: true, maxlength: 500 },
                             answerOptionA: { required: true, maxlength: 250 },
                             answerOptionB: { required: true, maxlength: 250 },
                             answerOptionC: { maxlength: 250 },
                             answerOptionD: { maxlength: 250 },
-                            correctAnswerLetter: { 
+                            "correctLetters[]": { 
                                 required: true,
-                                validCorrectAnswerLetter: true
+                                validCorrectLetters: true
                             },
-                            explanation: { maxlength: 1000 },
-                            isActive: { required: false }
+                            explanation: { maxlength: 1000 }
                         },
                         messages: {
                             lessonId: { required: "Please select a lesson." },
                             timestamp: {
                                 required: "Timestamp is required.",
                                 number: "Timestamp must be a number.",
-                                min: "Timestamp must be non-negative."
+                                min: "Timestamp must be non-negative.",
+                                remote: "This timestamp already exists for the selected lesson."
                             },
                             question: {
                                 required: "Question is required.",
                                 maxlength: "Question cannot exceed 500 characters."
                             },
-                            answerOptionA: {
+                            answerOptionA: { 
                                 required: "Option A is required.",
                                 maxlength: "Option A cannot exceed 250 characters."
                             },
-                            answerOptionB: {
+                            answerOptionB: { 
                                 required: "Option B is required.",
                                 maxlength: "Option B cannot exceed 250 characters."
                             },
                             answerOptionC: { maxlength: "Option C cannot exceed 250 characters." },
                             answerOptionD: { maxlength: "Option D cannot exceed 250 characters." },
-                            correctAnswerLetter: {
-                                required: "Correct answer is required.",
-                                validCorrectAnswerLetter: "Please select a valid correct answer corresponding to a non-empty option."
+                            "correctLetters[]": {
+                                required: "At least one correct answer is required.",
+                                validCorrectLetters: "Please select valid correct answers corresponding to non-empty options."
                             },
                             explanation: { maxlength: "Explanation cannot exceed 1000 characters." }
                         },
                         errorElement: 'div',
                         errorClass: 'error-message show',
                         errorPlacement: function(error, element) {
-                            error.insertAfter(element);
+                            if (element.attr("name") == "correctLetters[]") {
+                                error.insertAfter("#correctLettersError");
+                            } else {
+                                error.insertAfter(element.closest('.answer-option-group'));
+                            }
                         },
                         highlight: function(element) {
                             $(element).addClass('is-invalid').removeClass('is-valid');
@@ -470,54 +540,69 @@
                             $(element).nextAll('.error-message').removeClass('show').empty();
                         },
                         submitHandler: function(form) {
-                            // Construct answerOptions
-                            var optionA = $('#answerOptionA').val().trim();
-                            var optionB = $('#answerOptionB').val().trim();
-                            var optionC = $('#answerOptionC').val().trim();
-                            var optionD = $('#answerOptionD').val().trim();
-                            var answerOptions = ['A. ' + optionA, 'B. ' + optionB];
-                            if (optionC) answerOptions.push('C. ' + optionC);
-                            if (optionD) answerOptions.push('D. ' + optionD);
-                            $('#answerOptions').val(answerOptions.join(' ; '));
+                            const optionA = $('#answerOptionA').val().trim();
+                            const optionB = $('#answerOptionB').val().trim();
+                            const optionC = $('#answerOptionC').val().trim();
+                            const optionD = $('#answerOptionD').val().trim();
+                            const answerOptionsArray = [];
+                            if (optionA) answerOptionsArray.push('A. ' + optionA);
+                            if (optionB) answerOptionsArray.push('B. ' + optionB);
+                            if (optionC) answerOptionsArray.push('C. ' + optionC);
+                            if (optionD) answerOptionsArray.push('D. ' + optionD);
+                            const answerOptions = answerOptionsArray.join(';');
 
-                            // Construct full correctAnswer
-                            var correctLetter = $('#correctAnswerLetter').val();
-                            var correctAnswer = '';
-                            if (correctLetter === 'A') correctAnswer = 'A. ' + optionA;
-                            else if (correctLetter === 'B') correctAnswer = 'B. ' + optionB;
-                            else if (correctLetter === 'C') correctAnswer = 'C. ' + optionC;
-                            else if (correctLetter === 'D') correctAnswer = 'D. ' + optionD;
+                            const correctLetters = [];
+                            $('input[name="correctLetters[]"]:checked').each(function() {
+                                correctLetters.push($(this).val());
+                            });
+                            const correctAnswerArray = [];
+                            for (let i = 0; i < correctLetters.length; i++) {
+                                const letter = correctLetters[i];
+                                const opt = $('#answerOption' + letter).val().trim();
+                                if (opt) correctAnswerArray.push(letter + '. ' + opt);
+                            }
+                            const correctAnswer = correctAnswerArray.join(';');
+
+                            $('#answerOptions').val(answerOptions);
                             $('#correctAnswer').val(correctAnswer);
 
-                            // Submit form via AJAX
+                            if (answerOptionsArray.length < 2) {
+                                $('#answerOptionAError').text('At least two options are required.').addClass('show');
+                                return;
+                            }
+                            if (correctAnswerArray.length < 1) {
+                                $('#correctLettersError').text('At least one correct answer is required.').addClass('show');
+                                return;
+                            }
+
                             $.ajax({
                                 url: form.action,
                                 type: form.method,
                                 data: $(form).serialize(),
                                 success: function(response) {
                                     if (response.startsWith('success:')) {
-                                        $('#createForm').prepend(
+                                        $('#editForm').prepend(
                                             '<div class="alert alert-success">' + response.substring(8) + '</div>'
                                         );
                                         setTimeout(function() {
                                             window.location.href = 'instructorvideoquiz';
                                         }, 2000);
                                     } else if (response.startsWith('error:')) {
-                                        $('#createForm').prepend(
+                                        $('#editForm').prepend(
                                             '<div class="alert alert-danger">' + response.substring(6) + '</div>'
                                         );
                                     } else {
-                                        $('#createForm').prepend(
+                                        $('#editForm').prepend(
                                             '<div class="alert alert-danger">Unexpected server response. Please try again.</div>'
                                         );
                                     }
                                 },
                                 error: function(xhr) {
-                                    let errorMessage = 'Failed to create quiz. Please try again.';
+                                    let errorMessage = 'Failed to update quiz. Please try again.';
                                     if (xhr.responseText && xhr.responseText.startsWith('error:')) {
                                         errorMessage = xhr.responseText.substring(6);
                                     }
-                                    $('#createForm').prepend(
+                                    $('#editForm').prepend(
                                         '<div class="alert alert-danger">' + errorMessage + '</div>'
                                     );
                                 }
@@ -525,18 +610,17 @@
                         }
                     });
 
-                    // Custom validator for correctAnswerLetter
-                    $.validator.addMethod('validCorrectAnswerLetter', function(value, element) {
-                        var optionA = $('#answerOptionA').val().trim();
-                        var optionB = $('#answerOptionB').val().trim();
-                        var optionC = $('#answerOptionC').val().trim();
-                        var optionD = $('#answerOptionD').val().trim();
-                        if (value === 'A' && !optionA) return false;
-                        if (value === 'B' && !optionB) return false;
-                        if (value === 'C' && !optionC) return false;
-                        if (value === 'D' && !optionD) return false;
-                        return ['A', 'B', 'C', 'D'].includes(value);
-                    }, 'Please select a valid correct answer corresponding to a non-empty option.');
+                    $.validator.addMethod('validCorrectLetters', function(value, element) {
+                        var checked = $('input[name="correctLetters[]"]:checked');
+                        if (checked.length === 0) return false;
+                        var valid = true;
+                        checked.each(function() {
+                            var letter = $(this).val();
+                            var optVal = $('#answerOption' + letter).val().trim();
+                            if (!optVal) valid = false;
+                        });
+                        return valid;
+                    }, 'Please select valid correct answers corresponding to non-empty options.');
                 });
             </script>
         </body>

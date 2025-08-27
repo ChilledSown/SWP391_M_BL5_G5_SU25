@@ -360,7 +360,6 @@
                             <ul class="nav flex-column" id="sidebarNav">
                                 <li class="nav-item"><a href="DashBoard" class="nav-link">Overview</a></li>
                                 <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
-                                <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
                                 <li class="nav-item"><a href="listBlogsInstructor" class="nav-link active">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Order</a></li>
                                 <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
