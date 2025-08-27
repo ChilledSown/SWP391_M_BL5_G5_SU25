@@ -21,7 +21,7 @@
             min-height: 100vh;
         }
         .sidebar {
-            width: 250px;
+            width: 200px;
             background-color: #2c3e50;
             color: white;
             padding: 20px;
@@ -316,9 +316,9 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li data-section="overview">
-                        <a href="admin">Overview</a>
+                        <a href="overviewadmin">Overview</a>
                     </li>
-                    <li class="active" data-section="topics">
+                    <li data-section="courses" class="active">
                         <a href="admintopic">List Topic</a>
                     </li>
                     <li data-section="users">
@@ -335,7 +335,7 @@
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Welcome to Manage Topics</h1>
+                <h1>Welcome to Topics List</h1>
             </header>
             <c:if test="${not empty message}">
                 <div class="success-message">${message}</div>

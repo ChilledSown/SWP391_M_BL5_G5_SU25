@@ -25,7 +25,7 @@ public class ListCoursesInstructor extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         model.User currentUser = (model.User) session.getAttribute("user");
-        if (currentUser == null || !"seller".equals(currentUser.getRole())) {
+        if (currentUser == null || !"instructor".equals(currentUser.getRole())) {
             response.sendRedirect("login.jsp");
             return;
         }

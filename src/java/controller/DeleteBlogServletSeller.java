@@ -61,7 +61,7 @@ public class DeleteBlogServletSeller extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect("login.jsp");
             return;
         }
