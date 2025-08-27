@@ -18,6 +18,7 @@ public class BalanceDetailServletSeller extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         if (user == null || user.getUser_id() == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }

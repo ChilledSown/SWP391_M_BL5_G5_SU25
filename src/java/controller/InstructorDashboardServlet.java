@@ -25,6 +25,7 @@ public class InstructorDashboardServlet extends HttpServlet {
         HttpSession session = request.getSession();
         model.User user = (model.User) session.getAttribute("user");
         if (user == null || user.getUser_id() == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }

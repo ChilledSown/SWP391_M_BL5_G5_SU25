@@ -215,6 +215,7 @@
                     <div class="form-group">
                         <label for="price">Price ($)</label>
                         <input type="number" class="form-control" name="price"  value="<%= priceValue %>">
+
                         <% if (priceError != null) { %>
                         <div class="error-message"><%= priceError %></div>
                         <% } %>

@@ -43,11 +43,17 @@
                     <div class="col-md-4">
                         <input type="text" name="title" class="form-control" placeholder="Search by title..." value="${param.title}" />
                     </div>
+
                     From date
                     <div class="col-md-3">
                         <input type="date" name="startDate" class="form-control" placeholder="From date" value="${param.startDate}" />
                     </div>
                     To date
+
+                    <div class="col-md-3">
+                        <input type="date" name="startDate" class="form-control" placeholder="From date" value="${param.startDate}" />
+                    </div>
+
                     <div class="col-md-3">
                         <input type="date" name="endDate" class="form-control" placeholder="To date" value="${param.endDate}" />
                     </div>

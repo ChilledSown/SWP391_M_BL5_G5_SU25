@@ -15,6 +15,7 @@ import jakarta.servlet.http.Part;
 import model.Course; // Đảm bảo import lớp Course
 import model.User;
 
+
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024, // 1MB
     maxFileSize = 2 * 1024 * 1024, // 2MB
@@ -34,6 +35,7 @@ if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
     return;
 }
         request.setCharacterEncoding("UTF-8");
+
         // courseId từ hidden input
         String rawId = request.getParameter("courseId");
         long courseId;

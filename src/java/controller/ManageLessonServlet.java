@@ -25,12 +25,14 @@ public class ManageLessonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession();
 User user = (User) session.getAttribute("user");
 if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
     response.sendRedirect("login.jsp");
     return;
 }
+
         String courseIdParam = request.getParameter("courseId");
         // Check if courseId is missing or empty
         if (courseIdParam == null || courseIdParam.trim().isEmpty()) {

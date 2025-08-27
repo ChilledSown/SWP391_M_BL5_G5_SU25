@@ -9,9 +9,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import jakarta.servlet.http.HttpSession;
 import model.Lesson;
 import model.User;
+
 import model.VideoQuiz;
 
 @WebServlet(name = "InstructorVideoQuizServlet", urlPatterns = {"/instructorvideoquiz"})
@@ -22,6 +24,7 @@ public class InstructorVideoQuizServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         
         HttpSession session = request.getSession();
 User user = (User) session.getAttribute("user");
@@ -29,6 +32,7 @@ if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
     response.sendRedirect("login.jsp");
     return;
 }
+
         InstructorVideoDAO dao = new InstructorVideoDAO();
         try {
             List<Lesson> lessons = dao.getAllLessons();
