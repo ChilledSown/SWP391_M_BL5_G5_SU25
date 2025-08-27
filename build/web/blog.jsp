@@ -188,6 +188,21 @@
                         <div class="col-xl-10 col-lg-10">
                             <div class="menu-wrapper d-flex align-items-center justify-content-end">
                                 <div class="main-menu d-none d-lg-block">
+<<<<<<< HEAD
+                                <nav>
+                                    <ul id="navigation">                                                                                          
+                                        <li><a href="home">Home</a></li>
+                                        <li><a href="courses">Courses</a></li>
+                                        <li><a href="purchased-courses">Purchased courses</a></li>
+                                        <li><a href="blog">Blog</a></li>
+                                        <li class="active"><a href="cart">Cart</a></li>
+                                        <li><a href="profile" class="btn">Profile</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            </div>
+=======
                                     <nav>
                                         <ul id="navigation">
                                             <li><a href="home">Home</a></li>
@@ -201,6 +216,7 @@
                                     </nav>
                                 </div>
                             </div>
+>>>>>>> 85bac6c9f94c7d390a39154828f299c4f1dbf1d8
                         </div>
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>

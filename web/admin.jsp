@@ -290,7 +290,7 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li data-section="overview">
-                        <a href="overview">Overview</a>
+                        <a href="overviewadmin">Overview</a>
                     </li>
                     <li data-section="courses">
                         <a href="admintopic">List Topic</a>

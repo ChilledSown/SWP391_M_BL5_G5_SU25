@@ -21,7 +21,6 @@
             background: #f7f9fc;
         }
 
-        /* Header Styling */
         .combined-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             position: relative;
@@ -94,7 +93,6 @@
             max-height: 40px;
         }
 
-        /* Main Container - Full width */
         .main-container {
             width: 100%;
             max-width: none;
@@ -104,7 +102,6 @@
             min-height: calc(100vh - 80px);
         }
 
-        /* Quiz Header */
         .quiz-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -124,8 +121,6 @@
             font-size: 16px;
             opacity: 0.9;
         }
-
-        /* Score Section - Coursera Style */
         .score-section {
             background: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -319,7 +314,6 @@
             width: 100%;
         }
 
-        /* Answer Feedback */
         .answer-feedback {
             margin-top: 20px;
             display: none;
@@ -391,7 +385,6 @@
             width: 100%;
         }
 
-        /* Submit Button */
         .submit-section {
             padding: 20px 0;
             text-align: center;
@@ -423,7 +416,6 @@
             box-shadow: none;
         }
 
-        /* Congratulations Section */
         .congratulations-section {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
@@ -471,7 +463,6 @@
             text-decoration: none;
         }
 
-        /* Footer */
         .footer-wrappper {
             background: #2c3e50;
         }
@@ -531,7 +522,6 @@
                                         <li class="active"><a href="purchased-courses">Purchased courses</a></li>
                                         <li><a href="blog">Blog</a></li>
                                         <li><a href="cart">Cart</a></li>
-                                        <li><a href="customer-list-order">My Order</a></li>
                                         <li><a href="profile" class="btn">Profile</a></li>
                                         <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
                                     </ul>
@@ -580,9 +570,6 @@
             </div>
             
             <div class="score-actions">
-                <button class="btn btn-primary" onclick="tryAgain()">
-                    <i class="fas fa-redo"></i> Try Again
-                </button>
                 <a href="customer-course-detail?id=${course.course_id}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back to Course
                 </a>

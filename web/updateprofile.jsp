@@ -174,7 +174,30 @@
             } else {
                 if (backButton) backButton.style.display = 'none';
             }
+        
+
+            // Xử lý khi chọn file ảnh
+            const avatarInput = document.getElementById('avatar');
+            const avatarPreview = document.querySelector('.avatar-preview');
+
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    // Hiển thị ảnh preview ngay lập tức
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Nếu không phải file ảnh, giữ nguyên ảnh hiện tại
+                    avatarPreview.src = '${empty user.avataUrl ? "assets/img/blog/author.png" : user.avataUrl}';
+                    alert('Please select a valid image file.');
+                    avatarInput.value = ''; // Xóa file không hợp lệ
+                }
+            });
         });
+        //
 
         function goBack() {
             if (initialPage) {

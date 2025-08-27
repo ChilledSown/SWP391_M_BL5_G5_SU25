@@ -99,9 +99,9 @@
                     </div>
 
                     <div class="links">
-                        <a href="forgot_password.jsp" class="forget">Forget Password</a>
+                        <a href="forgot-password" class="forget">Forget Password</a>
                         <span>|</span>
-                        <a href="register.jsp" class="registration">Registration</a>
+                        <a href="register" class="registration">Registration</a>
                     </div>
 
                     <div style="color:white">${message}</div>
