@@ -20,14 +20,14 @@ public class OverviewAdminServlet extends HttpServlet {
         // Fetch statistics
         int totalUsers = dao.getTotalUsers();
         int totalAdmins = dao.getTotalAdmins();
-        int totalSellers = dao.getTotalSellers();
+        int totalInstructors = dao.getTotalInstructors();
         int totalCustomers = dao.getTotalCustomers();
         Map<String, Integer> userGrowthData = dao.getUserGrowthData();
 
         // Set attributes for JSP
         request.setAttribute("totalUsers", totalUsers);
         request.setAttribute("totalAdmins", totalAdmins);
-        request.setAttribute("totalSellers", totalSellers);
+        request.setAttribute("totalInstructors", totalInstructors);
         request.setAttribute("totalCustomers", totalCustomers);
         request.setAttribute("userGrowthData", userGrowthData);
 

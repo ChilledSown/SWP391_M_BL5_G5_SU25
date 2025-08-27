@@ -21,7 +21,7 @@
                 min-height: 100vh;
             }
             .sidebar {
-                width: 250px;
+                width: 200px;
                 background-color: #2c3e50;
                 color: white;
                 padding: 20px;
@@ -340,15 +340,17 @@
                             <a href="overviewadmin">Overview</a>
                         </li>
                         <li data-section="courses">
-                            <a href="admintopic">List Topic</a>
+                        <a href="admintopic">List Topic</a>
                         </li>
                         <li data-section="users">
                             <a href="manageuser">Manage Users</a>
                         </li>
-                        <li data-section="slider" class="active">
+                        <li class="active" data-section="slider">
                             <a href="manageslider">Manage Slider</a>
                         </li>
-                        <li data-section="settings"><a href="logout">Logout</a></li>
+                        <li data-section="settings">
+                            <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                        </li>
                     </ul>
                 </nav>
             </aside>

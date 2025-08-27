@@ -62,6 +62,29 @@
             font-size: 0.875rem;
             margin-top: 5px;
         }
+        #thumbPreviewWrap {
+            position: relative;
+            display: inline-block;
+            margin-top: 12px;
+        }
+        .remove-thumb {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 22px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .remove-thumb:hover {
+            background: rgba(255,0,0,0.8);
+        }
     </style>
 </head>
 <body>
@@ -126,8 +149,13 @@
                         <textarea class="form-control" id="topicDescription" name="description" rows="3" placeholder="(Optional) Short description"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="topicThumbnail">Thumbnail URL</label>
-                        <input type="url" class="form-control" id="topicThumbnail" name="thumbnail_url" placeholder="Paste image URL here">
+                        <label for="topicThumbnail">Thumbnail</label>
+                        <input type="file" class="form-control mb-2" id="topicThumbnail" name="thumbnail" accept="image/*">
+                        <div id="thumbPreviewWrap" style="display: none;">
+                            <button type="button" class="remove-thumb" id="btnRemoveThumb">&times;</button>
+                            <img id="thumbPreview" src="#" alt="Thumbnail preview" style="max-width: 100%; border: 1px solid #e9ecef; border-radius: 6px;">
+                        </div>
+                        <input type="hidden" name="thumbnail_url" id="thumbnail_url" value="">
                     </div>
                     <!-- Hidden inputs to maintain context for redirect -->
                     <input type="hidden" name="type" value="<%= type != null ? type : "" %>">
@@ -176,5 +204,31 @@
 </footer>
 <script src="./assets/js/main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const fileInput = document.getElementById('topicThumbnail');
+    const hiddenInput = document.getElementById('thumbnail_url');
+    const previewImg = document.getElementById('thumbPreview');
+    const previewWrap = document.getElementById('thumbPreviewWrap');
+    const removeBtn = document.getElementById('btnRemoveThumb');
+
+    fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewImg.src = e.target.result;
+            previewWrap.style.display = 'block';
+            hiddenInput.value = 'file'; // Indicate a new file is selected
+        };
+        reader.readAsDataURL(file);
+    });
+
+    removeBtn?.addEventListener('click', function () {
+        previewImg.src = '';
+        previewWrap.style.display = 'none';
+        fileInput.value = '';
+        hiddenInput.value = 'null'; // Indicate image is cleared
+    });
+</script>
 </body>
 </html>

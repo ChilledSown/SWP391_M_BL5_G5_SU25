@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import model.Course; // Đảm bảo import lớp Course
+import model.User;
+
 
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024, // 1MB
@@ -20,11 +23,18 @@ import jakarta.servlet.http.Part;
 )
 @WebServlet(name = "UpdateCourseServlet", urlPatterns = {"/updateCourse"})
 public class UpdateCourseServlet extends HttpServlet {
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+        
         HttpSession session = request.getSession();
+User user = (User) session.getAttribute("user");
+if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+    response.sendRedirect("login.jsp");
+    return;
+}
+        request.setCharacterEncoding("UTF-8");
 
         // courseId từ hidden input
         String rawId = request.getParameter("courseId");
@@ -41,15 +51,13 @@ public class UpdateCourseServlet extends HttpServlet {
             response.sendRedirect("blog_course_form.jsp?type=course&action=update");
             return;
         }
-
         // Lấy thông tin form
         String title = request.getParameter("title");
         String description = request.getParameter("description");
         String priceStr = request.getParameter("price");
         String topicIdStr = request.getParameter("topic_id");
-        String thumbnailUrl = request.getParameter("thumbnail_url");
+        String thumbnailUrlParam = request.getParameter("thumbnail_url"); // Giá trị từ hidden input
         Part filePart = request.getPart("thumbnail");
-
         // Validate form fields
         boolean hasError = false;
         if (title == null || title.trim().isEmpty()) {
@@ -86,50 +94,48 @@ public class UpdateCourseServlet extends HttpServlet {
                 hasError = true;
             }
         }
-        if ((thumbnailUrl == null || thumbnailUrl.equals("null")) && (filePart == null || filePart.getSize() == 0)) {
-            session.setAttribute("thumbnailError", "Please provide a thumbnail URL or select an image file.");
-            hasError = true;
+        // Xử lý thumbnail
+        String thumbnailUrl = null;
+        CourseDAO dao = new CourseDAO();
+        Course existingCourse = dao.getCourseById(courseId);
+        if (existingCourse != null) {
+            thumbnailUrl = existingCourse.getThumbnail_url(); // Giá trị ảnh cũ làm mặc định
         }
-
+        if (filePart != null && filePart.getSize() > 0) {
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String contentType = filePart.getContentType();
+            long fileSize = filePart.getSize();
+            if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
+                session.setAttribute("thumbnailError", "Only JPG, PNG, or GIF files are allowed.");
+                hasError = true;
+            }
+            if (fileSize > 2 * 1024 * 1024) {
+                session.setAttribute("thumbnailError", "Image size exceeds the 2MB limit.");
+                hasError = true;
+            }
+            if (!hasError) {
+                String uploadPath = getServletContext().getRealPath("/") + "assets/img/uploads";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) uploadDir.mkdirs();
+                String savedFileName = System.currentTimeMillis() + "_" + fileName;
+                filePart.write(uploadPath + File.separator + savedFileName);
+                thumbnailUrl = "assets/img/uploads/" + savedFileName;
+            }
+        } else if ("null".equals(thumbnailUrlParam)) {
+            thumbnailUrl = null; // Xóa ảnh khi nhấn "X"
+        } // Nếu không upload và không nhấn "X", giữ ảnh cũ
         // If there are validation errors, redirect back to form
         if (hasError) {
             response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
             return;
         }
-
-        // Xử lý ảnh thumbnail
-        if (filePart != null && filePart.getSize() > 0) {
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String contentType = filePart.getContentType();
-            long fileSize = filePart.getSize();
-
-            // Validate ảnh
-            if (!(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/gif"))) {
-                session.setAttribute("thumbnailError", "Only JPG, PNG, or GIF files are allowed.");
-                response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
-                return;
-            }
-            if (fileSize > 2 * 1024 * 1024) {
-                session.setAttribute("thumbnailError", "Image size exceeds the 2MB limit.");
-                response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
-                return;
-            }
-
-            // Lưu file vào thư mục uploads
-            String uploadPath = getServletContext().getRealPath("/") + "assets/img/uploads";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-            String filePath = uploadPath + File.separator + fileName;
-            filePart.write(filePath);
-
-            // Gán lại đường dẫn mới
-            thumbnailUrl = "assets/img/uploads/" + fileName;
+        // Kiểm tra trùng lặp tiêu đề chỉ khi tiêu đề thay đổi
+        if (existingCourse != null && !title.equals(existingCourse.getTitle()) && dao.isTitleExistsExceptCurrent(title, courseId)) {
+            session.setAttribute("duplicateMessage", "Course title already exists. You may want to use a different title.");
+            response.sendRedirect("blog_course_form.jsp?type=course&action=update&courseId=" + courseId);
+            return;
         }
-
         // Cập nhật DB
-        CourseDAO dao = new CourseDAO();
         dao.updateCourse(courseId, title, description, Integer.parseInt(priceStr), thumbnailUrl, Long.parseLong(topicIdStr));
         response.sendRedirect("listCourses");
     }

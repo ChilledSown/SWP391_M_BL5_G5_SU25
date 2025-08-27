@@ -1,8 +1,8 @@
 package controller;
 
 import dal.LessonDAO;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -10,32 +10,43 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.util.Date;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Lesson;
-import java.sql.SQLException;
-
+import model.User;
 
 @WebServlet(name = "EditLessonServlet", urlPatterns = {"/editLesson"})
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024, // 1MB
-        maxFileSize = 100 * 1024 * 1024, // 100MB
-        maxRequestSize = 150 * 1024 * 1024 // 150MB
+    fileSizeThreshold = 1024 * 1024, // 1MB
+    maxFileSize = 100 * 1024 * 1024, // 100MB
+    maxRequestSize = 150 * 1024 * 1024 // 150MB
 )
 public class EditLessonServlet extends HttpServlet {
-
     private static final Logger LOGGER = Logger.getLogger(EditLessonServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.INFO, "Received GET request for editLesson with lessonId={0}, courseId={1}",
-                new Object[]{request.getParameter("lessonId"), request.getParameter("courseId")});
-
+        
+        HttpSession session = request.getSession();
+User user = (User) session.getAttribute("user");
+if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+    response.sendRedirect("login.jsp");
+    return;
+}
+        
+        LOGGER.log(Level.INFO, "Received GET request for editLesson with parameters: {0}",
+                request.getParameterMap());
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
+
+        // Log parameter values for debugging
+        LOGGER.log(Level.INFO, "Raw lessonIdStr: {0}, Raw courseIdStr: {1}", 
+                new Object[]{lessonIdStr, courseIdStr});
+
         if (lessonIdStr == null || lessonIdStr.isEmpty() || courseIdStr == null || courseIdStr.isEmpty()) {
             String error = "Lesson ID and Course ID are required.";
             LOGGER.log(Level.WARNING, error);
@@ -46,11 +57,14 @@ public class EditLessonServlet extends HttpServlet {
 
         Long lessonId, courseId;
         try {
-            lessonId = Long.parseLong(lessonIdStr);
-            courseId = Long.parseLong(courseIdStr);
+            lessonId = Long.parseLong(lessonIdStr.trim());
+            courseId = Long.parseLong(courseIdStr.trim());
+            LOGGER.log(Level.INFO, "Parsed lessonId: {0}, courseId: {1}", 
+                    new Object[]{lessonId, courseId});
         } catch (NumberFormatException e) {
-            String error = "Invalid lesson ID or course ID format: " + e.getMessage();
-            LOGGER.log(Level.WARNING, error);
+            String error = "Invalid lesson ID or course ID format: " + e.getMessage() +
+                           " (lessonIdStr: " + lessonIdStr + ", courseIdStr: " + courseIdStr + ")";
+            LOGGER.log(Level.SEVERE, error, e);
             request.setAttribute("errorMessage", error);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
@@ -65,6 +79,7 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
+
         if (!lesson.getCourseId().equals(courseId)) {
             String error = "Course ID does not match the lesson's course.";
             LOGGER.log(Level.WARNING, error);
@@ -72,6 +87,7 @@ public class EditLessonServlet extends HttpServlet {
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
+
         LOGGER.log(Level.INFO, "Successfully loaded lesson ID={0} for editing", lessonId);
         request.setAttribute("lesson", lesson);
         request.setAttribute("courseId", courseId);
@@ -81,16 +97,15 @@ public class EditLessonServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.INFO, "Received POST request for editLesson with lessonId={0}, courseId={1}",
-                new Object[]{request.getParameter("lessonId"), request.getParameter("courseId")});
-
+        LOGGER.log(Level.INFO, "Received POST request for editLesson with parameters: {0}",
+                request.getParameterMap());
         request.setCharacterEncoding("UTF-8");
         String lessonIdStr = request.getParameter("lessonId");
         String courseIdStr = request.getParameter("courseId");
         String title = request.getParameter("title");
-        String videoUrl = request.getParameter("videoUrl");
         String content = request.getParameter("content");
         Part videoFilePart = null;
+
         try {
             videoFilePart = request.getPart("videoFile");
         } catch (IOException | ServletException e) {
@@ -98,7 +113,6 @@ public class EditLessonServlet extends HttpServlet {
             LOGGER.log(Level.SEVERE, error, e);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -111,40 +125,17 @@ public class EditLessonServlet extends HttpServlet {
             LOGGER.log(Level.WARNING, error);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
+
         if (title == null || title.trim().isEmpty()) {
             String error = "Title is required.";
             LOGGER.log(Level.WARNING, error);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
-            request.setAttribute("content", content);
-            request.setAttribute("courseId", courseIdStr);
-            request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
-            return;
-        }
-        if ((videoUrl == null || videoUrl.trim().isEmpty()) && (videoFilePart == null || videoFilePart.getSize() == 0)) {
-            String error = "Either Video URL or Video File is required.";
-            LOGGER.log(Level.WARNING, error);
-            request.setAttribute("errorMessage", error);
-            request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
-            request.setAttribute("content", content);
-            request.setAttribute("courseId", courseIdStr);
-            request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
-            return;
-        }
-        if (videoUrl != null && !videoUrl.trim().isEmpty() && !videoUrl.matches("^(https?://).+")) {
-            String error = "Video URL must be a valid URL (e.g., start with http:// or https://).";
-            LOGGER.log(Level.WARNING, error);
-            request.setAttribute("errorMessage", error);
-            request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -153,14 +144,14 @@ public class EditLessonServlet extends HttpServlet {
 
         Long lessonId, courseId;
         try {
-            lessonId = Long.parseLong(lessonIdStr);
-            courseId = Long.parseLong(courseIdStr);
+            lessonId = Long.parseLong(lessonIdStr.trim());
+            courseId = Long.parseLong(courseIdStr.trim());
         } catch (NumberFormatException e) {
-            String error = "Invalid lesson ID or course ID format: " + e.getMessage();
-            LOGGER.log(Level.WARNING, error);
+            String error = "Invalid lesson ID or course ID format: " + e.getMessage() +
+                           " (lessonIdStr: " + lessonIdStr + ", courseIdStr: " + courseIdStr + ")";
+            LOGGER.log(Level.SEVERE, error, e);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -168,25 +159,23 @@ public class EditLessonServlet extends HttpServlet {
         }
 
         LessonDAO dao = new LessonDAO();
-        // Validate lesson existence and course ID match
         Lesson existingLesson = dao.getLessonById(lessonId);
         if (existingLesson == null) {
             String error = "Lesson not found for ID: " + lessonId;
             LOGGER.log(Level.WARNING, error);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
             return;
         }
+
         if (!existingLesson.getCourseId().equals(courseId)) {
             String error = "Course ID does not match the lesson's course.";
             LOGGER.log(Level.WARNING, error);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -199,7 +188,6 @@ public class EditLessonServlet extends HttpServlet {
             LOGGER.log(Level.WARNING, error);
             request.setAttribute("errorMessage", error);
             request.setAttribute("title", title);
-            request.setAttribute("videoUrl", videoUrl);
             request.setAttribute("content", content);
             request.setAttribute("courseId", courseIdStr);
             request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -207,12 +195,11 @@ public class EditLessonServlet extends HttpServlet {
         }
 
         // Handle video file upload
-        String finalVideoUrl = videoUrl != null ? videoUrl.trim() : "";
+        String finalVideoUrl = existingLesson.getVideoUrl(); // Default to existing video URL
         if (videoFilePart != null && videoFilePart.getSize() > 0) {
             String fileName = Paths.get(videoFilePart.getSubmittedFileName()).getFileName().toString();
             String contentType = videoFilePart.getContentType();
             long fileSize = videoFilePart.getSize();
-
             LOGGER.log(Level.INFO, "Processing video file upload: name={0}, size={1}, type={2}",
                     new Object[]{fileName, fileSize, contentType});
 
@@ -222,18 +209,17 @@ public class EditLessonServlet extends HttpServlet {
                 LOGGER.log(Level.WARNING, error);
                 request.setAttribute("errorMessage", error);
                 request.setAttribute("title", title);
-                request.setAttribute("videoUrl", videoUrl);
                 request.setAttribute("content", content);
                 request.setAttribute("courseId", courseIdStr);
                 request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
                 return;
             }
+
             if (fileSize > 100 * 1024 * 1024) {
                 String error = "Video file size exceeds 100MB limit.";
                 LOGGER.log(Level.WARNING, error);
                 request.setAttribute("errorMessage", error);
                 request.setAttribute("title", title);
-                request.setAttribute("videoUrl", videoUrl);
                 request.setAttribute("content", content);
                 request.setAttribute("courseId", courseIdStr);
                 request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -253,24 +239,24 @@ public class EditLessonServlet extends HttpServlet {
                     LOGGER.log(Level.SEVERE, error, e);
                     request.setAttribute("errorMessage", error);
                     request.setAttribute("title", title);
-                    request.setAttribute("videoUrl", videoUrl);
                     request.setAttribute("content", content);
                     request.setAttribute("courseId", courseIdStr);
                     request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
                     return;
                 }
             }
+
             if (!uploadDir.canWrite()) {
                 String error = "No write permission for upload directory: " + uploadPath;
                 LOGGER.log(Level.SEVERE, error);
                 request.setAttribute("errorMessage", error);
                 request.setAttribute("title", title);
-                request.setAttribute("videoUrl", videoUrl);
                 request.setAttribute("content", content);
                 request.setAttribute("courseId", courseIdStr);
                 request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
                 return;
             }
+
             String savedFileName = System.currentTimeMillis() + "_" + fileName;
             try {
                 videoFilePart.write(uploadPath + File.separator + savedFileName);
@@ -281,7 +267,6 @@ public class EditLessonServlet extends HttpServlet {
                 LOGGER.log(Level.SEVERE, error, e);
                 request.setAttribute("errorMessage", error);
                 request.setAttribute("title", title);
-                request.setAttribute("videoUrl", videoUrl);
                 request.setAttribute("content", content);
                 request.setAttribute("courseId", courseIdStr);
                 request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
@@ -300,19 +285,25 @@ public class EditLessonServlet extends HttpServlet {
 
         try {
             dao.updateLesson(lesson);
-        } catch (Exception ex) {
-            Logger.getLogger(EditLessonServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            String error = "Error updating lesson: " + e.getMessage();
+            LOGGER.log(Level.SEVERE, error, e);
+            request.setAttribute("errorMessage", error);
+            request.setAttribute("title", title);
+            request.setAttribute("content", content);
+            request.setAttribute("courseId", courseIdStr);
+            request.getRequestDispatcher("/lesson_form.jsp").forward(request, response);
+            return;
         }
+
         LOGGER.log(Level.INFO, "Successfully updated lesson ID={0}", lessonId);
-        // Trả về thành công
         response.setContentType("text/plain");
         response.getWriter().write("success");
         LOGGER.log(Level.INFO, "Sent success response for lesson ID={0}", lessonId);
-
     }
 
     @Override
     public String getServletInfo() {
-        return "Handles editing of lessons with server-side validation and video file upload";
+        return "Handles editing of lessons with server-side validation and video file upload, allowing retention of existing video URL when no new video is provided.";
     }
 }

@@ -65,6 +65,127 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+        
+        /* Search & Filter Styles */
+        .search-filter-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-filter-title {
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-filter-title i {
+            margin-right: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .filter-group {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: end;
+        }
+        
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-item.search-item {
+            flex: 2;
+            min-width: 250px;
+        }
+        
+        .filter-item.action-item {
+            flex: 0 0 auto;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .search-input {
+            position: relative;
+        }
+        
+        .search-input i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 5;
+        }
+        
+        .search-input .form-control {
+            padding-left: 40px;
+        }
+        
+        .btn-search {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+        
+        .btn-reset {
+            background: #6c757d;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .btn-reset:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+        }
+        
         .table {
             background: #ffffff;
             border-radius: 8px;
@@ -83,19 +204,6 @@
         }
         .table tbody tr:hover {
             background-color: #f1f3f5;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-control {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            padding: 10px;
-            transition: border-color 0.3s ease;
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
         }
         .btn-primary {
             background-color: #007bff;
@@ -166,6 +274,7 @@
         .footer-social a:hover {
             color: #007bff;
         }
+        
         @media (max-width: 991px) {
             .sidebar {
                 min-height: auto;
@@ -177,18 +286,25 @@
             .content {
                 padding: 20px;
             }
+            .filter-row {
+                flex-direction: column;
+            }
+            .filter-item, .filter-item.search-item {
+                flex: 1;
+                min-width: 100%;
+            }
         }
+        
         @media (max-width: 767px) {
-            .form-inline .form-group {
-                margin-bottom: 15px;
-                width: 100%;
+            .search-filter-section {
+                padding: 20px 15px;
             }
-            .form-control {
-                width: 100%;
+            .filter-group {
+                padding: 15px;
             }
-            .btn-primary {
+            .btn-search, .btn-reset {
                 width: 100%;
-                text-align: center;
+                margin: 5px 0;
             }
         }
     </style>
@@ -222,9 +338,9 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">
-                                                <li><a href="index.jsp">Home</a></li>
+                                               
                                                 <li><a href="DashBoardSeller.jsp">Dashboard</a></li>
-                                                <li><a href="logout.jsp">Logout</a></li>
+                                                <li><a href="logout">Logout</a></li>
                                             </ul>
                                         </nav>
                                     </div>
@@ -246,10 +362,13 @@
                     <!-- Sidebar -->
                     <div class="col-lg-3 col-md-4 sidebar">
                         <ul class="nav flex-column" id="sidebarNav">
-                            <li class="nav-item"><a href="instructor_Doashboard.jsp" class="nav-link">Overview</a></li>
+                            <li class="nav-item"><a href="DashBoard" class="nav-link">Overview</a></li>
                             <li class="nav-item"><a href="listCourses" class="nav-link active">Courses</a></li>
+                            <li class="nav-item"><a href="instructorvideoquiz" class="nav-link">Video Quiz</a></li>
                             <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
-                            <li class="nav-item"><a href="balance.jsp" class="nav-link">Balance</a></li>
+
+                            <li class="nav-item"><a href="balance" class="nav-link">Order</a></li>
+
                             <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
                         </ul>
                     </div>
@@ -257,6 +376,7 @@
                     <div class="col-lg-9 col-md-8 content">
                         <h2>Course Management</h2>
                         <p>Manage your courses here.</p>
+                        
                         <%
                             TopicDAO topicDAO = new TopicDAO();
                             List<Topic> topics = topicDAO.getAllTopics();
@@ -266,38 +386,69 @@
                             }
                             request.setAttribute("topicMap", topicMap);
                         %>
-                        <form action="listCourses" method="get" class="mb-4">
-                            <div class="row">
-                                <div class="col-md-4 col-sm-12 form-group">
-                                    <label for="title" class="mr-2">Search Courses</label>
-                                    <input type="text" class="form-control" name="title" id="title" value="${param.title}" placeholder="Enter course title">
-                                </div>
-                                <div class="col-md-4 col-sm-12 form-group">
-                                    <label for="startDate" class="mr-2">From Date:</label>
-                                    <input type="date" class="form-control" name="startDate" id="startDate" value="${param.startDate}">
-                                </div>
-                                <div class="col-md-4 col-sm-12 form-group">
-                                    <label for="endDate" class="mr-2">To Date:</label>
-                                    <input type="date" class="form-control" name="endDate" id="endDate" value="${param.endDate}">
-                                </div>
-                                <div class="col-md-4 col-sm-12 form-group">
-                                    <label for="topicId" class="mr-2">Topic:</label>
-                                    <select name="topicId" id="topicId" class="form-control">
-                                        <option value="">All Topics</option>
-                                        <% for (Topic t : topics) { %>
-                                            <option value="<%= t.getTopic_id() %>" <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : "" %>>
-                                                <%= t.getName() %>
-                                            </option>
-                                        <% } %>
-                                    </select>
-                                </div>
-                                <div class="col-12 form-group mt-3">
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                </div>
+                        
+                        <!-- Improved Search & Filter Section -->
+                        <div class="search-filter-section">
+                            <div class="search-filter-title">
+                                <i class="fas fa-search"></i>
+                                Search & Filter Courses
                             </div>
-                            <input type="hidden" name="page" value="1" />
-                        </form>
-                        <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary mb-3">Create New Course</a>
+                            <div class="filter-group">
+                                <form action="listCourses" method="get">
+                                    <div class="filter-row">
+                                        <div class="filter-item search-item">
+                                            <div class="filter-label">Search Course Title</div>
+                                            <div class="search-input">
+                                                <i class="fas fa-search"></i>
+                                                <input type="text" class="form-control" name="title" 
+                                                       value="${param.title}" placeholder="Enter course title...">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="filter-item">
+                                            <div class="filter-label">Topic</div>
+                                            <select name="topicId" class="form-select">
+                                                <option value="">All Topics</option>
+                                                <% for (Topic t : topics) { %>
+                                                    <option value="<%= t.getTopic_id() %>" 
+                                                            <%= (t.getTopic_id() + "").equals(request.getParameter("topicId")) ? "selected" : "" %>>
+                                                        <%= t.getName() %>
+                                                    </option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="filter-item">
+                                            <div class="filter-label">From Date</div>
+                                            <input type="date" class="form-control" name="startDate" value="${param.startDate}">
+                                        </div>
+                                        
+                                        <div class="filter-item">
+                                            <div class="filter-label">To Date</div>
+                                            <input type="date" class="form-control" name="endDate" value="${param.endDate}">
+                                        </div>
+                                        
+                                        <div class="filter-item action-item">
+                                            <div class="filter-label">&nbsp;</div>
+                                            <button type="submit" class="btn btn-search">
+                                                <i class="fas fa-search me-2"></i>Search
+                                            </button>
+                                            <button type="button" class="btn btn-reset" onclick="resetFilters()">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="page" value="1" />
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <a href="blog_course_form.jsp?type=course&action=create" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create New Course
+                            </a>
+                        </div>
+                        
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -456,5 +607,18 @@
     <script src="${pageContext.request.contextPath}/assets/js/jquery.ajaxchimp.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/js/plugins.js"></script>
     <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
+    
+    <script>
+        function resetFilters() {
+            // Reset form fields
+            document.querySelector('input[name="title"]').value = '';
+            document.querySelector('select[name="topicId"]').value = '';
+            document.querySelector('input[name="startDate"]').value = '';
+            document.querySelector('input[name="endDate"]').value = '';
+            
+            // Submit form to clear filters
+            document.querySelector('form').submit();
+        }
+    </script>
 </body>
 </html>

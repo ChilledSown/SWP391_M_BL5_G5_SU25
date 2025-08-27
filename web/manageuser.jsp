@@ -387,7 +387,7 @@
                             <select name="role" id="role" onchange="this.form.submit()">
                                 <option value="all" <c:if test="${selectedRole == 'all'}">selected</c:if>>all role</option>
                                 <option value="admin" <c:if test="${selectedRole == 'admin'}">selected</c:if>>admin</option>
-                                <option value="seller" <c:if test="${selectedRole == 'seller'}">selected</c:if>>seller</option>
+                                <option value="instructor" <c:if test="${selectedRole == 'instructor'}">selected</c:if>>instructor</option>
                                 <option value="customer" <c:if test="${selectedRole == 'customer'}">selected</c:if>>customer</option>
                                 </select>
                             </form>
