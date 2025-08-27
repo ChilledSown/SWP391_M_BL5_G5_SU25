@@ -64,7 +64,7 @@ public class ListBlogsServletInstructor extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         // Check if user is logged in and is a seller
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect("login.jsp");
             return;
         }

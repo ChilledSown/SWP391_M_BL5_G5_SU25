@@ -188,18 +188,18 @@
                         <div class="col-xl-10 col-lg-10">
                             <div class="menu-wrapper d-flex align-items-center justify-content-end">
                                 <div class="main-menu d-none d-lg-block">
-                                    <nav>
-                                        <ul id="navigation">
-                                            <li><a href="home">Home</a></li>
-                                            <li><a href="courses">Courses</a></li>
-                                            <li><a href="about.jsp">About</a></li>
-                                            <li class="active"><a href="blog">Blog</a></li>
-                                            <li><a href="contact.jsp">Contact</a></li>
-                                            <li class="button-header margin-left"><a href="profile" class="btn">Profile</a></li>
-                                            <li class="button-header"><a href="login" class="btn btn3">Logout</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                <nav>
+                                    <ul id="navigation">                                                                                          
+                                        <li><a href="home">Home</a></li>
+                                        <li><a href="courses">Courses</a></li>
+                                        <li><a href="purchased-courses">Purchased courses</a></li>
+                                        <li><a href="blog">Blog</a></li>
+                                        <li class="active"><a href="cart">Cart</a></li>
+                                        <li><a href="profile" class="btn">Profile</a></li>
+                                        <li><a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
                             </div>
                         </div>
                         <div class="col-12">

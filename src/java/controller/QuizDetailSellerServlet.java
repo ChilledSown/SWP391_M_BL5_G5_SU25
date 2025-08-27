@@ -7,13 +7,21 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Quiz;
+import model.User;
 
 @WebServlet(name = "QuizDetailSellerServlet", urlPatterns = {"/quizDetailSeller"})
 public class QuizDetailSellerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+User user = (User) session.getAttribute("user");
+if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
+    response.sendRedirect("login.jsp");
+    return;
+}
         try {
             long quizId = Long.parseLong(request.getParameter("quizId"));
             long lessonId = Long.parseLong(request.getParameter("lessonId"));

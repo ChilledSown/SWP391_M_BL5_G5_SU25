@@ -1,3 +1,4 @@
+
 package controller;
 
 import dal.BlogDAO;
@@ -15,23 +16,21 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-@WebServlet(name = "EditBlogServlet", urlPatterns = {"/editBlog"})
+@WebServlet(name = "EditBlogServletSeller", urlPatterns = {"/editBlog"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
         maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class EditBlogServletSeller extends HttpServlet {
-
     private static final String UPLOAD_DIR = "assets/img/uploads";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole())) {
+        if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect("login.jsp");
             return;
         }
-
         String blogId = request.getParameter("blogId");
         if (blogId != null && !blogId.isEmpty()) {
             try {
@@ -42,15 +41,15 @@ public class EditBlogServletSeller extends HttpServlet {
                     request.setAttribute("action", "update");
                     request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
                 } else {
-                    request.setAttribute("errorMessage", "Blog not found or you do not have permission to edit it.");
-                    request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
+                    session.setAttribute("errorMessage", "Blog not found or you do not have permission to edit it.");
+                    response.sendRedirect("listBlogsInstructor");
                 }
             } catch (NumberFormatException e) {
-                request.setAttribute("errorMessage", "Invalid blog ID.");
-                request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
+                session.setAttribute("errorMessage", "Invalid blog ID.");
+                response.sendRedirect("listBlogsInstructor");
             }
         } else {
-            response.sendRedirect("listBlogsSeller");
+            response.sendRedirect("listBlogsInstructor");
         }
     }
 
@@ -58,7 +57,7 @@ public class EditBlogServletSeller extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null || !"seller".equalsIgnoreCase(user.getRole()) || user.getUser_id() == null) {
+        if (user == null || !"instructor".equalsIgnoreCase(user.getRole()) || user.getUser_id() == null) {
             response.sendRedirect("login.jsp");
             return;
         }
@@ -67,7 +66,6 @@ public class EditBlogServletSeller extends HttpServlet {
         String blogId = request.getParameter("blogId");
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        String thumbnailUrl = request.getParameter("thumbnail_url");
         String existingThumbnail = request.getParameter("existingThumbnail");
         Part filePart = request.getPart("thumbnail");
 
@@ -82,7 +80,7 @@ public class EditBlogServletSeller extends HttpServlet {
             hasError = true;
         }
 
-        // Fetch existing blog to verify
+        // Fetch existing blog
         BlogDAO blogDAO = new BlogDAO();
         Blog existingBlog = null;
         try {
@@ -98,9 +96,7 @@ public class EditBlogServletSeller extends HttpServlet {
 
         // Handle thumbnail logic
         String finalThumbnailUrl = existingThumbnail;
-        if (thumbnailUrl != null && thumbnailUrl.equals("null")) {
-            finalThumbnailUrl = null;
-        } else if (filePart != null && filePart.getSize() > 0) {
+        if (filePart != null && filePart.getSize() > 0) {
             String uploadPath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
@@ -109,25 +105,20 @@ public class EditBlogServletSeller extends HttpServlet {
             String fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName();
             filePart.write(uploadPath + File.separator + fileName);
             finalThumbnailUrl = UPLOAD_DIR + "/" + fileName;
-        } else if (thumbnailUrl != null && !thumbnailUrl.trim().isEmpty() && !thumbnailUrl.equals("file")) {
-            finalThumbnailUrl = thumbnailUrl;
         }
 
         // Check for duplicate title
-        if (blogDAO.isBlogTitleExists(title, Long.parseLong(blogId))) {
+        if (title != null && !title.trim().isEmpty() && blogDAO.isBlogTitleExists(title, Long.parseLong(blogId))) {
             session.setAttribute("duplicateMessage", "Blog title already exists.");
             hasError = true;
         }
 
         if (hasError) {
             // Preserve form data
-            Blog blog = new Blog(Long.parseLong(blogId), title, content, finalThumbnailUrl,
-                    existingBlog != null ? existingBlog.getCreatedAt() : null,
-                    new Timestamp(System.currentTimeMillis()), user.getUser_id().intValue(),
-                    existingBlog != null ? existingBlog.getCreatedByName() : null);
-            request.setAttribute("blog", blog);
-            request.setAttribute("action", "update");
-            request.getRequestDispatcher("Add_EditSeller.jsp").forward(request, response);
+            session.setAttribute("title", title);
+            session.setAttribute("content", content);
+            session.setAttribute("existingThumbnail", finalThumbnailUrl);
+            response.sendRedirect("editBlog?blogId=" + blogId);
             return;
         }
 
@@ -140,9 +131,13 @@ public class EditBlogServletSeller extends HttpServlet {
         // Clear session attributes
         session.removeAttribute("titleError");
         session.removeAttribute("contentError");
+        session.removeAttribute("thumbnailError");
         session.removeAttribute("duplicateMessage");
         session.removeAttribute("errorMessage");
+        session.removeAttribute("title");
+        session.removeAttribute("content");
+        session.removeAttribute("existingThumbnail");
 
-        response.sendRedirect("instructor_blog");
+        response.sendRedirect("listBlogsInstructor");
     }
 }

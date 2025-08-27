@@ -1,7 +1,7 @@
-<%-- 
-    Document   : manageQuizInstructor
+<%--
+    Document : manageQuizInstructor
     Created on : Aug 15, 2025, 4:21:29 PM
-    Author     : Admin
+    Author : Admin
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -24,28 +24,41 @@
     </style>
 </head>
 <body class="container mt-5">
-    <h2>Quizzes for Lesson ID: ${lessonId}</h2>
+    <h2>Quizzes for Lesson</h2>
     <c:if test="${not empty errorMessage}">
         <div class="alert alert-danger">${errorMessage}</div>
     </c:if>
-    <!-- Search form -->
+    <!-- File Import Form -->
+    <form method="post" action="createQuizSeller" enctype="multipart/form-data" class="mb-3">
+        <input type="hidden" name="lessonId" value="${lessonId}" />
+        <input type="hidden" name="courseId" value="${courseId}" />
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label for="importFile" class="form-label">Import Quizzes from File (.txt)</label>
+                <input type="file" class="form-control" id="importFile" name="importFile" accept=".txt" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100 mt-4">Import</button>
+            </div>
+        </div>
+    </form>
+    <!-- Search Form -->
     <form method="get" action="manageQuizInstructor" class="mb-3">
-        
-         <a href="createQuizSeller?lessonId=${lessonId}&courseId=${courseId}" class="btn btn-success mb-3">
-        <i class="fa-solid fa-plus"></i> Add New Quiz
-    </a>
-        
+        <a href="createQuizSeller?lessonId=${lessonId}&courseId=${courseId}" class="btn btn-success mb-3">
+            <i class="fa-solid fa-plus"></i> Add New Quiz
+        </a>
         <input type="hidden" name="lessonId" value="${lessonId}" />
         <input type="hidden" name="courseId" value="${courseId}" />
         <div class="row g-2">
             <div class="col-md-4">
                 <input type="text" name="question" class="form-control" placeholder="Search by question..." value="${param.question}" />
             </div>
-            From date
+
+            From
             <div class="col-md-3">
                 <input type="date" name="startDate" class="form-control" placeholder="From date" value="${param.startDate}" />
             </div>
-            To Date
+            To 
             <div class="col-md-3">
                 <input type="date" name="endDate" class="form-control" placeholder="To date" value="${param.endDate}" />
             </div>
@@ -105,7 +118,6 @@
     <a href="manageLessonInstructor?courseId=${courseId}" class="btn btn-secondary mb-3">
         <i class="fa-solid fa-arrow-left"></i> Back to Lessons
     </a>
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

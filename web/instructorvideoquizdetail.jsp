@@ -186,12 +186,12 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-4 sidebar">
                             <ul class="nav flex-column" id="sidebarNav">
-                                <li class="nav-item"><a href="#overview" class="nav-link">Overview</a></li>
-                                <li class="nav-item"><a href="listCourses" class="nav-link">Courses</a></li>
+                                <li class="nav-item"><a href="DashBoardSeller.jsp" class="nav-link">Overview</a></li>
+                                <li class="nav-item"><a href="listCousera" class="nav-link">Courses</a></li>
                                 <li class="nav-item"><a href="instructorvideoquiz" class="nav-link active">Video Quiz</a></li>
-                                <li class="nav-item"><a href="listBlogsInstructor" class="nav-link">Blogs</a></li>
+                                <li class="nav-item"><a href="listBlogsSeller" class="nav-link">Blogs</a></li>
                                 <li class="nav-item"><a href="balance" class="nav-link">Balance</a></li>
-                                <li class="nav-item"><a href="listReviews" class="nav-link">Reviews</a></li>
+                                <li class="nav-item"><a href="reviews.jsp" class="nav-link">Reviews</a></li>
                             </ul>
                         </div>
                         <div class="col-lg-9 col-md-8 content">
@@ -246,12 +246,7 @@
                                         <td><fmt:formatDate value="${videoQuiz.updatedAt}" pattern="yyyy-MM-dd"/></td>
                                     </tr>
                                 </table>
-                                <a href="instructorvideoquiz?action=edit&videoQuizId=${videoQuiz.videoQuizId}" class="btn-action" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="instructorvideoquiz?action=delete&videoQuizId=${videoQuiz.videoQuizId}" class="btn-action" title="Delete" onclick="return confirm('Are you sure you want to delete this quiz?');">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
+                             
                                 <a href="instructorvideoquiz" class="btn-back" title="Back to List">
                                     <i class="fas fa-arrow-left"></i> Back
                                 </a>
