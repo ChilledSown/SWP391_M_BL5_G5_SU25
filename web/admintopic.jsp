@@ -335,7 +335,7 @@
         </aside>
         <main class="main-content">
             <header class="main-header">
-                <h1>Welcome to Manage Topics</h1>
+                <h1>Welcome to Topics List</h1>
             </header>
             <c:if test="${not empty message}">
                 <div class="success-message">${message}</div>
