@@ -22,7 +22,7 @@
                 min-height: 100vh;
             }
             .sidebar {
-                width: 200px; /* Cố định độ rộng cột menu thành 200px */
+                width: 200px;
                 background-color: #2c3e50;
                 color: white;
                 padding: 20px;
@@ -103,7 +103,7 @@
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                 max-width: 600px;
                 margin: 0 auto;
-                overflow: hidden; /* Ngăn tràn nội dung */
+                overflow: hidden;
             }
             .form-container label {
                 display: block;
@@ -118,7 +118,7 @@
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 box-sizing: border-box;
-                font-size: 16px; /* Đảm bảo phông chữ đồng nhất */
+                font-size: 16px;
             }
             .form-container button {
                 background-color: #2ecc71;
@@ -149,9 +149,17 @@
                 background-color: #ffebee;
                 border-radius: 4px;
             }
+            .avatar-preview {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 15px;
+                border: 2px solid #3498db;
+            }
             @media (max-width: 768px) {
                 .sidebar {
-                    width: 100px; /* Thu nhỏ sidebar trên mobile */
+                    width: 100px;
                 }
                 .sidebar-nav a {
                     font-size: 14px;
@@ -172,8 +180,35 @@
                 .form-container {
                     padding: 15px;
                 }
+                .avatar-preview {
+                    width: 80px;
+                    height: 80px;
+                }
             }
         </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const avatarInput = document.getElementById('avataUrl');
+                const avatarPreview = document.querySelector('.avatar-preview');
+
+                avatarInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        // Display the selected image immediately
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            avatarPreview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        // Revert to the original avatar if the file is invalid
+                        avatarPreview.src = '${empty user.avataUrl ? "assets/img/default-avatar.png" : user.avataUrl}';
+                        alert('Please select a valid image file.');
+                        avatarInput.value = ''; // Clear the invalid file
+                    }
+                });
+            });
+        </script>
     </head>
     <body>
         <div class="dashboard-container">
@@ -188,13 +223,13 @@
                     </div>
                     <a href="${pageContext.request.contextPath}/profile"><button class="edit-profile-btn" title="Edit Profile"><i class="fas fa-edit"></i></button></a>
                 </div>
-                 <nav class="sidebar-nav">
+                <nav class="sidebar-nav">
                     <ul>
-                        <li  data-section="overview">
+                        <li data-section="overview">
                             <a href="overviewadmin">Overview</a>
                         </li>
                         <li data-section="courses">
-                        <a href="admintopic">List Topic</a>
+                            <a href="admintopic">List Topic</a>
                         </li>
                         <li class="active" data-section="users">
                             <a href="manageuser">Manage Users</a>
@@ -219,7 +254,7 @@
                     </c:if>
                 </div>
                 <div class="form-container">
-                    <form action="manageuser" method="post">
+                    <form action="manageuser" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="userId" value="${user.user_id}">
 
@@ -232,8 +267,9 @@
                         <label for="lastName">Last Name</label>
                         <input type="text" id="lastName" name="lastName" value="${user.lastName}" required>
 
-                        <label for="avataUrl">Avatar </label>
-                        <input type="file" id="avataUrl" name="avataUrl" value="${user.avataUrl}">
+                        <label for="avataUrl">Avatar</label>
+                        <img src="${empty user.avataUrl ? 'assets/img/default-avatar.png' : user.avataUrl}" alt="Avatar" class="avatar-preview">
+                        <input type="file" id="avataUrl" name="avataUrl" accept="image/*">
 
                         <label for="phone">Phone</label>
                         <input type="text" id="phone" name="phone" value="${user.phone}" required>
@@ -250,7 +286,7 @@
                         <label for="role">Role</label>
                         <select id="role" name="role" required>
                             <option value="admin" <c:if test="${user.role == 'admin'}">selected</c:if>>Admin</option>
-                            <option value="seller" <c:if test="${user.role == 'seller'}">selected</c:if>>Seller</option>
+                            <option value="instructor" <c:if test="${user.role == 'instructor'}">selected</c:if>>Instructor</option>
                             <option value="customer" <c:if test="${user.role == 'customer'}">selected</c:if>>Customer</option>
                         </select>
 

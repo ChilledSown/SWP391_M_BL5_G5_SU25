@@ -1,20 +1,27 @@
 package controller;
 
 import dal.UserDAO;
+import java.io.File;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import java.util.List;
 import model.User;
 import utils.PasswordHashUtil;
 
 @WebServlet(name = "ManageUserServlet", urlPatterns = {"/manageuser"})
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+                 maxFileSize = 1024 * 1024 * 10,      // 10MB
+                 maxRequestSize = 1024 * 1024 * 50)   // 50MB
 public class ManageUserServlet extends HttpServlet {
 
     private final int PAGE_SIZE = 8; // Records per page
+    private static final String UPLOAD_DIR = "Upload"; // Directory to store uploaded avatars
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -46,7 +53,7 @@ public class ManageUserServlet extends HttpServlet {
         String searchQuery = request.getParameter("searchQuery");
         String role = request.getParameter("role");
         if (role == null || role.trim().isEmpty()) {
-            role = "all"; // Mặc định all
+            role = "all"; // Default to all
         }
 
         List<User> users;
@@ -64,7 +71,7 @@ public class ManageUserServlet extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("searchQuery", searchQuery);
-        request.setAttribute("selectedRole", role); // Để giữ selected trong dropdown
+        request.setAttribute("selectedRole", role);
 
         String message = (String) request.getSession().getAttribute("message");
         if (message != null) {
@@ -77,11 +84,21 @@ public class ManageUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         UserDAO userDAO = new UserDAO();
         String action = request.getParameter("action");
 
         if ("delete".equals(action)) {
             long userId = Long.parseLong(request.getParameter("userId"));
+            User existingUser = userDAO.getUserById(userId);
+            if (existingUser != null && existingUser.getAvataUrl() != null && !existingUser.getAvataUrl().contains("default-avatar.png")) {
+                String oldFilePath = getServletContext().getRealPath("") + File.separator + existingUser.getAvataUrl().replace(request.getContextPath() + "/", "");
+                new File(oldFilePath).delete();
+                System.out.println("Deleted old avatar: " + oldFilePath);
+            }
             boolean success = userDAO.deleteUser(userId);
             request.getSession().setAttribute("message", success ? "User deleted successfully" : "Failed to delete user");
             response.sendRedirect("manageuser");
@@ -90,7 +107,6 @@ public class ManageUserServlet extends HttpServlet {
             String firstName = request.getParameter("firstName");
             String middleName = request.getParameter("middleName");
             String lastName = request.getParameter("lastName");
-            String avataUrl = request.getParameter("avataUrl");
             String phone = request.getParameter("phone");
             String address = request.getParameter("address");
             String email = request.getParameter("email");
@@ -98,6 +114,11 @@ public class ManageUserServlet extends HttpServlet {
             String role = request.getParameter("role");
             String accountStatus = request.getParameter("accountStatus");
 
+            String avataUrl = null;
+            Part filePart = request.getPart("avataUrl");
+            String fileName = null;
+
+            // Validate inputs
             String error = null;
             if (firstName == null || firstName.trim().isEmpty() ||
                 middleName == null || middleName.trim().isEmpty() ||
@@ -121,13 +142,44 @@ public class ManageUserServlet extends HttpServlet {
                 }
             }
 
+            // Handle file upload
+            if (filePart != null && filePart.getSize() > 0) {
+                fileName = extractFileName(filePart);
+                if (fileName != null && !fileName.isEmpty()) {
+                    if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                        error = "Only image files (jpg, jpeg, png, gif) are allowed.";
+                    } else if (filePart.getSize() > 10 * 1024 * 1024) {
+                        error = "File size exceeds 10MB limit.";
+                    } else {
+                        String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdirs();
+                        }
+                        String filePath = uploadPath + File.separator + fileName;
+                        filePart.write(filePath);
+                        avataUrl = request.getContextPath() + "/" + UPLOAD_DIR + "/" + fileName;
+                        System.out.println("File saved at: " + filePath);
+                        System.out.println("Avatar URL: " + avataUrl);
+
+                        // Delete old avatar if it exists
+                        User existingUser = userDAO.getUserById(Long.parseLong(userIdStr));
+                        if (existingUser.getAvataUrl() != null && !existingUser.getAvataUrl().contains("default-avatar.png")) {
+                            String oldFilePath = getServletContext().getRealPath("") + File.separator + existingUser.getAvataUrl().replace(request.getContextPath() + "/", "");
+                            new File(oldFilePath).delete();
+                            System.out.println("Deleted old avatar: " + oldFilePath);
+                        }
+                    }
+                }
+            }
+
             if (error != null) {
                 User user = new User();
                 user.setUser_id(Long.parseLong(userIdStr));
                 user.setFirstName(firstName);
                 user.setMiddleName(middleName);
                 user.setLastName(lastName);
-                user.setAvataUrl(avataUrl);
+                user.setAvataUrl(avataUrl != null ? avataUrl : userDAO.getUserById(Long.parseLong(userIdStr)).getAvataUrl());
                 user.setPhone(phone);
                 user.setAddress(address);
                 user.setEmail(email);
@@ -144,24 +196,32 @@ public class ManageUserServlet extends HttpServlet {
             user.setFirstName(firstName);
             user.setMiddleName(middleName);
             user.setLastName(lastName);
-            user.setAvataUrl(avataUrl != null ? avataUrl : "default-avatar.png");
             user.setPhone(phone);
             user.setAddress(address);
             user.setEmail(email);
             user.setRole(role);
             user.setAccountStatus(accountStatus != null ? accountStatus : "active");
 
+            // Set avatar URL
+            if (avataUrl != null) {
+                user.setAvataUrl(avataUrl);
+            } else {
+                User existingUser = userDAO.getUserById(Long.parseLong(userIdStr));
+                user.setAvataUrl(existingUser.getAvataUrl());
+            }
+
+            // Handle password
             if (password != null && !password.isEmpty()) {
                 try {
                     String hashedPassword = PasswordHashUtil.hashPassword(password);
                     user.setPasswordHash(hashedPassword);
                 } catch (Exception e) {
-                    request.getSession().setAttribute("message", "Error hashing password");
-                    response.sendRedirect("manageuser");
+                    request.setAttribute("user", user);
+                    request.setAttribute("error", "Error hashing password");
+                    request.getRequestDispatcher("updateuser.jsp").forward(request, response);
                     return;
                 }
             } else {
-                // Fetch existing password if not updating
                 User existingUser = userDAO.getUserById(Long.parseLong(userIdStr));
                 user.setPasswordHash(existingUser.getPasswordHash());
             }
@@ -173,7 +233,6 @@ public class ManageUserServlet extends HttpServlet {
             String firstName = request.getParameter("firstName");
             String middleName = request.getParameter("middleName");
             String lastName = request.getParameter("lastName");
-            String avataUrl = request.getParameter("avataUrl");
             String phone = request.getParameter("phone");
             String address = request.getParameter("address");
             String email = request.getParameter("email");
@@ -181,6 +240,11 @@ public class ManageUserServlet extends HttpServlet {
             String role = request.getParameter("role");
             String accountStatus = request.getParameter("accountStatus");
 
+            String avataUrl = null;
+            Part filePart = request.getPart("avataUrl");
+            String fileName = null;
+
+            // Validate inputs
             String error = null;
             if (firstName == null || firstName.trim().isEmpty() ||
                 middleName == null || middleName.trim().isEmpty() ||
@@ -204,12 +268,35 @@ public class ManageUserServlet extends HttpServlet {
                 }
             }
 
+            // Handle file upload
+            if (filePart != null && filePart.getSize() > 0) {
+                fileName = extractFileName(filePart);
+                if (fileName != null && !fileName.isEmpty()) {
+                    if (!fileName.matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                        error = "Only image files (jpg, jpeg, png, gif) are allowed.";
+                    } else if (filePart.getSize() > 10 * 1024 * 1024) {
+                        error = "File size exceeds 10MB limit.";
+                    } else {
+                        String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdirs();
+                        }
+                        String filePath = uploadPath + File.separator + fileName;
+                        filePart.write(filePath);
+                        avataUrl = request.getContextPath() + "/" + UPLOAD_DIR + "/" + fileName;
+                        System.out.println("File saved at: " + filePath);
+                        System.out.println("Avatar URL: " + avataUrl);
+                    }
+                }
+            }
+
             if (error != null) {
                 User user = new User();
                 user.setFirstName(firstName);
                 user.setMiddleName(middleName);
                 user.setLastName(lastName);
-                user.setAvataUrl(avataUrl);
+                user.setAvataUrl(avataUrl != null ? avataUrl : "assets/img/default-avatar.png");
                 user.setPhone(phone);
                 user.setAddress(address);
                 user.setEmail(email);
@@ -225,7 +312,7 @@ public class ManageUserServlet extends HttpServlet {
             user.setFirstName(firstName);
             user.setMiddleName(middleName);
             user.setLastName(lastName);
-            user.setAvataUrl(avataUrl != null ? avataUrl : "default-avatar.png");
+            user.setAvataUrl(avataUrl != null ? avataUrl : "assets/img/default-avatar.png");
             user.setPhone(phone);
             user.setAddress(address);
             user.setEmail(email);
@@ -236,8 +323,9 @@ public class ManageUserServlet extends HttpServlet {
                 String hashedPassword = PasswordHashUtil.hashPassword(password);
                 user.setPasswordHash(hashedPassword);
             } catch (Exception e) {
-                request.getSession().setAttribute("message", "Error hashing password");
-                response.sendRedirect("manageuser");
+                request.setAttribute("user", user);
+                request.setAttribute("error", "Error hashing password");
+                request.getRequestDispatcher("adduser.jsp").forward(request, response);
                 return;
             }
 
@@ -245,5 +333,16 @@ public class ManageUserServlet extends HttpServlet {
             request.getSession().setAttribute("message", success ? "User created successfully" : "Failed to create user");
             response.sendRedirect("manageuser");
         }
+    }
+
+    private String extractFileName(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        String[] items = contentDisposition.split(";");
+        for (String item : items) {
+            if (item.trim().startsWith("filename")) {
+                return System.currentTimeMillis() + "_" + item.substring(item.indexOf("=") + 2, item.length() - 1);
+            }
+        }
+        return "";
     }
 }
