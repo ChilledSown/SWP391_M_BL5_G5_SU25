@@ -30,7 +30,7 @@ public class CourseServlet extends HttpServlet {
             
             String searchTerm = request.getParameter("search");
             String priceFilter = request.getParameter("price");
-            String ratingFilter = request.getParameter("rating");
+
             String sortBy = request.getParameter("sort");
             String topicFilter = request.getParameter("topic");
             
@@ -43,17 +43,16 @@ public class CourseServlet extends HttpServlet {
                 }
             } catch (NumberFormatException ignored) {}
             if (page < 1) page = 1;
-            // Load More: luôn trả về danh sách tích lũy theo trang (6, 12, 18, ...)
             int offset = 0;
             int limit = page * size;
 
             // List of pagination courses
             List<Course> courses;
             int totalCount;
-            if (hasActiveFilters(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter)) {
+            if (hasActiveFilters(searchTerm, priceFilter, sortBy, topicFilter)) {
                 // Khi có filter: áp dụng phân trang kiểu Load More (cộng dồn)
-                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, ratingFilter, sortBy, topicFilter, offset, limit);
-                totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, ratingFilter, topicFilter);
+                courses = courseDAO.getFilteredCoursesPaged(searchTerm, priceFilter, null, sortBy, topicFilter, offset, limit);
+                totalCount = courseDAO.countFilteredCourses(searchTerm, priceFilter, null, topicFilter);
             } else {
                 // Không filter: áp dụng phân trang kiểu Load More (cộng dồn)
                 courses = courseDAO.getAllCoursePaged(offset, limit);
@@ -80,7 +79,6 @@ public class CourseServlet extends HttpServlet {
             // Reset filter parameters
             request.setAttribute("searchTerm", searchTerm);
             request.setAttribute("priceFilter", priceFilter);
-            request.setAttribute("ratingFilter", ratingFilter);
             request.setAttribute("sortBy", sortBy != null ? sortBy : "newest");
             request.setAttribute("topicFilter", topicFilter);
             
@@ -100,10 +98,9 @@ public class CourseServlet extends HttpServlet {
     }
     
     // Kiểm tra xem có filter nào được áp dụng không
-    private boolean hasActiveFilters(String searchTerm, String priceFilter, String ratingFilter, String sortBy, String topicFilter) {
+    private boolean hasActiveFilters(String searchTerm, String priceFilter, String sortBy, String topicFilter) {
         return (searchTerm != null && !searchTerm.trim().isEmpty()) ||
                (priceFilter != null && !priceFilter.trim().isEmpty()) ||
-               (ratingFilter != null && !ratingFilter.trim().isEmpty()) ||
                (sortBy != null && !sortBy.trim().isEmpty() && !sortBy.equals("newest")) ||
                (topicFilter != null && !topicFilter.trim().isEmpty());
     }

@@ -21,7 +21,7 @@
             min-height: 100vh;
         }
         .sidebar {
-            width: 200px; /* Cố định độ rộng giống updateuser.jsp */
+            width: 200px;
             background-color: #2c3e50;
             color: white;
             padding: 20px;
@@ -117,6 +117,17 @@
             border-radius: 4px;
             display: block;
         }
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid #3498db;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .back-btn {
             background-color: #3498db;
             color: white;
@@ -125,13 +136,15 @@
             border-radius: 4px;
             cursor: pointer;
             text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
         }
         .back-btn:hover {
             background-color: #2980b9;
         }
         @media (max-width: 768px) {
             .sidebar {
-                width: 100px; /* Thu nhỏ sidebar trên mobile */
+                width: 100px;
             }
             .sidebar-nav a {
                 font-size: 14px;
@@ -152,6 +165,10 @@
             .details-container {
                 padding: 15px;
             }
+            .avatar-preview {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
 </head>
@@ -170,10 +187,21 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li data-section="overview"><a href="admin">Overview</a></li>
-                    <li data-section="courses"><a href="managecourse">Manage Courses</a></li>
-                    <li data-section="users" class="active"><a href="manageuser">Manage Users</a></li>
-                    <li data-section="settings"><a href="login">Logout</a></li>
+                    <li data-section="overview">
+                        <a href="overviewadmin">Overview</a>
+                    </li>
+                    <li data-section="courses">
+                        <a href="admintopic">List Topic</a>
+                    </li>
+                    <li class="active" data-section="users">
+                        <a href="manageuser">Manage Users</a>
+                    </li>
+                    <li data-section="slider">
+                        <a href="manageslider">Manage Slider</a>
+                    </li>
+                    <li data-section="settings">
+                        <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -183,6 +211,10 @@
                 <h1>User Details</h1>
             </header>
             <div class="details-container">
+                <div class="details-field">
+                    <label>Avatar</label>
+                    <img src="${empty user.avataUrl ? 'assets/img/default-avatar.png' : user.avataUrl}" alt="User Avatar" class="avatar-preview">
+                </div>
                 <div class="details-field">
                     <label>ID</label>
                     <span>${user.user_id}</span>
@@ -202,10 +234,6 @@
                 <div class="details-field">
                     <label>Email</label>
                     <span>${user.email}</span>
-                </div>
-                <div class="details-field">
-                    <label>Avatar URL</label>
-                    <span>${user.avataUrl}</span>
                 </div>
                 <div class="details-field">
                     <label>Role</label>

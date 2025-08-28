@@ -87,7 +87,6 @@ public class ProcessCheckoutServlet extends HttpServlet {
             
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
 

@@ -512,7 +512,7 @@
                 <div class="video-container">
                     <div class="video-wrapper">
                         <c:choose>
-                            <c:when test="${activeLesson != null && activeLesson.videoUrl != null && activeLesson.videoUrl ne '' && !(fn:contains(activeLesson.videoUrl,'youtube.com') or fn:contains(activeLesson.videoUrl,'youtu.be'))}">
+                            <c:when test="${activeLesson != null && activeLesson.videoUrl != null && activeLesson.videoUrl ne ''}">
                                 <c:choose>
                                     <c:when test="${fn:startsWith(activeLesson.videoUrl,'http')}">
                                         <c:set var="resolvedVideoUrl" value="${activeLesson.videoUrl}" />

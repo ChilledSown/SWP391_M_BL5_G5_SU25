@@ -18,22 +18,101 @@
 
         <!-- Custom CSS for Course Detail -->
         <style>
-            /* Combined Header Styling (from purchased-courses) */
-            .combined-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; box-shadow: none; }
-            .combined-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-            .header-top { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
-            .page-header-content { padding: 60px 0; position: relative; z-index: 2; text-align: center; color: white; }
-            .page-header-content h1 { font-size: 36px; font-weight: 700; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-            .page-header-content p { font-size: 18px; opacity: 0.9; margin: 0; }
-            #navigation { display: flex; align-items: center; justify-content: center; gap: 0; margin: 0; padding: 0; list-style: none; }
-            #navigation li { margin: 0; padding: 0; display: flex; align-items: center; }
-            #navigation li a { color: white !important; font-weight: 500; font-size: 16px; text-decoration: none; padding: 12px 20px; border-radius: 8px; transition: all 0.3s ease; display: block; position: relative; margin: 0 5px; }
-            #navigation li a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: white; transition: all 0.3s ease; transform: translateX(-50%); }
+            .combined-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                position: relative;
+                overflow: hidden;
+                box-shadow: none;
+            }
+            .combined-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255,255,255,0.1);
+                backdrop-filter: blur(10px);
+            }
+            .header-top {
+                padding: 20px 0;
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+                position: relative;
+                z-index: 2;
+            }
+            .page-header-content {
+                padding: 60px 0;
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                color: white;
+            }
+            .page-header-content h1 {
+                font-size: 36px;
+                font-weight: 700;
+                margin-bottom: 15px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .page-header-content p {
+                font-size: 18px;
+                opacity: 0.9;
+                margin: 0;
+            }
+            #navigation {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            #navigation li {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+            }
+            #navigation li a {
+                color: white !important;
+                font-weight: 500;
+                font-size: 16px;
+                text-decoration: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                display: block;
+                position: relative;
+                margin: 0 5px;
+            }
+            #navigation li a::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                width: 0;
+                height: 2px;
+                background: white;
+                transition: all 0.3s ease;
+                transform: translateX(-50%);
+            }
             /* Disable hover effects for non-button nav links */
-            #navigation li a:not(.btn):hover { color: white !important; background: transparent !important; transform: none !important; box-shadow: none !important; backdrop-filter: none !important; }
-            #navigation li a:not(.btn):hover::after { width: 0 !important; }
-            .logo a { filter: brightness(1.2); }
-            .logo img { max-height: 40px; }
+            #navigation li a:not(.btn):hover {
+                color: white !important;
+                background: transparent !important;
+                transform: none !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+            }
+            #navigation li a:not(.btn):hover::after {
+                width: 0 !important;
+            }
+            .logo a {
+                filter: brightness(1.2);
+            }
+            .logo img {
+                max-height: 40px;
+            }
 
             .course-detail-section {
                 padding: 80px 0;
@@ -422,26 +501,47 @@
                 color: #2c3e50;
             }
 
-            .star-rating {
-                display: flex;
-                gap: 10px;
+            /* Modal Star Rating Section */
+            .modal-rating-section {
                 margin-bottom: 20px;
             }
 
-            .star-input {
+            .modal-rating-label {
+                display: block;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 10px;
+                font-size: 14px;
+            }
+
+            .modal-star-rating {
+                display: flex;
+                gap: 5px;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .modal-star-rating .modal-star-input {
                 display: none;
             }
 
-            .star-label {
-                font-size: 30px;
+            .modal-star-rating .modal-star-label {
+                font-size: 28px;
                 color: #bdc3c7;
                 cursor: pointer;
                 transition: color 0.3s ease;
+                margin: 0;
             }
 
-            .star-label:hover,
-            .star-label:hover ~ .star-label,
-            .star-input:checked ~ .star-label {
+            /* Modal star rating hover effect */
+            .modal-star-rating .modal-star-label:hover,
+            .modal-star-rating .modal-star-label:hover ~ .modal-star-label {
+                color: #f39c12;
+            }
+
+            /* Modal star rating selected state */
+            .modal-star-rating .modal-star-input:checked + .modal-star-label,
+            .modal-star-rating .modal-star-input:checked ~ .modal-star-label {
                 color: #f39c12;
             }
 
@@ -872,14 +972,20 @@
                 <form action="update-review" method="POST">
                     <input type="hidden" id="updateReviewId" name="reviewId">
                     <input type="hidden" name="courseId" value="${course.course_id}">
-                    <div class="star-rating">
-                        <c:forEach begin="1" end="5" var="i">
-                            <input type="radio" name="rating" value="${i}" id="star${i}" class="star-input">
-                            <label for="star${i}" class="star-label">
-                                <i class="fas fa-star"></i>
-                            </label>
-                        </c:forEach>
+
+                    <!-- Star Rating Section -->
+                    <div class="modal-rating-section">
+                        <label class="modal-rating-label">Rate this course:</label>
+                        <div class="modal-star-rating">
+                            <c:forEach begin="1" end="5" var="i">
+                                <input type="radio" name="rating" value="${i}" id="modalStar${i}" class="modal-star-input">
+                                <label for="modalStar${i}" class="modal-star-label">
+                                    <i class="fas fa-star"></i>
+                                </label>
+                            </c:forEach>
+                        </div>
                     </div>
+
                     <textarea class="modal-textarea" name="comment" placeholder="Write your review..." required></textarea>
                     <div class="modal-buttons">
                         <button type="button" class="btn-cancel" onclick="closeUpdateModal()">Cancel</button>
@@ -994,237 +1100,306 @@
     <script>
 
 
-                                              // Toggle review dropdown function - simplified and more reliable
-                                              function toggleReviewDropdown(reviewId) {
-                                                  console.log('Toggle dropdown for review:', reviewId);
+                                                // Toggle review dropdown function - simplified and more reliable
+                                                function toggleReviewDropdown(reviewId) {
+                                                    console.log('Toggle dropdown for review:', reviewId);
 
-                                                  // Try multiple methods to find the dropdown
-                                                  let dropdown = null;
+                                                    // Try multiple methods to find the dropdown
+                                                    let dropdown = null;
 
-                                                  // Method 1: Try to find by ID
-                                                  dropdown = document.getElementById(`dropdown-${reviewId}`);
-                                                  if (dropdown) {
-                                                      console.log('Found dropdown by ID');
-                                                  } else {
-                                                      // Method 2: Try to find by data attribute
-                                                      const button = document.querySelector(`.review-settings[data-review-id="${reviewId}"]`);
-                                                      if (button) {
-                                                          const reviewActions = button.closest('.review-actions');
-                                                          if (reviewActions) {
-                                                              dropdown = reviewActions.querySelector('.review-dropdown');
-                                                              console.log('Found dropdown by DOM traversal');
-                                                          }
-                                                      }
-                                                  }
+                                                    // Method 1: Try to find by ID
+                                                    dropdown = document.getElementById(`dropdown-${reviewId}`);
+                                                    if (dropdown) {
+                                                        console.log('Found dropdown by ID');
+                                                    } else {
+                                                        // Method 2: Try to find by data attribute
+                                                        const button = document.querySelector(`.review-settings[data-review-id="${reviewId}"]`);
+                                                        if (button) {
+                                                            const reviewActions = button.closest('.review-actions');
+                                                            if (reviewActions) {
+                                                                dropdown = reviewActions.querySelector('.review-dropdown');
+                                                                console.log('Found dropdown by DOM traversal');
+                                                            }
+                                                        }
+                                                    }
 
-                                                  // Method 3: If still not found, try to find all and match by partial ID
-                                                  if (!dropdown) {
-                                                      const allDropdowns = document.querySelectorAll('.review-dropdown');
-                                                      console.log('Total dropdowns found:', allDropdowns.length);
+                                                    // Method 3: If still not found, try to find all and match by partial ID
+                                                    if (!dropdown) {
+                                                        const allDropdowns = document.querySelectorAll('.review-dropdown');
+                                                        console.log('Total dropdowns found:', allDropdowns.length);
 
-                                                      // Try to find by partial ID match
-                                                      dropdown = Array.from(allDropdowns).find(dd => {
-                                                          const ddId = dd.id;
-                                                          console.log('Checking dropdown ID:', ddId);
-                                                          return ddId && ddId.includes(reviewId.toString());
-                                                      });
+                                                        // Try to find by partial ID match
+                                                        dropdown = Array.from(allDropdowns).find(dd => {
+                                                            const ddId = dd.id;
+                                                            console.log('Checking dropdown ID:', ddId);
+                                                            return ddId && ddId.includes(reviewId.toString());
+                                                        });
 
-                                                      if (dropdown) {
-                                                          console.log('Found dropdown by partial ID match');
-                                                      }
-                                                  }
+                                                        if (dropdown) {
+                                                            console.log('Found dropdown by partial ID match');
+                                                        }
+                                                    }
 
-                                                  if (!dropdown) {
-                                                      console.error('All methods failed to find dropdown for review ID:', reviewId);
-                                                      console.log('Available dropdowns:');
-                                                      document.querySelectorAll('.review-dropdown').forEach((dd, index) => {
-                                                          console.log(`Dropdown ${index}:`, dd.id, dd);
-                                                      });
-                                                      return;
-                                                  }
+                                                    if (!dropdown) {
+                                                        console.error('All methods failed to find dropdown for review ID:', reviewId);
+                                                        console.log('Available dropdowns:');
+                                                        document.querySelectorAll('.review-dropdown').forEach((dd, index) => {
+                                                            console.log(`Dropdown ${index}:`, dd.id, dd);
+                                                        });
+                                                        return;
+                                                    }
 
-                                                  console.log('Successfully found dropdown:', dropdown);
+                                                    console.log('Successfully found dropdown:', dropdown);
 
-                                                  // Close all other dropdowns first
-                                                  const allDropdowns = document.querySelectorAll('.review-dropdown');
-                                                  allDropdowns.forEach(dd => {
-                                                      if (dd !== dropdown) {
-                                                          dd.classList.remove('show');
-                                                      }
-                                                  });
+                                                    // Close all other dropdowns first
+                                                    const allDropdowns = document.querySelectorAll('.review-dropdown');
+                                                    allDropdowns.forEach(dd => {
+                                                        if (dd !== dropdown) {
+                                                            dd.classList.remove('show');
+                                                        }
+                                                    });
 
-                                                  // Toggle current dropdown
-                                                  const isVisible = dropdown.classList.contains('show');
-                                                  console.log('Current dropdown state:', isVisible);
+                                                    // Toggle current dropdown
+                                                    const isVisible = dropdown.classList.contains('show');
+                                                    console.log('Current dropdown state:', isVisible);
 
-                                                  if (isVisible) {
-                                                      dropdown.classList.remove('show');
-                                                  } else {
-                                                      dropdown.classList.add('show');
-                                                  }
-                                              }
+                                                    if (isVisible) {
+                                                        dropdown.classList.remove('show');
+                                                    } else {
+                                                        dropdown.classList.add('show');
+                                                    }
+                                                }
 
-                                              // Direct toggle function for onclick - more reliable
-                                              function toggleReviewDropdownDirect(reviewId, buttonElement) {
-                                                  console.log('Direct toggle for review:', reviewId, 'Button:', buttonElement);
+                                                // Direct toggle function for onclick - more reliable
+                                                function toggleReviewDropdownDirect(reviewId, buttonElement) {
+                                                    console.log('Direct toggle for review:', reviewId, 'Button:', buttonElement);
 
-                                                  // Find dropdown within the same review-actions container
-                                                  const reviewActions = buttonElement.closest('.review-actions');
-                                                  if (!reviewActions) {
-                                                      console.error('Review actions container not found');
-                                                      return;
-                                                  }
+                                                    // Find dropdown within the same review-actions container
+                                                    const reviewActions = buttonElement.closest('.review-actions');
+                                                    if (!reviewActions) {
+                                                        console.error('Review actions container not found');
+                                                        return;
+                                                    }
 
-                                                  const dropdown = reviewActions.querySelector('.review-dropdown');
-                                                  if (!dropdown) {
-                                                      console.error('Dropdown not found in review actions');
-                                                      return;
-                                                  }
+                                                    const dropdown = reviewActions.querySelector('.review-dropdown');
+                                                    if (!dropdown) {
+                                                        console.error('Dropdown not found in review actions');
+                                                        return;
+                                                    }
 
-                                                  console.log('Found dropdown directly:', dropdown);
+                                                    console.log('Found dropdown directly:', dropdown);
 
-                                                  // Close all other dropdowns first
-                                                  const allDropdowns = document.querySelectorAll('.review-dropdown');
-                                                  allDropdowns.forEach(dd => {
-                                                      if (dd !== dropdown) {
-                                                          dd.classList.remove('show');
-                                                      }
-                                                  });
+                                                    // Close all other dropdowns first
+                                                    const allDropdowns = document.querySelectorAll('.review-dropdown');
+                                                    allDropdowns.forEach(dd => {
+                                                        if (dd !== dropdown) {
+                                                            dd.classList.remove('show');
+                                                        }
+                                                    });
 
-                                                  // Toggle current dropdown
-                                                  const isVisible = dropdown.classList.contains('show');
-                                                  console.log('Current dropdown state:', isVisible);
+                                                    // Toggle current dropdown
+                                                    const isVisible = dropdown.classList.contains('show');
+                                                    console.log('Current dropdown state:', isVisible);
 
-                                                  if (isVisible) {
-                                                      dropdown.classList.remove('show');
-                                                  } else {
-                                                      dropdown.classList.add('show');
-                                                  }
-                                              }
-
-
+                                                    if (isVisible) {
+                                                        dropdown.classList.remove('show');
+                                                    } else {
+                                                        dropdown.classList.add('show');
+                                                    }
+                                                }
 
 
-                                              document.addEventListener('click', function (event) {
-                                                  // Handle review settings button clicks
-                                                  if (event.target.closest('.review-settings')) {
-                                                      const button = event.target.closest('.review-settings');
-                                                      const reviewId = button.getAttribute('data-review-id');
-                                                      console.log('Button clicked, data-review-id:', reviewId);
-                                                      console.log('Button element:', button);
 
-                                                      if (reviewId) {
-                                                          // Use direct method with button element
-                                                          toggleReviewDropdownDirect(reviewId, button);
-                                                      } else {
-                                                          console.error('No data-review-id found on button');
-                                                          console.log('All review-settings buttons:');
-                                                          document.querySelectorAll('.review-settings').forEach((btn, index) => {
-                                                              console.log(`Button ${index}:`, btn.getAttribute('data-review-id'), btn);
-                                                          });
-                                                      }
-                                                      return; // Exit early to avoid closing dropdown immediately
-                                                  }
 
-                                                  // Handle update review clicks
-                                                  if (event.target.closest('.update-review')) {
-                                                      const updateLink = event.target.closest('.update-review');
-                                                      const reviewId = updateLink.getAttribute('data-review-id');
-                                                      const rating = updateLink.getAttribute('data-rating');
-                                                      const comment = updateLink.getAttribute('data-comment');
+                                                document.addEventListener('click', function (event) {
+                                                    // Handle review settings button clicks
+                                                    if (event.target.closest('.review-settings')) {
+                                                        const button = event.target.closest('.review-settings');
+                                                        const reviewId = button.getAttribute('data-review-id');
+                                                        console.log('Button clicked, data-review-id:', reviewId);
+                                                        console.log('Button element:', button);
 
-                                                      console.log('Update review clicked:', {reviewId, rating, comment});
-                                                      openUpdateModal(reviewId, rating, comment);
-                                                      return;
-                                                  }
+                                                        if (reviewId) {
+                                                            // Use direct method with button element
+                                                            toggleReviewDropdownDirect(reviewId, button);
+                                                        } else {
+                                                            console.error('No data-review-id found on button');
+                                                            console.log('All review-settings buttons:');
+                                                            document.querySelectorAll('.review-settings').forEach((btn, index) => {
+                                                                console.log(`Button ${index}:`, btn.getAttribute('data-review-id'), btn);
+                                                            });
+                                                        }
+                                                        return; // Exit early to avoid closing dropdown immediately
+                                                    }
 
-                                                  // Handle clicks outside to close dropdowns
-                                                  if (!event.target.closest('.review-actions')) {
-                                                      document.querySelectorAll('.review-dropdown').forEach(dropdown => {
-                                                          dropdown.classList.remove('show');
-                                                      });
-                                                  }
-                                              });
+                                                    // Handle update review clicks
+                                                    if (event.target.closest('.update-review')) {
+                                                        const updateLink = event.target.closest('.update-review');
+                                                        const reviewId = updateLink.getAttribute('data-review-id');
+                                                        const rating = updateLink.getAttribute('data-rating');
+                                                        const comment = updateLink.getAttribute('data-comment');
 
-                                              // Keyboard support for accessibility
-                                              document.addEventListener('keydown', function (event) {
-                                                  if (event.key === 'Escape') {
-                                                      if (!dropdownElements) {
-                                                          dropdownElements = document.querySelectorAll('.review-dropdown');
-                                                      }
-                                                      dropdownElements.forEach(dropdown => {
-                                                          dropdown.classList.remove('show');
-                                                      });
-                                                  }
-                                              });
+                                                        console.log('Update review clicked:', {reviewId, rating, comment});
+                                                        openUpdateModal(reviewId, rating, comment);
+                                                        return;
+                                                    }
 
-                                              // Update review modal
-                                              function openUpdateModal(reviewId, rating, comment) {
-                                                  document.getElementById('updateReviewId').value = reviewId;
-                                                  document.querySelector('input[name="rating"][value="' + rating + '"]').checked = true;
-                                                  document.querySelector('.modal-textarea[name="comment"]').value = comment;
-                                                  document.getElementById('updateModal').style.display = 'block';
-                                              }
+                                                    // Handle clicks outside to close dropdowns
+                                                    if (!event.target.closest('.review-actions')) {
+                                                        document.querySelectorAll('.review-dropdown').forEach(dropdown => {
+                                                            dropdown.classList.remove('show');
+                                                        });
+                                                    }
+                                                });
 
-                                              function closeUpdateModal() {
-                                                  document.getElementById('updateModal').style.display = 'none';
-                                              }
+                                                // Keyboard support for accessibility
+                                                document.addEventListener('keydown', function (event) {
+                                                    if (event.key === 'Escape') {
+                                                        if (!dropdownElements) {
+                                                            dropdownElements = document.querySelectorAll('.review-dropdown');
+                                                        }
+                                                        dropdownElements.forEach(dropdown => {
+                                                            dropdown.classList.remove('show');
+                                                        });
+                                                    }
+                                                });
 
-                                              // Close modal when clicking outside
-                                              window.onclick = function (event) {
-                                                  const modal = document.getElementById('updateModal');
-                                                  if (event.target === modal) {
-                                                      closeUpdateModal();
-                                                  }
-                                              }
+                                                // Update review modal
+                                                function openUpdateModal(reviewId, rating, comment) {
+                                                    document.getElementById('updateReviewId').value = reviewId;
 
-                                              // Star rating functionality
-                                              document.addEventListener('DOMContentLoaded', function () {
-                                                  const starInputs = document.querySelectorAll('.star-rating-input .star-input');
-                                                  const starLabels = document.querySelectorAll('.star-rating-input .star-label');
+                                                    // Set the rating radio button
+                                                    const ratingInput = document.querySelector('input[name="rating"][value="' + rating + '"]');
+                                                    if (ratingInput) {
+                                                        ratingInput.checked = true;
 
-                                                  starInputs.forEach((input, index) => {
-                                                      input.addEventListener('change', function () {
-                                                          const rating = parseInt(this.value);
+                                                        // Update star colors to show current rating
+                                                        updateModalStarColors(rating);
 
-                                                          // Reset all stars to gray
-                                                          starLabels.forEach(label => {
-                                                              label.style.color = '#bdc3c7';
-                                                          });
+                                                        // Đã xóa phần cập nhật rating text
+                                                    }
 
-                                                          // Color stars from 1 to rating with gold
-                                                          for (let i = 0; i < rating; i++) {
-                                                              starLabels[i].style.color = '#f39c12';
-                                                          }
-                                                      });
-                                                  });
+                                                    document.querySelector('.modal-textarea[name="comment"]').value = comment;
+                                                    document.getElementById('updateModal').style.display = 'block';
+                                                }
 
-                                                  // Hover effects
-                                                  starLabels.forEach((label, index) => {
-                                                      label.addEventListener('mouseenter', function () {
-                                                          // Color stars from 1 to current hover position
-                                                          for (let i = 0; i <= index; i++) {
-                                                              starLabels[i].style.color = '#f39c12';
-                                                          }
-                                                      });
+                                                function closeUpdateModal() {
+                                                    document.getElementById('updateModal').style.display = 'none';
+                                                }
 
-                                                      label.addEventListener('mouseleave', function () {
-                                                          // Reset to selected state
-                                                          const checkedInput = document.querySelector('.star-rating-input .star-input:checked');
-                                                          if (checkedInput) {
-                                                              const rating = parseInt(checkedInput.value);
-                                                              starLabels.forEach((label, i) => {
-                                                                  label.style.color = i < rating ? '#f39c12' : '#bdc3c7';
-                                                              });
-                                                          } else {
-                                                              // No star selected, reset all to gray
-                                                              starLabels.forEach(label => {
-                                                                  label.style.color = '#bdc3c7';
-                                                              });
-                                                          }
-                                                      });
-                                                  });
-                                              });
+                                                // Close modal when clicking outside
+                                                window.onclick = function (event) {
+                                                    const modal = document.getElementById('updateModal');
+                                                    if (event.target === modal) {
+                                                        closeUpdateModal();
+                                                    }
+                                                }
+
+                                                // Function to update modal star colors
+                                                function updateModalStarColors(rating) {
+                                                    const modalStarLabels = document.querySelectorAll('.modal-star-rating .modal-star-label');
+                                                    modalStarLabels.forEach((label, index) => {
+                                                        if (index < rating) {
+                                                            label.style.color = '#f39c12';
+                                                        } else {
+                                                            label.style.color = '#bdc3c7';
+                                                        }
+                                                    });
+                                                }
+
+                                                // Đã xóa function updateModalRatingText
+
+                                                // Star rating functionality for modal
+                                                document.addEventListener('DOMContentLoaded', function () {
+                                                    // Handle modal star rating
+                                                    const modalStarInputs = document.querySelectorAll('.modal-star-rating .modal-star-input');
+                                                    const modalStarLabels = document.querySelectorAll('.modal-star-rating .modal-star-label');
+
+                                                    modalStarInputs.forEach((input, index) => {
+                                                        input.addEventListener('change', function () {
+                                                            const rating = parseInt(this.value);
+
+                                                            // Update star colors
+                                                            updateModalStarColors(rating);
+
+                                                            // Đã xóa phần cập nhật rating text
+                                                        });
+                                                    });
+
+                                                    // Hover effects for modal stars
+                                                    modalStarLabels.forEach((label, index) => {
+                                                        label.addEventListener('mouseenter', function () {
+                                                            // Color stars from 1 to current hover position
+                                                            modalStarLabels.forEach((starLabel, i) => {
+                                                                if (i <= index) {
+                                                                    starLabel.style.color = '#f39c12';
+                                                                } else {
+                                                                    starLabel.style.color = '#bdc3c7';
+                                                                }
+                                                            });
+                                                        });
+
+                                                        label.addEventListener('mouseleave', function () {
+                                                            // Reset to selected state
+                                                            const checkedInput = document.querySelector('.modal-star-rating .modal-star-input:checked');
+                                                            if (checkedInput) {
+                                                                const rating = parseInt(checkedInput.value);
+                                                                updateModalStarColors(rating);
+                                                            } else {
+                                                                // No star selected, reset all to gray
+                                                                modalStarLabels.forEach(starLabel => {
+                                                                    starLabel.style.color = '#bdc3c7';
+                                                                });
+                                                            }
+                                                        });
+                                                    });
+
+                                                    // Handle add review star rating (existing functionality)
+                                                    const starInputs = document.querySelectorAll('.star-rating-input .star-input');
+                                                    const starLabels = document.querySelectorAll('.star-rating-input .star-label');
+
+                                                    starInputs.forEach((input, index) => {
+                                                        input.addEventListener('change', function () {
+                                                            const rating = parseInt(this.value);
+
+                                                            // Reset all stars to gray
+                                                            starLabels.forEach(label => {
+                                                                label.style.color = '#bdc3c7';
+                                                            });
+
+                                                            // Color stars from 1 to rating with gold
+                                                            for (let i = 0; i < rating; i++) {
+                                                                starLabels[i].style.color = '#f39c12';
+                                                            }
+                                                        });
+                                                    });
+
+                                                    // Hover effects for add review stars
+                                                    starLabels.forEach((label, index) => {
+                                                        label.addEventListener('mouseenter', function () {
+                                                            // Color stars from 1 to current hover position
+                                                            for (let i = 0; i <= index; i++) {
+                                                                starLabels[i].style.color = '#f39c12';
+                                                            }
+                                                        });
+
+                                                        label.addEventListener('mouseleave', function () {
+                                                            // Reset to selected state
+                                                            const checkedInput = document.querySelector('.star-rating-input .star-input:checked');
+                                                            if (checkedInput) {
+                                                                const rating = parseInt(checkedInput.value);
+                                                                starLabels.forEach((label, i) => {
+                                                                    label.style.color = i < rating ? '#f39c12' : '#bdc3c7';
+                                                                });
+                                                            } else {
+                                                                // No star selected, reset all to gray
+                                                                starLabels.forEach(label => {
+                                                                    label.style.color = '#bdc3c7';
+                                                                });
+                                                            }
+                                                        });
+                                                    });
+                                                });
 
 
     </script>

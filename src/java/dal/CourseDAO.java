@@ -24,7 +24,7 @@ public class CourseDAO extends DBContext {
         List<Object> parameters = new ArrayList<>();
         parameters.add(creatorId);
 
-        // 🔍 Fuzzy search theo title
+        // Fuzzy search theo title
         sql.append(buildFuzzySqlCondition(title, parameters));
 
         // Filter by date range
@@ -128,7 +128,6 @@ public class CourseDAO extends DBContext {
         return condition.toString();
     }
 
-    // Các phương thức khác giữ nguyên
     public List<Course> getFilteredCourses(String searchTerm, String priceFilter, String ratingFilter, String sortBy, String topicFilter) {
         List<Course> courses = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
@@ -182,11 +181,6 @@ public class CourseDAO extends DBContext {
             sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
         }
         sql.append("GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n");
-        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            double minRating = Double.parseDouble(ratingFilter);
-            conditions.add("ISNULL(ar.AverageRating, 0) >= ?");
-            parameters.add(minRating);
-        }
         sql.append("ORDER BY ");
         switch (sortBy != null ? sortBy : "newest") {
             case "oldest":
@@ -199,7 +193,7 @@ public class CourseDAO extends DBContext {
                 sql.append("c.Price DESC");
                 break;
             case "rating":
-                sql.append("ar.AverageRating DESC");
+                sql.append("c.Created_At DESC");
                 break;
             default:
                 sql.append("c.Created_At DESC");
@@ -237,6 +231,7 @@ public class CourseDAO extends DBContext {
                     "FROM Course c\n" +
                     "LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n" +
                     "GROUP BY c.Course_Id, c.Title, c.Description, c.Price, c.Thumbnail_Url, c.Created_At, c.Updated_At, c.Topic_Id\n" +
+                    "WHERE c.status = 'active'\n" +
                     "ORDER BY c.Created_At DESC;";
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -267,6 +262,8 @@ public class CourseDAO extends DBContext {
         sql.append("LEFT JOIN Review r ON c.Course_Id = r.Course_Id\n");
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
+        conditions.add("c.Status = 'active'");
+        
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
             conditions.add("(c.Title LIKE ? OR c.Description LIKE ?)");
             parameters.add("%" + searchTerm.trim() + "%");
@@ -308,10 +305,6 @@ public class CourseDAO extends DBContext {
             sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
         }
         sql.append("GROUP BY c.Course_Id\n");
-        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            sql.append("HAVING AVG(r.Rating) >= ?\n");
-            parameters.add(Double.parseDouble(ratingFilter));
-        }
         sql.append(") t");
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < parameters.size(); i++) {
@@ -328,7 +321,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int countAllCourses() {
-        String sql = "SELECT COUNT(*) AS Total FROM Course";
+        String sql = "SELECT COUNT(*) AS Total FROM Course WHERE Status = 'active'";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
@@ -348,6 +341,9 @@ public class CourseDAO extends DBContext {
         sql.append("LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n");
         List<String> conditions = new ArrayList<>();
         List<Object> parameters = new ArrayList<>();
+        
+        conditions.add("c.Status = 'active'");
+        
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
             conditions.add("(c.Title LIKE ? OR c.Description LIKE ?)");
             parameters.add("%" + searchTerm.trim() + "%");
@@ -378,20 +374,16 @@ public class CourseDAO extends DBContext {
                     conditions.add("c.Topic_Id = ?");
                     parameters.add(topicId);
                 } catch (NumberFormatException e) {
-                    // ignore
+                    e.printStackTrace();
                 }
             } else {
                 conditions.add("c.Topic_Id IN (SELECT Topic_Id FROM Topic WHERE Name = ?)");
                 parameters.add(topicValue);
             }
         }
-        if (!conditions.isEmpty()) {
-            sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
-        }
-        if (ratingFilter != null && !ratingFilter.trim().isEmpty()) {
-            sql.append("HAVING ISNULL(ar.AverageRating, 0) >= ?\n");
-            parameters.add(Double.parseDouble(ratingFilter));
-        }
+        
+        sql.append("WHERE ").append(String.join(" AND ", conditions)).append("\n");
+        
         sql.append("ORDER BY ");
         switch (sortBy != null ? sortBy : "newest") {
             case "oldest":
@@ -447,6 +439,7 @@ public class CourseDAO extends DBContext {
         String sql = "SELECT c.*, ISNULL(ar.AverageRating, 0) AS AverageRating " +
                     "FROM Course c " +
                     "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id " +
+                    "WHERE c.status = 'active'\n" +
                     "ORDER BY c.Created_At DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, offset);
@@ -476,6 +469,7 @@ public class CourseDAO extends DBContext {
         String sql = "SELECT TOP 3 c.*, ISNULL(ar.AverageRating, 0) AS AverageRating\n" +
                     "FROM Course c\n" +
                     "LEFT JOIN (SELECT Course_Id, AVG(Rating) AS AverageRating FROM Review GROUP BY Course_Id) ar ON ar.Course_Id = c.Course_Id\n" +
+                    "WHERE status = 'active'\n" +
                     "ORDER BY c.Created_At DESC;";
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
@@ -784,5 +778,68 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+     public void deleteCourse(long courseId) {
+        try {
+            connection.setAutoCommit(false); // Start transaction
+
+            // Delete quizzes associated with lessons of the course
+            String deleteQuizzesSql = "DELETE FROM Quiz WHERE Lesson_Id IN (SELECT Lesson_Id FROM Lesson WHERE Course_Id = ?)";
+            try (PreparedStatement psQuizzes = connection.prepareStatement(deleteQuizzesSql)) {
+                psQuizzes.setLong(1, courseId);
+                psQuizzes.executeUpdate();
+            }
+
+            // Delete lessons associated with the course
+            String deleteLessonsSql = "DELETE FROM Lesson WHERE Course_Id = ?";
+            try (PreparedStatement psLessons = connection.prepareStatement(deleteLessonsSql)) {
+                psLessons.setLong(1, courseId);
+                psLessons.executeUpdate();
+            }
+
+            // Delete order details associated with the course
+            String deleteOrderDetailsSql = "DELETE FROM Order_Detail WHERE Course_Id = ?";
+            try (PreparedStatement psOrderDetails = connection.prepareStatement(deleteOrderDetailsSql)) {
+                psOrderDetails.setLong(1, courseId);
+                psOrderDetails.executeUpdate();
+            }
+
+            // Delete cart items associated with the course
+            String deleteCartItemsSql = "DELETE FROM CartItem WHERE Course_Id = ?";
+            try (PreparedStatement psCartItems = connection.prepareStatement(deleteCartItemsSql)) {
+                psCartItems.setLong(1, courseId);
+                psCartItems.executeUpdate();
+            }
+
+            // Delete reviews associated with the course
+            String deleteReviewsSql = "DELETE FROM Review WHERE Course_Id = ?";
+            try (PreparedStatement psReviews = connection.prepareStatement(deleteReviewsSql)) {
+                psReviews.setLong(1, courseId);
+                psReviews.executeUpdate();
+            }
+
+            // Delete the course
+            String deleteCourseSql = "DELETE FROM Course WHERE Course_Id = ?";
+            try (PreparedStatement psCourse = connection.prepareStatement(deleteCourseSql)) {
+                psCourse.setLong(1, courseId);
+                psCourse.executeUpdate();
+            }
+
+            connection.commit(); // Commit transaction
+        } catch (SQLException e) {
+            try {
+                connection.rollback(); // Rollback on error
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete course and related data: " + e.getMessage());
+        } finally {
+            try {
+                connection.setAutoCommit(true); // Restore auto-commit mode
+            } catch (SQLException autoCommitEx) {
+                autoCommitEx.printStackTrace();
+            }
+        }
     }
 }

@@ -515,7 +515,7 @@
                     <div class="col-xl-7 col-lg-8">
                         <div class="section-tittle text-center mb-55">
                             <h2>Our featured courses</h2>
-                            <c:if test="${not empty searchTerm or not empty priceFilter or not empty ratingFilter or not empty topicFilter}">
+                            <c:if test="${not empty searchTerm or not empty priceFilter or not empty topicFilter}">
                                 <div class="results-info mt-3">
                                     <p class="text-muted">
                                         Showing <strong>${totalResults}</strong> course(s)
@@ -558,21 +558,7 @@
                                             <option value="101-200" <c:if test="${priceFilter == '101-200'}">selected</c:if>>$101 - $200</option>
                                             <option value="201+" <c:if test="${priceFilter == '201+'}">selected</c:if>>$201+</option>
                                         </select>
-                                </div>
-                                    
-                                    <div class="filter-item">
-                                        <label for="ratingFilter" class="filter-label">
-                                            <i class="fas fa-star"></i> Minimum Rating
-                                        </label>
-                                        <select name="rating" id="ratingFilter" onchange="this.form.submit()">
-                                            <option value="">All Ratings</option>
-                                            <option value="4.5" <c:if test="${ratingFilter == '4.5'}">selected</c:if>>4.5+ Stars</option>
-                                            <option value="4.0" <c:if test="${ratingFilter == '4.0'}">selected</c:if>>4.0+ Stars</option>
-                                            <option value="3.5" <c:if test="${ratingFilter == '3.5'}">selected</c:if>>3.5+ Stars</option>
-                                            <option value="3.0" <c:if test="${ratingFilter == '3.0'}">selected</c:if>>3.0+ Stars</option>
-                                        </select>
-                                </div>
-                                
+                                </div>                        
                                     <div class="filter-item">
                                         <label for="sortBy" class="filter-label">
                                             <i class="fas fa-sort"></i> Sort By
@@ -582,7 +568,6 @@
                                             <option value="oldest" <c:if test="${sortBy == 'oldest'}">selected</c:if>>Oldest First</option>
                                             <option value="price-low" <c:if test="${sortBy == 'price-low'}">selected</c:if>>Price: Low to High</option>
                                             <option value="price-high" <c:if test="${sortBy == 'price-high'}">selected</c:if>>Price: High to Low</option>
-                                            <option value="rating" <c:if test="${sortBy == 'rating'}">selected</c:if>>Highest Rated</option>
                                         </select>
                                 </div>
                                     
@@ -606,7 +591,7 @@
                     </div>
                                 
                                 <!-- Active Filters Display -->
-                                <c:if test="${not empty searchTerm or not empty priceFilter or not empty ratingFilter or not empty topicFilter}">
+                                <c:if test="${not empty searchTerm or not empty priceFilter or not empty topicFilter}">
                                 <div class="active-filters">
                                     <h5><i class="fas fa-filter"></i> Active Filters:</h5>
                                     <div class="filter-tags">
@@ -620,12 +605,7 @@
                                                 <i class="fas fa-dollar-sign"></i> ${priceFilter}
                                             </span>
                                         </c:if>
-                    
-                                        <c:if test="${not empty ratingFilter}">
-                                            <span class="filter-tag">
-                                                <i class="fas fa-star"></i> ${ratingFilter}+ Stars
-                                            </span>
-                                        </c:if>
+                
                                         <c:if test="${not empty topicFilter}">
                                             <span class="filter-tag">
                                                 <i class="fas fa-tag"></i> ${topicFilter}
@@ -712,7 +692,7 @@
                     <c:if test="${empty allCourses}">
                         <div class="col-12 text-center">
                             <c:choose>
-                                <c:when test="${not empty searchTerm or not empty priceFilter or not empty ratingFilter or not empty topicFilter}">
+                                <c:when test="${not empty searchTerm or not empty priceFilter or not empty topicFilter}">
                                     <div class="no-results">
                                         <i class="fas fa-search" style="font-size: 48px; color: #95a5a6; margin-bottom: 20px;"></i>
                                         <h4>No courses found</h4>
@@ -933,7 +913,7 @@
              }
              
              // Add filter change logging
-             const filterSelects = document.querySelectorAll('select[name="price"], select[name="rating"], select[name="sort"], select[name="topic"]');
+             const filterSelects = document.querySelectorAll('select[name="price"], select[name="sort"], select[name="topic"]');
              filterSelects.forEach(select => {
                  select.addEventListener('change', function() {
                      this.form.submit();

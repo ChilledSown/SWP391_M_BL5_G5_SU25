@@ -31,7 +31,7 @@ public class ListCoursesInstructor extends HttpServlet {
         }
         int userId = currentUser.getUser_id().intValue();
         int page = 1;
-        int pageSize = 5;
+        int pageSize = 3;
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
             try {

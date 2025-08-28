@@ -9,6 +9,7 @@
         <title>Add User</title>
         <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -102,7 +103,7 @@
                 box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                 max-width: 600px;
                 margin: 0 auto;
-                overflow: hidden; /* Ngăn tràn nội dung */
+                overflow: hidden;
             }
             .form-container label {
                 display: block;
@@ -117,7 +118,7 @@
                 border: 1px solid #ddd;
                 border-radius: 4px;
                 box-sizing: border-box;
-                font-size: 16px; /* Đảm bảo phông chữ đồng nhất */
+                font-size: 16px;
             }
             .form-container button {
                 background-color: #2ecc71;
@@ -148,9 +149,20 @@
                 background-color: #ffebee;
                 border-radius: 4px;
             }
+            .avatar-preview {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 15px;
+                border: 2px solid #3498db;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
             @media (max-width: 768px) {
                 .sidebar {
-                    width: 100px; /* Thu nhỏ sidebar trên mobile */
+                    width: 100px;
                 }
                 .sidebar-nav a {
                     font-size: 14px;
@@ -171,8 +183,44 @@
                 .form-container {
                     padding: 15px;
                 }
+                .avatar-preview {
+                    width: 80px;
+                    height: 80px;
+                }
             }
         </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const avatarInput = document.getElementById('avataUrl');
+                const avatarPreview = document.querySelector('.avatar-preview');
+
+                // Xử lý lỗi load hình ảnh để tránh nháy liên tục
+                avatarPreview.addEventListener('error', function() {
+                    this.src = 'assets/img/blog/author.png';
+                });
+
+                avatarInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        if (file.size > 10 * 1024 * 1024) { // Giới hạn 10MB
+                            alert('Kích thước file vượt quá 10MB.');
+                            avatarInput.value = '';
+                            avatarPreview.src = 'assets/img/blog/author.png';
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            avatarPreview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        avatarPreview.src = 'assets/img/blog/author.png';
+                        alert('Vui lòng chọn file ảnh hợp lệ.');
+                        avatarInput.value = '';
+                    }
+                });
+            });
+        </script>
     </head>
     <body>
         <div class="dashboard-container">
@@ -181,7 +229,7 @@
                     <h3>Admin Dashboard</h3>
                 </div>
                 <div class="profile-section">
-                    <img src="${empty sessionScope.user.avataUrl ? 'assets/img/default-avatar.png' : sessionScope.user.avataUrl}" alt="Avatar" class="profile-avatar">
+                    <img src="${empty sessionScope.user.avataUrl ? 'assets/img/blog/author.png' : sessionScope.user.avataUrl}" alt="Avatar" class="profile-avatar">
                     <div class="profile-name">
                         <c:out value="${sessionScope.user.firstName} ${sessionScope.user.middleName} ${sessionScope.user.lastName}"/>
                     </div>
@@ -189,10 +237,21 @@
                 </div>
                 <nav class="sidebar-nav">
                     <ul>
-                        <li data-section="overview"><a href="admin">Overview</a></li>
-                        <li data-section="courses"><a href="managecourse">Manage Courses</a></li>
-                        <li data-section="users" class="active"><a href="manageuser">Manage Users</a></li>
-                        <li data-section="settings"><a href="login">Logout</a></li>
+                        <li data-section="overview">
+                            <a href="overviewadmin">Overview</a>
+                        </li>
+                        <li data-section="courses">
+                            <a href="admintopic">List Topic</a>
+                        </li>
+                        <li class="active" data-section="users">
+                            <a href="manageuser">Manage Users</a>
+                        </li>
+                        <li data-section="slider">
+                            <a href="manageslider">Manage Slider</a>
+                        </li>
+                        <li data-section="settings">
+                            <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                        </li>
                     </ul>
                 </nav>
             </aside>
@@ -207,7 +266,7 @@
                     </c:if>
                 </div>
                 <div class="form-container">
-                    <form action="manageuser" method="post">
+                    <form action="manageuser" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="add">
 
                         <label for="firstName">First Name</label>
@@ -219,8 +278,9 @@
                         <label for="lastName">Last Name</label>
                         <input type="text" id="lastName" name="lastName" value="${not empty requestScope.user ? requestScope.user.lastName : ''}" required>
 
-                        <label for="avataUrl">Avatar </label>
-                        <input type="file" id="avataUrl" name="avataUrl">
+                        <label for="avataUrl">Avatar</label>
+                        <img src="assets/img/blog/author.png" alt="Avatar Preview" class="avatar-preview">
+                        <input type="file" id="avataUrl" name="avataUrl" accept="image/*">
 
                         <label for="phone">Phone</label>
                         <input type="text" id="phone" name="phone" value="${not empty requestScope.user ? requestScope.user.phone : ''}" required>
@@ -232,13 +292,13 @@
                         <input type="email" id="email" name="email" value="${not empty requestScope.user ? requestScope.user.email : ''}" required>
 
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" value="${not empty requestScope.user ? requestScope.user.passwordHash : ''}" required>
+                        <input type="password" id="password" name="password" required>
 
                         <label for="role">Role</label>
                         <select id="role" name="role" required>
                             <option value="customer" <c:if test="${not empty requestScope.user and requestScope.user.role == 'customer'}">selected</c:if>>Customer</option>
                             <option value="admin" <c:if test="${not empty requestScope.user and requestScope.user.role == 'admin'}">selected</c:if>>Admin</option>
-                            <option value="seller" <c:if test="${not empty requestScope.user and requestScope.user.role == 'seller'}">selected</c:if>>Seller</option>                        
+                            <option value="instructor" <c:if test="${not empty requestScope.user and requestScope.user.role == 'instructor'}">selected</c:if>>Instructor</option>                        
                         </select>
 
                         <label for="accountStatus">Account Status</label>

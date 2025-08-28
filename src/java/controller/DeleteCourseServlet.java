@@ -73,7 +73,7 @@ if (user == null || !"instructor".equalsIgnoreCase(user.getRole())) {
             try {
                 long courseId = Long.parseLong(id);
                 CourseDAO dao = new CourseDAO();
-                dao.markCourseAsDeleted(courseId); 
+                dao.deleteCourse(courseId); 
             } catch (Exception e) {
                 e.printStackTrace();
             }
