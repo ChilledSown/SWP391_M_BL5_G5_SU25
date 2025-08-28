@@ -16,8 +16,8 @@ import utils.PasswordHashUtil;
 
 @WebServlet(name = "ManageUserServlet", urlPatterns = {"/manageuser"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-                 maxFileSize = 1024 * 1024 * 10,      // 10MB
-                 maxRequestSize = 1024 * 1024 * 50)   // 50MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50)   // 50MB
 public class ManageUserServlet extends HttpServlet {
 
     private final int PAGE_SIZE = 8; // Records per page
@@ -35,7 +35,7 @@ public class ManageUserServlet extends HttpServlet {
             request.setAttribute("user", user);
             request.getRequestDispatcher("updateuser.jsp").forward(request, response);
             return;
-        } else if ("add".equals(action)) {   
+        } else if ("add".equals(action)) {
             request.getRequestDispatcher("adduser.jsp").forward(request, response);
             return;
         }
@@ -120,10 +120,16 @@ public class ManageUserServlet extends HttpServlet {
 
             // Validate inputs
             String error = null;
-            if (firstName == null || firstName.trim().isEmpty() ||
-                middleName == null || middleName.trim().isEmpty() ||
-                lastName == null || lastName.trim().isEmpty()) {
+            if (firstName == null || firstName.trim().isEmpty()
+                    || middleName == null || middleName.trim().isEmpty()
+                    || lastName == null || lastName.trim().isEmpty()) {
                 error = "All name fields are required.";
+            } else if (!firstName.matches("^[A-Za-z]+$") || firstName.length() > 8) {
+                error = "First name must contain only letters and be up to 8 characters long.";
+            } else if (!middleName.matches("^[A-Za-z]+$") || middleName.length() > 8) {
+                error = "Middle name must contain only letters and be up to 8 characters long.";
+            } else if (!lastName.matches("^[A-Za-z]+$") || lastName.length() > 8) {
+                error = "Middle name must contain only letters and be up to 8 characters long.";
             } else if (password != null && !password.isEmpty() && password.length() < 6) {
                 error = "Password must be at least 6 characters long.";
             } else if (!email.contains("@")) {
@@ -246,10 +252,16 @@ public class ManageUserServlet extends HttpServlet {
 
             // Validate inputs
             String error = null;
-            if (firstName == null || firstName.trim().isEmpty() ||
-                middleName == null || middleName.trim().isEmpty() ||
-                lastName == null || lastName.trim().isEmpty()) {
+            if (firstName == null || firstName.trim().isEmpty()
+                    || middleName == null || middleName.trim().isEmpty()
+                    || lastName == null || lastName.trim().isEmpty()) {
                 error = "All name fields are required.";
+            } else if (!firstName.matches("^[A-Za-z]+$") || firstName.length() > 8) {
+                error = "First name must contain only letters and be up to 8 characters long.";
+            } else if (!middleName.matches("^[A-Za-z]+$") || middleName.length() > 8) {
+                error = "Middle name must contain only letters and be up to 8 characters long.";
+            } else if (!lastName.matches("^[A-Za-z]+$") || lastName.length() > 8) {
+                error = "Middle name must contain only letters and be up to 8 characters long.";
             } else if (password == null || password.length() < 6) {
                 error = "Password must be at least 6 characters long.";
             } else if (!email.contains("@")) {

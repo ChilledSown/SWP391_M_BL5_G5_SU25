@@ -55,6 +55,42 @@ public class RegisterServlet extends HttpServlet {
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
+        // Validation: Check if firstName, middleName, lastName contain only letters and max 8 characters
+        if (!firstName.matches("^[A-Za-z]+$") || firstName.length() > 8) {
+            request.setAttribute("message", "Name must contain only letters and a maximum of 8 characters.");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        if (!middleName.matches("^[A-Za-z]+$") || middleName.length() > 8) {
+            request.setAttribute("message", "Name must contain only letters and a maximum of 8 characters.");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        if (!lastName.matches("^[A-Za-z]+$") || lastName.length() > 8) {
+            request.setAttribute("message", "Name must contain only letters and a maximum of 8 characters.");
+            request.setAttribute("firstName", firstName);
+            request.setAttribute("middleName", middleName);
+            request.setAttribute("lastName", lastName);
+            request.setAttribute("email", email);
+            request.setAttribute("phone", phone);
+            request.setAttribute("address", address);
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
 
         // Validate email format
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
