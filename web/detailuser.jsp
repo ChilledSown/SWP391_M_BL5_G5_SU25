@@ -168,14 +168,25 @@
                 </div>
                 <a href="${pageContext.request.contextPath}/profile"><button class="edit-profile-btn" title="Edit Profile"><i class="fas fa-edit"></i></button></a>
             </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li data-section="overview"><a href="admin">Overview</a></li>
-                    <li data-section="courses"><a href="managecourse">Manage Courses</a></li>
-                    <li data-section="users" class="active"><a href="manageuser">Manage Users</a></li>
-                    <li data-section="settings"><a href="login">Logout</a></li>
-                </ul>
-            </nav>
+             <nav class="sidebar-nav">
+                    <ul>
+                        <li  data-section="overview">
+                            <a href="overviewadmin">Overview</a>
+                        </li>
+                        <li data-section="courses">
+                        <a href="admintopic">List Topic</a>
+                        </li>
+                        <li class="active" data-section="users">
+                            <a href="manageuser">Manage Users</a>
+                        </li>
+                        <li data-section="slider">
+                            <a href="manageslider">Manage Slider</a>
+                        </li>
+                        <li data-section="settings">
+                            <a href="${pageContext.request.contextPath}/logout">Logout</a>
+                        </li>
+                    </ul>
+                </nav>
         </aside>
 
         <main class="main-content">
